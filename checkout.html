@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabFlow Uni | Checkout Seguro — Parte 2 Semana 16 UGB</title>
+
+    <script>
+        (function () {
+            const origWarn = console.warn;
+            console.warn = function (...args) {
+                if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+                origWarn.apply(console, args);
+            };
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#1E3A8A',   // Azul Tech Profundo
+                            secondary: '#06B6D4', // Turquesa / Menta Código
+                            accent: '#7C3AED',    // Violeta Eléctrico
+                            dark: '#0F172A',      // Gris Terminal Carbón
+                            light: '#F8FAFC'      // Blanco Nieve Suave
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --brand-primary: #1E3A8A;
+            --brand-secondary: #06B6D4;
+            --brand-accent: #7C3AED;
+            --brand-dark: #0F172A;
+            --brand-light: #F8FAFC;
+        }
+
+        html, body {
+            background-color: #0F172A !important;
+            color: #F8FAFC !important;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, h4, .font-brand {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .font-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .bg-brand-dark { background-color: #0F172A !important; }
+        .bg-brand-primary { background-color: #1E3A8A !important; }
+        .bg-brand-secondary { background-color: #06B6D4 !important; }
+        .bg-brand-accent { background-color: #7C3AED !important; }
+        .text-brand-secondary { color: #06B6D4 !important; }
+        .text-brand-accent { color: #A78BFA !important; }
+        .border-brand-secondary { border-color: #06B6D4 !important; }
+        .border-brand-accent { border-color: #7C3AED !important; }
+
+        .btn-cta-main {
+            background: linear-gradient(90deg, #06B6D4 0%, #22D3EE 50%, #38BDF8 100%) !important;
+            color: #020617 !important;
+            font-weight: 700 !important;
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.45);
+            transition: all 0.25s ease;
+        }
+        .btn-cta-main:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 15px 30px -5px rgba(6, 182, 212, 0.65);
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink {
+            animation: blinkCursor 1.1s infinite;
+        }
+
+        .bg-tech-grid {
+            background-color: #0F172A;
+            background-size: 36px 36px;
+            background-image:
+                linear-gradient(to right, rgba(30, 58, 138, 0.22) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 58, 138, 0.22) 1px, transparent 1px);
+        }
+
+        .credit-card-visual {
+            transition: all 0.35s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-400 selection:text-slate-950">
+
+    <!-- ===================================================================== -->
+    <!-- BARRA SUPERIOR DE URGENCIA Y NAVEGACIÓN ENTRE PÁGINAS (SEMANA 16 UGB) -->
+    <!-- ===================================================================== -->
+    <div style="background: linear-gradient(90deg, #E11D48 0%, #D97706 50%, #7C3AED 100%);" class="text-white text-xs py-2.5 px-4 border-b border-white/20 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-950 text-amber-300 font-code text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    ¡ATENCIÓN ESTUDIANTES!
+                </span>
+                <span class="font-brand font-bold text-white text-xs sm:text-sm tracking-wide">
+                    BECA UNIVERSITARIA DEL 93% + 3 BONUS GRATIS TERMINA EN:
+                </span>
+                <!-- Cronómetro en Vivo -->
+                <div class="inline-flex items-center gap-1 font-code text-xs font-bold bg-slate-950 text-cyan-300 px-3 py-0.5 rounded-lg border border-cyan-400/40">
+                    <span id="topTimerHours">02</span>h :
+                    <span id="topTimerMinutes">14</span>m :
+                    <span id="topTimerSeconds">48</span>s
+                </div>
+            </div>
+
+            <!-- Selector de Páginas Independientes (Solo Parte 1 y Parte 2) -->
+            <div class="flex items-center gap-1.5">
+                <a href="index.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-semibold bg-slate-950/80 hover:bg-slate-900 text-white border border-white/20 transition">
+                    Parte 1 (Landing)
+                </a>
+                <a href="checkout.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-bold bg-cyan-400 text-slate-950 shadow transition">
+                    Parte 2 (Checkout)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- NAVBAR PRINCIPAL FIJO CON IMAGOTIPO OFICIAL LABFLOW UNI               -->
+    <!-- ===================================================================== -->
+    <header class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/95 border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Imagotipo Oficial SVG (Regresa al Landing) -->
+            <a href="index.html" class="flex items-center gap-3 group focus:outline-none">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition">
+                    <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="flaskBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#06B6D4"/>
+                                <stop offset="50%" stop-color="#3B82F6"/>
+                                <stop offset="100%" stop-color="#7C3AED"/>
+                            </linearGradient>
+                            <linearGradient id="liquidFill" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.25"/>
+                                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.28"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M24 72 H76 L83 86 C85 90 82 94 77 94 H23 C18 94 15 90 17 86 L24 72 Z" fill="url(#liquidFill)"/>
+                        <path d="M36 12 H64 M41 12 V34 L17 84 C14 90 18 95 25 95 H75 C82 95 86 90 83 84 L59 34 V12" stroke="url(#flaskBorderGrad)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M34 24 L29 27 L34 30" stroke="#06B6D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M66 24 L71 27 L66 30" stroke="#06B6D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M53 22 L47 32" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M34 80 C34 65 50 62 50 48" stroke="#06B6D4" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M66 80 C66 65 50 62 50 48" stroke="#7C3AED" stroke-width="4.5" stroke-linecap="round"/>
+                        <circle cx="34" cy="80" r="6" fill="#0F172A" stroke="#06B6D4" stroke-width="4"/>
+                        <circle cx="66" cy="80" r="6" fill="#0F172A" stroke="#7C3AED" stroke-width="4"/>
+                        <circle cx="50" cy="48" r="7.5" fill="#F8FAFC" stroke="#06B6D4" stroke-width="4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-brand text-2xl sm:text-3xl font-bold tracking-tight text-white">Lab</span>
+                        <span class="font-brand text-2xl sm:text-3xl font-bold tracking-tight text-cyan-400">Flow<span class="cursor-blink text-cyan-400 font-code">_</span></span>
+                        <span class="ml-1 px-2.5 py-0.5 text-xs font-brand font-bold uppercase tracking-wider bg-violet-600 text-white rounded-full shadow-md">UNI</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-medium tracking-wide hidden sm:block">Tu código fluye, tu equipo avanza.</p>
+                </div>
+            </a>
+
+            <!-- Enlaces hacia las secciones de Parte 1 (Landing) -->
+            <nav class="hidden xl:flex items-center gap-4 text-xs font-semibold text-slate-300">
+                <a href="index.html#sec-hero" class="hover:text-cyan-400 transition">1. Hero & VSL</a>
+                <a href="index.html#sec-problema" class="hover:text-cyan-400 transition">2. Problema & Por Qué</a>
+                <a href="index.html#sec-mockup" class="hover:text-cyan-400 transition">3. Sandbox & 8 Entornos</a>
+                <a href="index.html#sec-pasos" class="hover:text-cyan-400 transition">4. ¿Cómo funciona?</a>
+                <a href="index.html#sec-precios" class="hover:text-cyan-400 transition">5. 3 Bonus + Valor</a>
+                <a href="index.html#sec-social" class="hover:text-cyan-400 transition">6. Prueba Social</a>
+                <a href="index.html#sec-faq" class="hover:text-cyan-400 transition">7. FAQ (8)</a>
+                <a href="index.html#sec-garantia" class="hover:text-cyan-400 transition">8. Garantía 30d</a>
+            </nav>
+
+            <!-- Botón Volver al Landing + Menú Móvil -->
+            <div class="flex items-center gap-2.5">
+                <a href="index.html" class="px-4 py-2.5 rounded-xl font-brand font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/50 transition inline-flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al Landing</span>
+                </a>
+                <button type="button" onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl bg-slate-900 text-slate-200 hover:text-cyan-400 border border-slate-700" aria-label="Abrir Menú">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú Desplegable Móvil -->
+        <div id="mobileMenu" class="hidden xl:hidden bg-slate-900 border-b border-slate-800 px-4 pt-3 pb-5 space-y-2">
+            <div class="grid grid-cols-2 gap-2 pb-2 border-b border-slate-800">
+                <a href="index.html#sec-hero" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">1. Hero & VSL</a>
+                <a href="index.html#sec-problema" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">2. Problema y Solución</a>
+                <a href="index.html#sec-mockup" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">3. Mockup Sandbox</a>
+                <a href="index.html#sec-pasos" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">4. 3 Pasos Sencillos</a>
+                <a href="index.html#sec-precios" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">5. 3 Bonus & Precios</a>
+                <a href="index.html#sec-social" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">6. Prueba Social</a>
+                <a href="index.html#sec-faq" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">7. 8 Preguntas FAQ</a>
+                <a href="index.html#sec-garantia" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-medium text-white hover:text-cyan-400">8. Garantía y CTA</a>
+            </div>
+            <a href="index.html" class="w-full py-2.5 rounded-xl font-brand font-bold text-sm bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-400/40 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Volver a Parte 1: Landing Page
+            </a>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- CONTENEDOR PARTE 2: PÁGINA DE PAGO / CHECKOUT SEGURO MULTI-TARJETA    -->
+    <!-- ===================================================================== -->
+    <main id="checkoutContainer" class="py-16 sm:py-20 bg-tech-grid relative min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-code font-bold bg-blue-950 text-cyan-300 border border-cyan-400/50">
+                    <i class="fa-solid fa-credit-card"></i>
+                    PARTE 2 DE LA ACTIVIDAD (SEMANA 16) • PÁGINA DE PAGO (CHECKOUT CON MÚLTIPLES MARCAS DE TARJETAS)
+                </span>
+                <div class="flex items-center gap-2 text-xs font-code text-emerald-400">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Conexión Cifrada TLS 1.3 / 256-Bit SSL</span>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h1 class="font-brand text-3xl sm:text-4xl font-bold text-white">
+                    Finaliza tu suscripción en <span class="text-cyan-400">LabFlow Uni</span>
+                </h1>
+                <p class="text-slate-300 text-sm sm:text-base mt-1">
+                    Selecciona tu plan, elige tu marca de tarjeta preferida y activa tu entorno colaborativo en la nube al instante.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- COLUMNA IZQUIERDA (7 COLS): PLANES, 5 MARCAS DE TARJETA Y FORMULARIO -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Paso 1: Elegir Plan -->
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-6">
+                        <div class="text-xs font-code text-cyan-400 uppercase font-bold mb-3">
+                            Paso 1 • Selecciona tu Plan Universitario
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <button type="button" onclick="selectCheckoutPlan('pro')" id="planCard-pro" class="p-4 rounded-2xl border-2 border-cyan-400 bg-blue-950/50 text-left transition">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-brand font-bold text-white text-sm">Estudiante Pro</span>
+                                    <i class="fa-solid fa-circle-check text-cyan-400"></i>
+                                </div>
+                                <div class="font-code text-xl font-bold text-cyan-400 mt-1">$4.99<span class="text-xs text-slate-300">/mes</span></div>
+                                <div class="text-[11px] text-slate-300 mt-1">1 Estudiante + 3 Bonus</div>
+                            </button>
+
+                            <button type="button" onclick="selectCheckoutPlan('team')" id="planCard-team" class="p-4 rounded-2xl border border-slate-700 bg-slate-950 hover:border-slate-500 text-left transition">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-brand font-bold text-white text-sm">Pack Grupo (5)</span>
+                                    <i class="fa-regular fa-circle text-slate-500"></i>
+                                </div>
+                                <div class="font-code text-xl font-bold text-white mt-1">$14.99<span class="text-xs text-slate-400">/mes</span></div>
+                                <div class="text-[11px] text-slate-400 mt-1">5 Integrantes ($2.99 c/u)</div>
+                            </button>
+
+                            <button type="button" onclick="selectCheckoutPlan('trial')" id="planCard-trial" class="p-4 rounded-2xl border border-slate-700 bg-slate-950 hover:border-slate-500 text-left transition">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-brand font-bold text-white text-sm">Prueba 14 Días</span>
+                                    <i class="fa-regular fa-circle text-slate-500"></i>
+                                </div>
+                                <div class="font-code text-xl font-bold text-emerald-400 mt-1">$0.00<span class="text-xs text-slate-400"> hoy</span></div>
+                                <div class="text-[11px] text-slate-400 mt-1">Luego $4.99/mes si continúas</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Selección de 5 Marcas de Tarjeta de Crédito Diferentes -->
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xs font-code text-cyan-400 uppercase font-bold">
+                                Paso 2 • Elige tu Marca de Tarjeta de Crédito o Débito
+                            </span>
+                            <span class="text-xs text-slate-300">Aceptamos todas las redes internacionales</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                            <!-- Marca 1: VISA -->
+                            <button type="button" onclick="selectCardBrand('visa')" id="brandBtn-visa" class="p-3 rounded-2xl border-2 border-cyan-400 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition">
+                                <svg viewBox="0 0 80 28" class="h-6">
+                                    <rect width="80" height="28" rx="4" fill="#1A1F71"/>
+                                    <text x="40" y="20" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-weight="700" font-style="italic" font-size="17">VISA</text>
+                                </svg>
+                                <span class="font-code text-[11px] font-bold text-cyan-400">Visa</span>
+                            </button>
+
+                            <!-- Marca 2: MASTERCARD -->
+                            <button type="button" onclick="selectCardBrand('mastercard')" id="brandBtn-mastercard" class="p-3 rounded-2xl border border-slate-700 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition">
+                                <svg viewBox="0 0 80 28" class="h-6">
+                                    <rect width="80" height="28" rx="4" fill="#111827"/>
+                                    <circle cx="33" cy="14" r="9" fill="#EB001B"/>
+                                    <circle cx="47" cy="14" r="9" fill="#F79E1B" fill-opacity="0.9"/>
+                                </svg>
+                                <span class="font-code text-[11px] text-slate-300">Mastercard</span>
+                            </button>
+
+                            <!-- Marca 3: AMEX -->
+                            <button type="button" onclick="selectCardBrand('amex')" id="brandBtn-amex" class="p-3 rounded-2xl border border-slate-700 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition">
+                                <svg viewBox="0 0 80 28" class="h-6">
+                                    <rect width="80" height="28" rx="4" fill="#006FCF"/>
+                                    <text x="40" y="18" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="13">AMEX</text>
+                                </svg>
+                                <span class="font-code text-[11px] text-slate-300">American Express</span>
+                            </button>
+
+                            <!-- Marca 4: DISCOVER -->
+                            <button type="button" onclick="selectCardBrand('discover')" id="brandBtn-discover" class="p-3 rounded-2xl border border-slate-700 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition">
+                                <svg viewBox="0 0 80 28" class="h-6">
+                                    <rect width="80" height="28" rx="4" fill="#1F2937"/>
+                                    <text x="34" y="18" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="11">DISCOVER</text>
+                                    <circle cx="66" cy="14" r="5.5" fill="#F97316"/>
+                                </svg>
+                                <span class="font-code text-[11px] text-slate-300">Discover</span>
+                            </button>
+
+                            <!-- Marca 5: DINERS / UNIONPAY -->
+                            <button type="button" onclick="selectCardBrand('diners')" id="brandBtn-diners" class="p-3 rounded-2xl border border-slate-700 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition col-span-2 sm:col-span-1">
+                                <svg viewBox="0 0 80 28" class="h-6">
+                                    <rect width="80" height="28" rx="4" fill="#0F4C81"/>
+                                    <circle cx="24" cy="14" r="7" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                                    <text x="53" y="18" text-anchor="middle" fill="#FFFFFF" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="11">DINERS</text>
+                                </svg>
+                                <span class="font-code text-[11px] text-slate-300">Diners / UnionPay</span>
+                            </button>
+                        </div>
+
+                        <!-- Formulario de Pago -->
+                        <form id="checkoutForm" onsubmit="processCheckoutPayment(event)" class="space-y-4 pt-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-code text-slate-200 mb-1.5">Nombre Completo en la Tarjeta *</label>
+                                    <input type="text" id="inputCardName" required value="KILMAR BONILLA" oninput="updateLiveCardPreview()" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white font-code uppercase">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-code text-slate-200 mb-1.5">Correo Institucional o Personal *</label>
+                                    <input type="email" id="inputEmail" required value="equipo.labflow@ugb.edu.sv" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white font-code">
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="text-xs font-code text-slate-200">Número de Tarjeta (<span id="selectedBrandLabel" class="text-cyan-400 font-bold">VISA</span>) *</label>
+                                    <button type="button" onclick="fillDemoCardNumber()" class="text-[11px] font-code text-cyan-400 hover:underline">
+                                        Autocompletar tarjeta de prueba
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input type="text" id="inputCardNumber" required maxlength="19" value="4532 8910 4421 8891" oninput="formatAndPreviewCardNumber(this)" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white font-code tracking-wider">
+                                    <span id="inputBrandBadge" class="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-blue-950 text-cyan-300 font-code text-xs font-bold">
+                                        VISA
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-code text-slate-200 mb-1.5">Vencimiento (MM/AA) *</label>
+                                    <input type="text" id="inputCardExp" required maxlength="5" value="10/29" oninput="formatAndPreviewExpiry(this)" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white font-code">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-code text-slate-200 mb-1.5">Código CVV / CVC *</label>
+                                    <input type="text" id="inputCardCvv" required maxlength="4" value="842" oninput="this.value = this.value.replace(/\D/g, '').substring(0, 4)" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white font-code">
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label class="block text-xs font-code text-slate-200 mb-1.5">Universidad / Facultad</label>
+                                    <input type="text" value="UGB • Ing. Sistemas" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-200 font-code">
+                                </div>
+                            </div>
+
+                            <!-- Campo de Cupón Promocional -->
+                            <div class="pt-2">
+                                <label class="block text-xs font-code text-slate-300 mb-1.5">¿Tienes un código de descuento universitario? (Prueba <strong class="text-cyan-400">UGB10</strong>)</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="couponInput" placeholder="Ingresa UGB10 o LABFLOW" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white font-code uppercase">
+                                    <button type="button" onclick="applyDiscountCoupon()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-400/40 font-code text-xs font-bold transition">
+                                        Aplicar Cupón
+                                    </button>
+                                </div>
+                                <p id="couponFeedback" class="text-xs font-code text-emerald-400 mt-1.5 hidden"></p>
+                            </div>
+
+                            <!-- Botón Principal de Pago Seguro -->
+                            <button type="submit" class="btn-cta-main w-full py-4 rounded-2xl font-brand text-base flex items-center justify-center gap-3 mt-4">
+                                <i class="fa-solid fa-lock"></i>
+                                <span id="submitBtnText">Completar Suscripción Segura ($4.99/mes)</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA (5 COLS): TARJETA VISUAL EN VIVO + RESUMEN DE ORDEN -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Tarjeta 3D Interactiva -->
+                    <div id="liveCreditCard" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 55%, #7C3AED 100%);" class="credit-card-visual rounded-3xl p-6 sm:p-7 border-2 border-cyan-400/50 shadow-2xl relative overflow-hidden text-white">
+                        <div class="flex items-center justify-between mb-8">
+                            <div class="flex items-center gap-2">
+                                <div class="w-11 h-8 rounded-md bg-amber-300 p-1 flex items-center justify-center shadow">
+                                    <div class="w-full h-full border border-amber-700/50 rounded-sm"></div>
+                                </div>
+                                <i class="fa-solid fa-wifi rotate-90 text-slate-200 text-sm"></i>
+                            </div>
+                            <div id="cardVisualBrandLogo" class="px-3 py-1 rounded-lg bg-slate-950/60 border border-white/20 font-brand font-extrabold text-lg tracking-wider italic text-cyan-300">
+                                VISA
+                            </div>
+                        </div>
+
+                        <!-- Primeros 12 dígitos ocultos -->
+                        <div class="font-code text-xl sm:text-2xl tracking-[0.18em] font-bold text-white my-5" id="cardVisualNumber">
+                            •••• •••• •••• 8891
+                        </div>
+
+                        <div class="flex items-end justify-between text-xs font-code pt-2">
+                            <div>
+                                <div class="text-[10px] text-slate-300 uppercase">Titular de la Tarjeta</div>
+                                <div id="cardVisualHolder" class="text-sm font-bold tracking-wider text-white mt-0.5">KILMAR BONILLA</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-300 uppercase">Expira</div>
+                                <div id="cardVisualExpiry" class="text-sm font-bold text-cyan-300 mt-0.5">10/29</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen del Pedido -->
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                            <h3 class="font-brand text-lg font-bold text-white">Resumen de tu Pedido</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-code text-xs font-bold">Ahorro 93%</span>
+                        </div>
+
+                        <div class="space-y-2.5 text-sm">
+                            <div class="flex justify-between text-slate-200">
+                                <span id="summaryPlanName" class="font-semibold text-white">Plan Estudiante Pro (Mensual)</span>
+                                <span class="font-code line-through text-slate-400">$80.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-300">
+                                <span>Descuento beca universitaria LabFlow Uni</span>
+                                <span class="font-code text-emerald-400">-$75.01</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-300">
+                                <span>3 Regalos / Bonus Exclusivos incluidos</span>
+                                <span class="font-code text-emerald-400">¡GRATIS!</span>
+                            </div>
+                            <div id="summaryCouponRow" class="hidden flex justify-between text-xs text-cyan-300">
+                                <span>Cupón adicional aplicado (<strong id="summaryCouponCode">UGB10</strong>)</span>
+                                <span id="summaryCouponAmount" class="font-code">-$1.00</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-800 flex items-baseline justify-between">
+                            <div>
+                                <span class="font-brand font-bold text-white text-base">Total a Pagar Hoy:</span>
+                                <span class="block text-[11px] text-slate-300">Incluye Garantía de Reembolso de 30 días</span>
+                            </div>
+                            <span id="summaryTotalAmount" class="font-code text-3xl font-extrabold text-cyan-400">$4.99</span>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-center font-code text-[11px] text-slate-300">
+                            <div class="p-2 rounded-xl bg-slate-950 border border-slate-800">
+                                <i class="fa-solid fa-lock text-emerald-400 block text-sm mb-1"></i>SSL 256-Bit
+                            </div>
+                            <div class="p-2 rounded-xl bg-slate-950 border border-slate-800">
+                                <i class="fa-solid fa-shield-halved text-cyan-400 block text-sm mb-1"></i>PCI-DSS OK
+                            </div>
+                            <div class="p-2 rounded-xl bg-slate-950 border border-slate-800">
+                                <i class="fa-solid fa-rotate-left text-violet-400 block text-sm mb-1"></i>Garantía 30d
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL DE CONFIRMACIÓN DE SUSCRIPCIÓN EXITOSA                          -->
+    <!-- ===================================================================== -->
+    <div id="paymentSuccessModal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="max-w-md w-full rounded-3xl bg-slate-900 border-2 border-cyan-400 p-6 sm:p-8 text-center shadow-2xl space-y-5">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-400 text-emerald-300 flex items-center justify-center text-3xl mx-auto">
+                <i class="fa-solid fa-check-double"></i>
+            </div>
+            <div>
+                <span class="px-3 py-1 rounded-full bg-cyan-400/20 text-cyan-300 font-code text-xs font-bold">
+                    ¡SUSCRIPCIÓN ACTIVADA CON ÉXITO!
+                </span>
+                <h3 class="font-brand text-2xl font-bold text-white mt-2">
+                    ¡Bienvenido a LabFlow Uni!
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                    Tu contenedor Sandbox en la nube y tus 3 Bonus ya están activos. Tu código fluye, tu equipo avanza.
+                </p>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-left font-code text-xs space-y-2 text-slate-200">
+                <div class="flex justify-between"><span>ID de Transacción:</span><span id="modalTxId" class="text-cyan-400 font-bold">#LF-2026-8941</span></div>
+                <div class="flex justify-between"><span>Plan Activado:</span><span id="modalPlanName" class="text-white">Estudiante Pro</span></div>
+                <div class="flex justify-between"><span>Método de Pago:</span><span id="modalCardUsed" class="text-emerald-400">VISA •••• 8891</span></div>
+                <div class="flex justify-between"><span>Total Cobrado:</span><span id="modalAmountPaid" class="text-white font-bold">$4.99 USD</span></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="closePaymentModalAndGoToSandbox()" class="btn-cta-main flex-1 py-3 rounded-xl font-brand text-xs">
+                    Ir al Sandbox Interactivo →
+                </button>
+                <button type="button" onclick="closePaymentModal()" class="py-3 px-4 rounded-xl font-brand font-semibold text-xs bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- FOOTER OFICIAL CON CRÉDITOS DEL EQUIPO UGB (SEMANAS 10, 11 Y 16)      -->
+    <!-- ===================================================================== -->
+    <footer class="bg-slate-950 border-t border-slate-800 pt-14 pb-10 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-slate-800">
+                <div class="md:col-span-5 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="font-brand text-2xl font-bold text-white">Lab</span>
+                        <span class="font-brand text-2xl font-bold text-cyan-400">Flow<span class="cursor-blink font-code">_</span></span>
+                        <span class="px-2 py-0.5 text-[10px] font-brand font-bold bg-violet-600 text-white rounded-full">UNI</span>
+                    </div>
+                    <p class="text-slate-200 font-medium">«Tu código fluye, tu equipo avanza.»</p>
+                    <p class="text-slate-400 leading-relaxed max-w-sm">
+                        Plataforma SaaS educativa en la nube para control de versiones simplificado y validación automática en sandboxes aislados.
+                    </p>
+                </div>
+
+                <div class="md:col-span-4 space-y-2 text-slate-300">
+                    <div class="font-brand font-bold text-cyan-400 text-sm uppercase tracking-wider">
+                        Universidad Gerardo Barrios (UGB)
+                    </div>
+                    <p>Facultad de Ciencia y Tecnología</p>
+                    <p><strong>Carrera:</strong> Ingeniería en Sistemas y Redes Informáticas</p>
+                    <p><strong>Asignatura:</strong> Emprendimiento (Unidad 3 - Semana 16)</p>
+                    <p><strong>Docente:</strong> Ing. David Eduardo Márquez Chávez</p>
+                </div>
+
+                <div class="md:col-span-3 space-y-2">
+                    <div class="font-brand font-bold text-cyan-400 text-sm uppercase tracking-wider">
+                        Equipo Emprendedor
+                    </div>
+                    <ul class="space-y-1.5 text-slate-200 font-medium">
+                        <li><i class="fa-solid fa-code text-cyan-400 mr-2"></i>Kilmar Vladimir Bonilla Alfallo</li>
+                        <li><i class="fa-solid fa-code text-cyan-400 mr-2"></i>Andromeda Dayanara Morales Pereira</li>
+                        <li><i class="fa-solid fa-code text-cyan-400 mr-2"></i>Roberto Carlos Orellana Sorto</li>
+                        <li><i class="fa-solid fa-code text-cyan-400 mr-2"></i>Carlos Arístides Larín Cañas</li>
+                        <li><i class="fa-solid fa-code text-cyan-400 mr-2"></i>Josué Roberto Villegas Durán</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400 font-code">
+                <div>© 2026 LabFlow Uni • San Miguel, El Salvador. Todos los derechos reservados.</div>
+                <div>Paleta Oficial: #1E3A8A • #06B6D4 • #7C3AED • #0F172A • #F8FAFC</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- NOTIFICACIÓN FLOTANTE DE PRUEBA SOCIAL EN VIVO                        -->
+    <!-- ===================================================================== -->
+    <div id="socialProofToast" class="fixed bottom-4 left-4 z-40 max-w-xs rounded-2xl bg-slate-900/95 backdrop-blur-md border border-cyan-400/50 p-3.5 shadow-2xl flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-400/20 border border-cyan-400 text-cyan-300 flex items-center justify-center font-brand font-bold text-sm shrink-0" id="toastAvatar">
+            KM
+        </div>
+        <div class="text-xs leading-tight pr-2">
+            <div class="font-brand font-bold text-white" id="toastTitle">Kevin M. (Ing. Sistemas UGB)</div>
+            <div class="text-slate-200 mt-0.5" id="toastAction">Activó <span class="text-cyan-400 font-semibold">Plan Estudiante Pro</span></div>
+            <div class="text-[10px] font-code text-emerald-400 mt-0.5" id="toastTime">✓ Hace 2 minutos • San Miguel</div>
+        </div>
+        <button type="button" onclick="dismissSocialToast()" class="text-slate-400 hover:text-white text-xs p-1" aria-label="Cerrar notificación">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- LÓGICA INTERACTIVA JAVASCRIPT (PARTE 2 - CHECKOUT)                    -->
+    <!-- ===================================================================== -->
+    <script>
+        let currentPlan = 'pro';
+        let currentBrand = 'visa';
+        let discountApplied = false;
+
+        const plansData = {
+            pro: { name: 'Plan Estudiante Pro (Mensual)', basePrice: 4.99 },
+            team: { name: 'Pack Grupo de Laboratorio (5 Integrantes)', basePrice: 14.99 },
+            trial: { name: 'Prueba Gratis 14 Días + Reserva Pro', basePrice: 0.00 }
+        };
+
+        const brandStyles = {
+            visa: {
+                label: 'VISA',
+                sample: '4532 8910 4421 8891',
+                bg: 'linear-gradient(135deg, #1E3A8A 0%, #0F172A 55%, #7C3AED 100%)'
+            },
+            mastercard: {
+                label: 'MASTERCARD',
+                sample: '5412 7534 8901 2345',
+                bg: 'linear-gradient(135deg, #881337 0%, #0F172A 55%, #B45309 100%)'
+            },
+            amex: {
+                label: 'AMEX',
+                sample: '3782 8224 6310 005',
+                bg: 'linear-gradient(135deg, #075985 0%, #0F172A 55%, #0891B2 100%)'
+            },
+            discover: {
+                label: 'DISCOVER',
+                sample: '6011 4921 3380 1194',
+                bg: 'linear-gradient(135deg, #9A3412 0%, #0F172A 55%, #D97706 100%)'
+            },
+            diners: {
+                label: 'DINERS / UNIONPAY',
+                sample: '3612 9044 1128 9012',
+                bg: 'linear-gradient(135deg, #312E81 0%, #0F172A 55%, #0F766E 100%)'
+            }
+        };
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function selectCheckoutPlan(planKey) {
+            currentPlan = planKey;
+            ['pro', 'team', 'trial'].forEach(key => {
+                const card = document.getElementById('planCard-' + key);
+                const icon = card.querySelector('i');
+                if (key === planKey) {
+                    card.className = 'p-4 rounded-2xl border-2 border-cyan-400 bg-blue-950/50 text-left transition';
+                    icon.className = 'fa-solid fa-circle-check text-cyan-400';
+                } else {
+                    card.className = 'p-4 rounded-2xl border border-slate-700 bg-slate-950 hover:border-slate-500 text-left transition';
+                    icon.className = 'fa-regular fa-circle text-slate-500';
+                }
+            });
+            recalculateOrderSummary();
+        }
+
+        // Enmascara los primeros 12 dígitos en la tarjeta visual
+        function maskFirst12Digits(rawNumber) {
+            const digits = (rawNumber || '').replace(/\D/g, '').substring(0, 16);
+            if (!digits) return '•••• •••• •••• 8891';
+            let masked = '';
+            for (let i = 0; i < digits.length; i++) {
+                if (i > 0 && i % 4 === 0) masked += ' ';
+                masked += (i < 12) ? '•' : digits[i];
+            }
+            return masked;
+        }
+
+        function selectCardBrand(brandKey) {
+            currentBrand = brandKey;
+            const info = brandStyles[brandKey];
+
+            ['visa', 'mastercard', 'amex', 'discover', 'diners'].forEach(b => {
+                const btn = document.getElementById('brandBtn-' + b);
+                if (b === brandKey) {
+                    btn.className = 'p-3 rounded-2xl border-2 border-cyan-400 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition';
+                } else {
+                    btn.className = 'p-3 rounded-2xl border border-slate-700 bg-slate-950 flex flex-col items-center justify-center gap-1.5 transition';
+                }
+            });
+
+            document.getElementById('selectedBrandLabel').textContent = info.label;
+            document.getElementById('inputBrandBadge').textContent = info.label;
+            document.getElementById('cardVisualBrandLogo').textContent = info.label;
+            document.getElementById('inputCardNumber').value = info.sample;
+            document.getElementById('cardVisualNumber').textContent = maskFirst12Digits(info.sample);
+            document.getElementById('liveCreditCard').style.background = info.bg;
+        }
+
+        function fillDemoCardNumber() {
+            const info = brandStyles[currentBrand];
+            document.getElementById('inputCardNumber').value = info.sample;
+            updateLiveCardPreview();
+        }
+
+        function formatAndPreviewCardNumber(input) {
+            let digits = input.value.replace(/\D/g, '').substring(0, 16);
+            input.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+            updateLiveCardPreview();
+        }
+
+        function formatAndPreviewExpiry(input) {
+            let digits = input.value.replace(/\D/g, '').substring(0, 4);
+            if (digits.length >= 3) {
+                input.value = digits.substring(0, 2) + '/' + digits.substring(2, 4);
+            } else {
+                input.value = digits;
+            }
+            updateLiveCardPreview();
+        }
+
+        function updateLiveCardPreview() {
+            const name = document.getElementById('inputCardName').value.trim() || 'ESTUDIANTE UGB';
+            const num = document.getElementById('inputCardNumber').value.trim();
+            const exp = document.getElementById('inputCardExp').value.trim() || '10/29';
+
+            document.getElementById('cardVisualHolder').textContent = name.toUpperCase();
+            document.getElementById('cardVisualNumber').textContent = maskFirst12Digits(num);
+            document.getElementById('cardVisualExpiry').textContent = exp;
+        }
+
+        function applyDiscountCoupon() {
+            const code = document.getElementById('couponInput').value.trim().toUpperCase();
+            const feedback = document.getElementById('couponFeedback');
+            feedback.classList.remove('hidden');
+
+            if (code === 'UGB10' || code === 'LABFLOW') {
+                discountApplied = true;
+                feedback.textContent = `✓ Cupón "${code}" aplicado: 20% de descuento estudiantil adicional.`;
+                feedback.className = 'text-xs font-code text-emerald-400 mt-1.5';
+                document.getElementById('summaryCouponCode').textContent = code;
+            } else {
+                discountApplied = false;
+                feedback.textContent = 'Usa el código oficial UGB10 o LABFLOW para obtener un 20% extra.';
+                feedback.className = 'text-xs font-code text-amber-400 mt-1.5';
+            }
+            recalculateOrderSummary();
+        }
+
+        function recalculateOrderSummary() {
+            const plan = plansData[currentPlan];
+            let finalPrice = plan.basePrice;
+            const couponRow = document.getElementById('summaryCouponRow');
+
+            if (discountApplied && finalPrice > 0) {
+                const discountVal = +(finalPrice * 0.20).toFixed(2);
+                finalPrice = +(finalPrice - discountVal).toFixed(2);
+                couponRow.classList.remove('hidden');
+                document.getElementById('summaryCouponAmount').textContent = `-$${discountVal.toFixed(2)}`;
+            } else {
+                couponRow.classList.add('hidden');
+            }
+
+            document.getElementById('summaryPlanName').textContent = plan.name;
+            document.getElementById('summaryTotalAmount').textContent = `$${finalPrice.toFixed(2)}`;
+            document.getElementById('submitBtnText').textContent = `Completar Suscripción Segura ($${finalPrice.toFixed(2)})`;
+        }
+
+        function processCheckoutPayment(event) {
+            event.preventDefault();
+            const plan = plansData[currentPlan];
+            const totalText = document.getElementById('summaryTotalAmount').textContent;
+            const numVal = document.getElementById('inputCardNumber').value.trim();
+            const last4 = numVal.slice(-4) || '8891';
+            const brandName = brandStyles[currentBrand].label;
+
+            document.getElementById('modalTxId').textContent = '#LF-UGB-' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('modalPlanName').textContent = plan.name;
+            document.getElementById('modalCardUsed').textContent = `${brandName} •••• ${last4}`;
+            document.getElementById('modalAmountPaid').textContent = `${totalText} USD`;
+
+            document.getElementById('paymentSuccessModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentSuccessModal').classList.add('hidden');
+        }
+
+        function closePaymentModalAndGoToSandbox() {
+            closePaymentModal();
+            window.location.href = 'index.html?runSandbox=1#sec-mockup';
+        }
+
+        // Selecciona automáticamente el plan enviado desde index.html (?plan=pro|team|trial)
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const planParam = params.get('plan');
+            if (planParam && plansData[planParam]) {
+                selectCheckoutPlan(planParam);
+            }
+        });
+
+        // Cronómetro en vivo sincronizado entre páginas con sessionStorage
+        const storedSeconds = parseInt(sessionStorage.getItem('labflowCountdown'), 10);
+        let countdownSecondsRemaining = Number.isFinite(storedSeconds) && storedSeconds > 0
+            ? storedSeconds
+            : (2 * 3600) + (14 * 60) + 48;
+
+        function renderTopTimer() {
+            const hrs = String(Math.floor(countdownSecondsRemaining / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((countdownSecondsRemaining % 3600) / 60)).padStart(2, '0');
+            const secs = String(countdownSecondsRemaining % 60).padStart(2, '0');
+            const hEl = document.getElementById('topTimerHours');
+            const mEl = document.getElementById('topTimerMinutes');
+            const sEl = document.getElementById('topTimerSeconds');
+            if (hEl && mEl && sEl) {
+                hEl.textContent = hrs;
+                mEl.textContent = mins;
+                sEl.textContent = secs;
+            }
+        }
+        renderTopTimer();
+        setInterval(() => {
+            if (countdownSecondsRemaining > 0) countdownSecondsRemaining--;
+            sessionStorage.setItem('labflowCountdown', String(countdownSecondsRemaining));
+            renderTopTimer();
+        }, 1000);
+
+        // Notificación flotante de prueba social
+        let toastDismissed = false;
+        const recentBuyers = [
+            { initials: 'KM', name: 'Kevin M. (Ing. Sistemas UGB)', plan: 'Plan Estudiante Pro', time: '✓ Hace 1 minuto • San Miguel' },
+            { initials: 'GP', name: 'Gabriela P. (Líder de Grupo)', plan: 'Pack Grupo (5 Integrantes)', time: '✓ Hace 3 minutos • Usulután' },
+            { initials: 'DR', name: 'Diego R. (3.º Año Sistemas)', plan: 'Prueba Gratis 14 Días + 3 Bonus', time: '✓ Hace 4 minutos • San Salvador' },
+            { initials: 'AC', name: 'Andrea C. (Redes Informáticas)', plan: 'Plan Estudiante Pro', time: '✓ Hace 6 minutos • San Miguel' }
+        ];
+        let buyerIdx = 0;
+
+        function dismissSocialToast() {
+            toastDismissed = true;
+            document.getElementById('socialProofToast').classList.add('hidden');
+        }
+
+        setInterval(() => {
+            if (toastDismissed) return;
+            buyerIdx = (buyerIdx + 1) % recentBuyers.length;
+            const b = recentBuyers[buyerIdx];
+            document.getElementById('toastAvatar').textContent = b.initials;
+            document.getElementById('toastTitle').textContent = b.name;
+            document.getElementById('toastAction').innerHTML = `Activó <span class="text-cyan-400 font-semibold">${b.plan}</span>`;
+            document.getElementById('toastTime').textContent = b.time;
+        }, 7000);
+    </script>
+</body>
+</html>
