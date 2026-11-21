@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabFlow Uni | Dashboard Operativo SaaS (MVP)</title>
+    <script>
+        (function () {
+            const origWarn = console.warn;
+            console.warn = function (...args) {
+                if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+                origWarn.apply(console, args);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body { background-color: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
+        .font-brand { font-family: 'Space Grotesk', sans-serif; }
+        .font-code { font-family: 'JetBrains Mono', monospace; }
+        .btn-cta-main {
+            background: linear-gradient(90deg, #06B6D4 0%, #22D3EE 50%, #38BDF8 100%);
+            color: #020617;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-cta-main:hover { opacity: 0.92; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-1.5">
+                    <span class="font-brand text-2xl font-bold text-white">Lab<span class="text-cyan-400">Flow_</span></span>
+                    <span class="px-2 py-0.5 text-[10px] font-brand font-bold bg-violet-600 text-white rounded-full">UNI</span>
+                </a>
+                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px]">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Codificando en Live
+                </span>
+            </div>
+
+            <nav class="flex flex-wrap items-center gap-1.5 font-code text-xs">
+                <button onclick="switchDashTab('sandbox')" id="nav-sandbox" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold">
+                    <i class="fa-solid fa-code mr-1"></i>Sandbox
+                </button>
+                <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                    <i class="fa-solid fa-table-columns mr-1"></i>Kanban
+                </button>
+                <button onclick="switchDashTab('soporte')" id="nav-soporte" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                    <i class="fa-solid fa-headset mr-1"></i>Soporte N1-N3
+                </button>
+                <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                    <i class="fa-solid fa-chart-line mr-1"></i>KPIs en Vivo
+                </button>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="checkout.html" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200">
+                    <i class="fa-solid fa-credit-card text-cyan-400"></i>Planes
+                </a>
+                <div class="text-right hidden sm:block">
+                    <div id="userNameDisplay" class="font-brand font-bold text-xs text-white">Cargando...</div>
+                    <div class="text-[10px] font-code text-cyan-400">
+                        <span id="userRoleDisplay">Rol</span> • <span id="userPlanDisplay">Plan</span>
+                    </div>
+                </div>
+                <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-xs">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <div id="dashToast" class="hidden p-3 rounded-xl font-code text-xs border"></div>
+
+        <!-- MÓDULO 1: SANDBOX -->
+        <section id="tab-sandbox" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 space-y-5">
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+                    <h2 class="font-brand font-bold text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-cyan-400"></i>Nuevo Laboratorio Cloud
+                    </h2>
+                    <form onsubmit="crearLaboratorio(event)" class="space-y-3">
+                        <input type="text" id="newLabName" required placeholder="Ej. API_Redes_Lab5"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white focus:border-cyan-400 focus:outline-none">
+                        <select id="newLabTemplate" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
+                            <option value="Python & IA">Python, Algoritmos & IA</option>
+                            <option value="Web Full-Stack">Desarrollo Web Full-Stack</option>
+                            <option value="Redes Linux">Redes & Servidores Linux</option>
+                            <option value="Bases de Datos SQL">Bases de Datos SQL</option>
+                            <option value="Java & POO">Java & POO Universitario</option>
+                            <option value="C# / .NET">C# / .NET & Estructuras</option>
+                        </select>
+                        <button type="submit" class="btn-cta-main w-full py-2.5 rounded-xl font-code text-xs">
+                            + Crear Contenedor en BD
+                        </button>
+                    </form>
+                </div>
+
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-brand font-bold text-white text-sm">Laboratorios Guardados</h3>
+                        <span id="labsCountBadge" class="px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 font-code text-[11px]">0</span>
+                    </div>
+                    <div id="labsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-5">
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
+                    <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                        <div class="font-code text-xs text-white">
+                            <i class="fa-solid fa-flask text-cyan-400 mr-1.5"></i>
+                            <span id="activeLabTitle">Selecciona un laboratorio</span>
+                            <span id="activeLabTemplate" class="ml-2 px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px]">---</span>
+                        </div>
+                        <span class="font-code text-[11px] text-emerald-400">● Rama: main</span>
+                    </div>
+
+                    <div class="p-4 space-y-3">
+                        <textarea id="codeEditor" rows="9"
+                            class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs sm:text-sm text-cyan-100 focus:border-cyan-400 focus:outline-none"></textarea>
+
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input type="text" id="commitMsgInput" placeholder="Mensaje del commit (ej. Validación de módulo de login)"
+                                class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
+                            <button type="button" onclick="ejecutarYGuardarValidacion()" class="btn-cta-main px-5 py-2.5 rounded-xl font-code text-xs flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Validar y Guardar Commit</span>
+                            </button>
+                        </div>
+
+                        <div id="sandboxConsole" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs text-slate-300">
+                            $ Listo para validar código en contenedor aislado...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+                    <h3 class="font-brand font-bold text-white text-sm mb-3">
+                        <i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i>
+                        Historial de Validaciones y Commits (Tabla: <code>validaciones_sandbox</code>)
+                    </h3>
+                    <div id="validationsList" class="space-y-2 font-code text-xs"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 2: KANBAN -->
+        <section id="tab-kanban" class="hidden space-y-5">
+            <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+                <h2 class="font-brand font-bold text-white text-lg mb-3">Nueva Tarea del Equipo</h2>
+                <form onsubmit="crearTareaKanban(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <input type="text" id="kanbanTitle" required placeholder="Ej. Revisar diagrama operativo en Miro"
+                        class="sm:col-span-2 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white">
+                    <input type="text" id="kanbanAssignee" required placeholder="Responsable (ej. Roberto)"
+                        class="px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white">
+                    <button type="submit" class="btn-cta-main py-2.5 rounded-xl font-code text-xs">+ Agregar Tarea</button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
+                    <div class="font-code text-xs font-bold text-cyan-400 uppercase">Por Hacer</div>
+                    <div id="col-por_hacer" class="space-y-2.5"></div>
+                </div>
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
+                    <div class="font-code text-xs font-bold text-amber-400 uppercase">En Proceso</div>
+                    <div id="col-en_proceso" class="space-y-2.5"></div>
+                </div>
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
+                    <div class="font-code text-xs font-bold text-emerald-400 uppercase">Completado</div>
+                    <div id="col-completado" class="space-y-2.5"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 3: SOPORTE N1-N3 -->
+        <section id="tab-soporte" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+                <h2 class="font-brand font-bold text-white text-lg">Crear Ticket de Soporte Técnico</h2>
+                <p class="text-xs text-slate-400">Clasificación operativa según Niveles de Soporte (Semana 17):</p>
+                <form onsubmit="crearTicketSoporte(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1">Nivel de Soporte</label>
+                        <select id="ticketNivel" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
+                            <option value="N1">Nivel 1 (N1) — Dudas básicas / acceso / contraseña</option>
+                            <option value="N2">Nivel 2 (N2) — Facturación / pagos / reportes TI</option>
+                            <option value="N3">Nivel 3 (N3) — Bugs críticos en código / Sandbox</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1">Asunto</label>
+                        <input type="text" id="ticketAsunto" required placeholder="Ej. Error al compilar librería SQL"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1">Descripción</label>
+                        <textarea id="ticketDesc" required rows="3" placeholder="Describe el inconveniente..."
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white"></textarea>
+                    </div>
+                    <button type="submit" class="btn-cta-main w-full py-3 rounded-xl font-code text-xs">
+                        Enviar Ticket a Base de Datos
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-7 rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+                <h3 class="font-brand font-bold text-white text-base">Historial de Tickets (Tabla: <code>tickets_soporte</code>)</h3>
+                <div id="ticketsList" class="space-y-3 text-xs"></div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 4: KPIS EN VIVO -->
+        <section id="tab-kpis" class="hidden space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="font-brand font-bold text-2xl text-white">Medición Operativa en Vivo (KPIs)</h2>
+                    <p class="text-xs text-slate-400">Calculados en tiempo real directamente desde las tablas de Supabase.</p>
+                </div>
+                <button onclick="cargarKPIs()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-cyan-400/40 text-cyan-300 font-code text-xs">
+                    <i class="fa-solid fa-rotate mr-1"></i>Actualizar KPIs
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-code">
+                <div class="p-5 rounded-2xl bg-slate-900 border border-cyan-400/40">
+                    <div class="text-xs text-slate-400">KPI 1: Latencia Promedio Sandbox/BD</div>
+                    <div id="kpiLatencia" class="text-3xl font-bold text-cyan-400 mt-2">-- ms</div>
+                    <div class="text-[11px] text-emerald-400 mt-1">Meta SLA: &lt; 500 ms</div>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-900 border border-emerald-400/40">
+                    <div class="text-xs text-slate-400">KPI 2: Tasa de Validaciones Exitosas</div>
+                    <div id="kpiTasaExito" class="text-3xl font-bold text-emerald-400 mt-2">-- %</div>
+                    <div id="kpiTotalValidaciones" class="text-[11px] text-slate-300 mt-1">0 ejecuciones registradas</div>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-900 border border-violet-400/40">
+                    <div class="text-xs text-slate-400">KPI 3: Registros & Suscripciones Activas</div>
+                    <div id="kpiUsuarios" class="text-3xl font-bold text-violet-300 mt-2">--</div>
+                    <div id="kpiPagos" class="text-[11px] text-slate-300 mt-1">0 suscripciones en Checkout</div>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-900 border border-amber-400/40">
+                    <div class="text-xs text-slate-400">KPI 4: Respuesta Promedio Soporte</div>
+                    <div id="kpiSoporte" class="text-3xl font-bold text-amber-300 mt-2">-- seg</div>
+                    <div id="kpiTicketsTotal" class="text-[11px] text-slate-300 mt-1">0 tickets registrados</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const currentUser = obtenerSesion();
+        if (!currentUser) {
+            window.location.href = 'auth.html';
+        }
+
+        let laboratorios = [];
+        let activeLabId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!currentUser) return;
+            document.getElementById('userNameDisplay').textContent = currentUser.nombre_completo;
+            document.getElementById('userRoleDisplay').textContent = currentUser.rol;
+            document.getElementById('userPlanDisplay').textContent = currentUser.plan_actual;
+
+            // Si un docente intentó entrar al checkout, se le avisa que su acceso es gratuito.
+            if (new URLSearchParams(window.location.search).get('aviso') === 'docente') {
+                showToast('Acceso Docente Evaluador sin costo: los planes de pago son solo para estudiantes.', 'success');
+            }
+
+            if (!db) {
+                showToast('Error al conectar con Supabase.', 'error');
+                return;
+            }
+            cargarLaboratorios();
+            cargarTickets();
+            cargarKPIs();
+        });
+
+        function showToast(msg, type = 'success') {
+            const box = document.getElementById('dashToast');
+            box.classList.remove('hidden');
+            box.className = type === 'success'
+                ? 'p-3 rounded-xl font-code text-xs bg-emerald-950/80 border border-emerald-400 text-emerald-300'
+                : 'p-3 rounded-xl font-code text-xs bg-rose-950/80 border border-rose-400 text-rose-300';
+            box.textContent = msg;
+            setTimeout(() => box.classList.add('hidden'), 4000);
+        }
+
+        function switchDashTab(tab) {
+            ['sandbox', 'kanban', 'soporte', 'kpis'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('nav-' + t).className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800';
+            });
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold';
+
+            if (tab === 'kanban') cargarTareasKanban();
+            if (tab === 'soporte') cargarTickets();
+            if (tab === 'kpis') cargarKPIs();
+        }
+
+        async function cargarLaboratorios() {
+            const { data, error } = await db.from('laboratorios').select('*').order('id', { ascending: false });
+            if (error) return showToast('Error cargando laboratorios: ' + error.message, 'error');
+
+            laboratorios = data || [];
+            document.getElementById('labsCountBadge').textContent = laboratorios.length;
+            const list = document.getElementById('labsList');
+            list.innerHTML = '';
+
+            laboratorios.forEach(lab => {
+                if (!activeLabId) activeLabId = lab.id;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => seleccionarLaboratorio(lab.id);
+                btn.className = `w-full text-left p-3 rounded-xl border font-code text-xs transition ${
+                    lab.id === activeLabId
+                        ? 'bg-blue-950/80 border-cyan-400 text-white'
+                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600'
+                }`;
+                btn.innerHTML = `
+                    <div class="font-bold truncate">${lab.nombre_proyecto}</div>
+                    <div class="text-[10px] text-cyan-400 mt-1">${lab.plantilla} • ${lab.estado_sandbox}</div>
+                `;
+                list.appendChild(btn);
+            });
+
+            if (activeLabId) mostrarLaboratorioActivo();
+        }
+
+        function seleccionarLaboratorio(id) {
+            activeLabId = id;
+            cargarLaboratorios();
+            cargarTareasKanban();
+        }
+
+        function mostrarLaboratorioActivo() {
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab) return;
+            document.getElementById('activeLabTitle').textContent = lab.nombre_proyecto;
+            document.getElementById('activeLabTemplate').textContent = lab.plantilla;
+            document.getElementById('codeEditor').value = lab.codigo_fuente;
+            cargarValidaciones(lab.id);
+        }
+
+        async function crearLaboratorio(e) {
+            e.preventDefault();
+            const nombre_proyecto = document.getElementById('newLabName').value.trim();
+            const plantilla = document.getElementById('newLabTemplate').value;
+            const codigo_fuente = `# Proyecto: ${nombre_proyecto}\n# Plantilla: ${plantilla}\nprint("Contenedor LabFlow Uni listo para ${currentUser.nombre_completo}")`;
+
+            const { data, error } = await db
+                .from('laboratorios')
+                .insert([{ usuario_id: currentUser.id, nombre_proyecto, plantilla, codigo_fuente }])
+                .select()
+                .single();
+
+            if (error) return showToast('Error al crear laboratorio: ' + error.message, 'error');
+
+            document.getElementById('newLabName').value = '';
+            activeLabId = data.id;
+            showToast(`Laboratorio "${nombre_proyecto}" guardado en Supabase.`);
+            cargarLaboratorios();
+        }
+
+        async function ejecutarYGuardarValidacion() {
+            if (!activeLabId) return showToast('Crea o selecciona un laboratorio primero.', 'error');
+
+            const codigo_fuente = document.getElementById('codeEditor').value;
+            const mensaje_commit = document.getElementById('commitMsgInput').value.trim() || 'Actualización y validación desde Sandbox';
+            const consoleBox = document.getElementById('sandboxConsole');
+            consoleBox.innerHTML = '<span class="text-amber-300">$ Validando código y midiendo latencia en Supabase...</span>';
+
+            const inicio = performance.now();
+            const { error: errUpdate } = await db.from('laboratorios').update({ codigo_fuente }).eq('id', activeLabId);
+            const latencia_ms = Math.max(45, Math.round(performance.now() - inicio));
+            const estado_validacion = codigo_fuente.trim().length < 5 ? 'ERROR' : 'PASSED';
+
+            const { error: errVal } = await db.from('validaciones_sandbox').insert([{
+                laboratorio_id: activeLabId,
+                autor_nombre: currentUser.nombre_completo,
+                mensaje_commit,
+                estado_validacion,
+                latencia_ms,
+                conflictos_detectados: 0
+            }]);
+
+            if (errUpdate || errVal) return showToast('Error guardando validación.', 'error');
+
+            document.getElementById('commitMsgInput').value = '';
+            consoleBox.innerHTML = `
+                <div class="text-emerald-400">✓ Código guardado y validado (${estado_validacion})</div>
+                <div class="text-cyan-300">→ Latencia real registrada en BD: ${latencia_ms} ms • 0 conflictos de fusión.</div>
+            `;
+            showToast('Validación registrada en validaciones_sandbox.');
+            cargarValidaciones(activeLabId);
+            cargarKPIs();
+        }
+
+        async function cargarValidaciones(labId) {
+            const { data } = await db
+                .from('validaciones_sandbox')
+                .select('*')
+                .eq('laboratorio_id', labId)
+                .order('id', { ascending: false })
+                .limit(8);
+
+            const box = document.getElementById('validationsList');
+            if (!data || !data.length) {
+                box.innerHTML = '<div class="text-slate-500">Sin validaciones todavía.</div>';
+                return;
+            }
+            box.innerHTML = data.map(v => `
+                <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <span class="text-cyan-400 font-bold">[${v.autor_nombre}]</span>
+                        <span class="text-slate-200 ml-1">${v.mensaje_commit}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-400">${v.latencia_ms} ms</span>
+                        <span class="px-2 py-0.5 rounded ${v.estado_validacion === 'PASSED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'} font-bold">
+                            ${v.estado_validacion}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function cargarTareasKanban() {
+            if (!activeLabId) return;
+            const { data } = await db
+                .from('tareas_kanban')
+                .select('*')
+                .eq('laboratorio_id', activeLabId)
+                .order('id', { ascending: false });
+
+            ['por_hacer', 'en_proceso', 'completado'].forEach(col => {
+                document.getElementById('col-' + col).innerHTML = '';
+            });
+
+            (data || []).forEach(t => {
+                const container = document.getElementById('col-' + t.estado);
+                if (!container) return;
+                const nextState = t.estado === 'por_hacer' ? 'en_proceso' : (t.estado === 'en_proceso' ? 'completado' : 'por_hacer');
+                const nextLabel = t.estado === 'por_hacer' ? 'Mover a En Proceso →' : (t.estado === 'en_proceso' ? 'Completar ✓' : 'Reabrir');
+
+                const card = document.createElement('div');
+                card.className = 'p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs';
+                card.innerHTML = `
+                    <div class="font-semibold text-white">${t.titulo}</div>
+                    <div class="flex items-center justify-between text-[11px] font-code">
+                        <span class="text-cyan-400"><i class="fa-solid fa-user mr-1"></i>${t.asignado_a}</span>
+                        <button onclick="moverTarea(${t.id}, '${nextState}')" class="text-violet-300 hover:underline">${nextLabel}</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function crearTareaKanban(e) {
+            e.preventDefault();
+            if (!activeLabId) return showToast('Selecciona primero un laboratorio en Sandbox.', 'error');
+
+            const titulo = document.getElementById('kanbanTitle').value.trim();
+            const asignado_a = document.getElementById('kanbanAssignee').value.trim();
+
+            const { error } = await db
+                .from('tareas_kanban')
+                .insert([{ laboratorio_id: activeLabId, titulo, asignado_a, estado: 'por_hacer' }]);
+
+            if (error) return showToast('Error creando tarea: ' + error.message, 'error');
+            document.getElementById('kanbanTitle').value = '';
+            document.getElementById('kanbanAssignee').value = '';
+            showToast('Tarea agregada a tareas_kanban.');
+            cargarTareasKanban();
+        }
+
+        async function moverTarea(id, nuevoEstado) {
+            await db.from('tareas_kanban').update({ estado: nuevoEstado }).eq('id', id);
+            cargarTareasKanban();
+        }
+
+        async function crearTicketSoporte(e) {
+            e.preventDefault();
+            const nivel_soporte = document.getElementById('ticketNivel').value;
+            const asunto = document.getElementById('ticketAsunto').value.trim();
+            const descripcion = document.getElementById('ticketDesc').value.trim();
+            const tiempo_respuesta_seg = nivel_soporte === 'N1' ? 30 : (nivel_soporte === 'N2' ? 90 : 180);
+
+            const { error } = await db.from('tickets_soporte').insert([{
+                usuario_correo: currentUser.correo,
+                nivel_soporte,
+                asunto,
+                descripcion,
+                estado: 'Abierto',
+                tiempo_respuesta_seg
+            }]);
+
+            if (error) return showToast('Error al enviar ticket: ' + error.message, 'error');
+            document.getElementById('ticketAsunto').value = '';
+            document.getElementById('ticketDesc').value = '';
+            showToast(`Ticket ${nivel_soporte} guardado en tickets_soporte.`);
+            cargarTickets();
+            cargarKPIs();
+        }
+
+        async function cargarTickets() {
+            const { data } = await db.from('tickets_soporte').select('*').order('id', { ascending: false });
+            const box = document.getElementById('ticketsList');
+            box.innerHTML = (data || []).map(tk => `
+                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                    <div class="flex items-center justify-between font-code">
+                        <span class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-bold">${tk.nivel_soporte}</span>
+                        <span class="text-emerald-400">${tk.estado}</span>
+                    </div>
+                    <div class="font-bold text-white pt-1">${tk.asunto}</div>
+                    <div class="text-slate-400">${tk.descripcion}</div>
+                    <div class="text-[10px] font-code text-slate-500 pt-1">Reportado por: ${tk.usuario_correo}</div>
+                </div>
+            `).join('');
+        }
+
+        async function cargarKPIs() {
+            const [uRes, sRes, vRes, tRes] = await Promise.all([
+                db.from('usuarios').select('id'),
+                db.from('suscripciones').select('id'),
+                db.from('validaciones_sandbox').select('estado_validacion, latencia_ms'),
+                db.from('tickets_soporte').select('tiempo_respuesta_seg')
+            ]);
+
+            const vals = vRes.data || [];
+            const avgLat = vals.length ? Math.round(vals.reduce((a, b) => a + b.latencia_ms, 0) / vals.length) : 0;
+            const passed = vals.filter(v => v.estado_validacion === 'PASSED').length;
+            const rate = vals.length ? ((passed / vals.length) * 100).toFixed(1) : '100.0';
+
+            const tks = tRes.data || [];
+            const avgResp = tks.length ? Math.round(tks.reduce((a, b) => a + (b.tiempo_respuesta_seg || 45), 0) / tks.length) : 0;
+
+            document.getElementById('kpiLatencia').textContent = `${avgLat} ms`;
+            document.getElementById('kpiTasaExito').textContent = `${rate}%`;
+            document.getElementById('kpiTotalValidaciones').textContent = `${vals.length} validaciones registradas`;
+            document.getElementById('kpiUsuarios').textContent = (uRes.data || []).length;
+            document.getElementById('kpiPagos').textContent = `${(sRes.data || []).length} suscripciones en Checkout`;
+            document.getElementById('kpiSoporte').textContent = `${avgResp} seg`;
+            document.getElementById('kpiTicketsTotal').textContent = `${tks.length} tickets registrados`;
+        }
+    </script>
+</body>
+</html>

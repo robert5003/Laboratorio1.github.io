@@ -157,14 +157,6 @@
             </div>
 
             <!-- Selector de Páginas Independientes (Solo Parte 1 y Parte 2) -->
-            <div class="flex items-center gap-1.5">
-                <a href="index.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-bold bg-cyan-400 text-slate-950 shadow transition">
-                    Parte 1 (Landing)
-                </a>
-                <a href="checkout.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-semibold bg-slate-950/80 hover:bg-slate-900 text-white border border-white/20 transition">
-                    Parte 2 (Checkout)
-                </a>
-            </div>
         </div>
     </div>
 
@@ -225,10 +217,10 @@
 
             <!-- Botón Ir al Checkout + Menú Móvil -->
             <div class="flex items-center gap-2.5">
-                <button type="button" onclick="goToCheckoutWithPlan('pro')" class="btn-cta-main inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-brand text-xs sm:text-sm">
-                    <i class="fa-solid fa-credit-card"></i>
-                    <span>Página de Pago</span>
-                </button>
+                <a href="auth.html" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-brand font-bold text-xs bg-violet-600 hover:bg-violet-500 text-white transition">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>Registrarse / Login</span>
+                </a>
                 <button type="button" onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl bg-slate-900 text-slate-200 hover:text-cyan-400 border border-slate-700" aria-label="Abrir Menú">
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
@@ -250,6 +242,9 @@
             <button type="button" onclick="toggleMobileMenu(); goToCheckoutWithPlan('pro')" class="btn-cta-main w-full py-2.5 rounded-xl font-brand text-sm flex items-center justify-center gap-2">
                 <i class="fa-solid fa-lock"></i> Ir a Parte 2: Página de Pago (Checkout)
             </button>
+            <a href="auth.html" class="w-full py-2.5 rounded-xl font-brand font-bold text-sm bg-violet-600 hover:bg-violet-500 text-white flex items-center justify-center gap-2">
+                <i class="fa-solid fa-terminal"></i> Registrarse (Login / Dashboard)
+            </a>
         </div>
     </header>
 
@@ -1728,13 +1723,30 @@
     <!-- ===================================================================== -->
     <!-- LÓGICA INTERACTIVA JAVASCRIPT (PARTE 1 - LANDING)                     -->
     <!-- ===================================================================== -->
+    <script src="supabase-config.js"></script>
     <script>
         function toggleMobileMenu() {
             document.getElementById('mobileMenu').classList.toggle('hidden');
         }
 
         function goToCheckoutWithPlan(planKey) {
-            window.location.href = `checkout.html?plan=${encodeURIComponent(planKey)}`;
+            const destinoPago = `checkout.html?plan=${encodeURIComponent(planKey)}`;
+            const sesion = obtenerSesion();
+
+            // Antes de pagar debe existir una sesión: si no, pasa por login/registro
+            // y auth.html lo devuelve a este mismo checkout con el plan elegido.
+            if (!sesion) {
+                window.location.href = `auth.html?motivo=pago&next=${encodeURIComponent(destinoPago)}`;
+                return;
+            }
+
+            // Los docentes entran gratis como evaluadores: nunca pasan por el pago.
+            if (sesion.rol === 'Docente') {
+                window.location.href = 'dashboard.html?aviso=docente';
+                return;
+            }
+
+            window.location.href = destinoPago;
         }
 
         const heroSimulatedLogs = [

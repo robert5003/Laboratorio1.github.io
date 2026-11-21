@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabFlow Uni | Acceso Institucional UGB (MVP)</title>
+    <script>
+        (function () {
+            const origWarn = console.warn;
+            console.warn = function (...args) {
+                if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+                origWarn.apply(console, args);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body { background-color: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
+        .font-brand { font-family: 'Space Grotesk', sans-serif; }
+        .font-code { font-family: 'JetBrains Mono', monospace; }
+        .bg-tech-grid {
+            background-color: #0F172A;
+            background-size: 36px 36px;
+            background-image:
+                linear-gradient(to right, rgba(30, 58, 138, 0.22) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 58, 138, 0.22) 1px, transparent 1px);
+        }
+        .btn-cta-main {
+            background: linear-gradient(90deg, #06B6D4 0%, #22D3EE 50%, #38BDF8 100%);
+            color: #020617;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-cta-main:hover { opacity: 0.92; transform: translateY(-1px); }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink {
+            animation: blinkCursor 1.1s infinite;
+        }
+    </style>
+</head>
+<body class="bg-tech-grid min-h-screen flex flex-col justify-between">
+
+<header class="backdrop-blur-xl bg-slate-950/95 border-b border-slate-800 shadow-xl">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center">
+            <a href="index.html" class="flex items-center gap-3 group focus:outline-none">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition">
+                    <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="flaskBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#06B6D4"/>
+                                <stop offset="50%" stop-color="#3B82F6"/>
+                                <stop offset="100%" stop-color="#7C3AED"/>
+                            </linearGradient>
+                            <linearGradient id="liquidFill" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.25"/>
+                                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.28"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M24 72 H76 L83 86 C85 90 82 94 77 94 H23 C18 94 15 90 17 86 L24 72 Z" fill="url(#liquidFill)"/>
+                        <path d="M36 12 H64 M41 12 V34 L17 84 C14 90 18 95 25 95 H75 C82 95 86 90 83 84 L59 34 V12" stroke="url(#flaskBorderGrad)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M34 24 L29 27 L34 30" stroke="#06B6D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M66 24 L71 27 L66 30" stroke="#06B6D4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M53 22 L47 32" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M34 80 C34 65 50 62 50 48" stroke="#06B6D4" stroke-width="4.5" stroke-linecap="round"/>
+                        <path d="M66 80 C66 65 50 62 50 48" stroke="#7C3AED" stroke-width="4.5" stroke-linecap="round"/>
+                        <circle cx="34" cy="80" r="6" fill="#0F172A" stroke="#06B6D4" stroke-width="4"/>
+                        <circle cx="66" cy="80" r="6" fill="#0F172A" stroke="#7C3AED" stroke-width="4"/>
+                        <circle cx="50" cy="48" r="7.5" fill="#F8FAFC" stroke="#06B6D4" stroke-width="4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-brand text-2xl sm:text-3xl font-bold tracking-tight text-white">Lab</span>
+                        <span class="font-brand text-2xl sm:text-3xl font-bold tracking-tight text-cyan-400">Flow<span class="cursor-blink text-cyan-400 font-code">_</span></span>
+                        <span class="ml-1 px-2.5 py-0.5 text-xs font-brand font-bold uppercase tracking-wider bg-violet-600 text-white rounded-full shadow-md">UNI</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-medium tracking-wide">Tu código fluye, tu equipo avanza.</p>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center p-4 py-10">
+        <div class="w-full max-w-md space-y-5">
+            <div class="rounded-3xl bg-slate-900 border-2 border-slate-800 p-7 shadow-2xl">
+                <div class="text-center mb-6">
+                    <span class="px-3 py-1 rounded-full bg-cyan-400/15 text-cyan-300 font-code text-[11px] font-bold">
+                        ACCESO SAAS MVP
+                    </span>
+                    <h1 class="font-brand text-2xl font-bold text-white mt-3">Bienvenido a LabFlow Uni</h1>
+                    <p class="text-xs text-slate-400 mt-1">Usa tu correo institucional <code>@ugb.edu.sv</code> para entrar al panel operativo.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-950 border border-slate-800 mb-6 font-code text-xs">
+                    <button type="button" id="tabLogin" onclick="switchAuthTab('login')" class="py-2 rounded-lg font-bold bg-cyan-400 text-slate-950 transition">
+                        Iniciar Sesión
+                    </button>
+                    <button type="button" id="tabRegister" onclick="switchAuthTab('register')" class="py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition">
+                        Crear Cuenta
+                    </button>
+                </div>
+
+                <div id="authAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-code"></div>
+
+                <!-- LOGIN -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Correo Institucional UGB</label>
+                        <input type="email" id="loginEmail" required placeholder="smssxxxxxx@ugb.edu.sv o dxxxx@ugb.edu.sv"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm font-code text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Contraseña</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm font-code text-white">
+                    </div>
+                    <button type="submit" id="btnLoginSubmit" class="btn-cta-main w-full py-3.5 rounded-xl font-brand text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Entrar al Dashboard</span>
+                    </button>
+
+                    <div class="pt-3 border-t border-slate-800 text-[11px] font-code text-slate-400 space-y-2">
+                        <div>Accesos rápidos:</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="quickFill('smss044923@ugb.edu.sv','labflow123')" class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-300 text-left">
+                                <i class="fa-solid fa-user-graduate mr-1"></i>Estudiante UGB
+                            </button>
+                            <button type="button" onclick="quickFill('david@ugb.edu.sv','docente123')" class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-violet-300 text-left">
+                                <i class="fa-solid fa-chalkboard-user mr-1"></i>Docente UGB
+                            </button>
+                        </div>
+                        <div class="text-[10px] text-emerald-400/90 leading-relaxed">
+                            <i class="fa-solid fa-circle-info mr-1"></i>Los docentes acceden gratis como evaluadores. Los planes de pago son solo para estudiantes.
+                        </div>
+                    </div>
+                </form>
+
+                <!-- REGISTRO -->
+                <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Nombre Completo</label>
+                        <input type="text" id="regName" required placeholder="Ej. Sofía Ramírez"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Correo Institucional (@ugb.edu.sv)</label>
+                        <input type="email" id="regEmail" required oninput="previewDetectedRole()" placeholder="smss123426@ugb.edu.sv"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm font-code text-white">
+                        <div id="roleBadgePreview" class="mt-2 text-[11px] font-code text-slate-400"></div>
+                    </div>
+                    <div id="planField">
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Plan Inicial <span class="text-slate-500">(solo estudiantes)</span></label>
+                        <select id="regPlan" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white font-code">
+                            <option value="Freemium">Inicial Freemium ($0.00)</option>
+                            <option value="Estudiante Pro">Estudiante Pro ($4.99/mes)</option>
+                            <option value="Pack Grupo (5)">Pack Grupo 5 Integrantes ($14.99/mes)</option>
+                        </select>
+                    </div>
+                    <div id="teacherPlanNotice" class="hidden p-3 rounded-xl text-[11px] font-code bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 leading-relaxed">
+                        <i class="fa-solid fa-chalkboard-user mr-1"></i>
+                        <strong>Acceso Docente Evaluador sin costo.</strong> Los docentes no compran plan: administran y evalúan los laboratorios de los estudiantes.
+                    </div>
+                    <div>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Contraseña</label>
+                        <input type="password" id="regPassword" required minlength="6" placeholder="Mínimo 6 caracteres"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-sm font-code text-white">
+                    </div>
+                    <button type="submit" id="btnRegSubmit" class="btn-cta-main w-full py-3.5 rounded-xl font-brand text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Registrarse</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 text-[11px] font-code text-slate-500 border-t border-slate-900">
+        LabFlow Uni MVP • Semana 17 Emprendimiento UGB
+    </footer>
+
+    <script>
+        // Destino posterior al login: solo se permiten páginas internas
+        // (por ejemplo "checkout.html?plan=pro" cuando viene de la landing).
+        function obtenerDestinoSeguro() {
+            const next = new URLSearchParams(window.location.search).get('next');
+            if (!next) return 'dashboard.html';
+            if (/^[\w.-]+\.html(\?[\w%&=.-]*)?(#[\w-]+)?$/.test(next)) return next;
+            return 'dashboard.html';
+        }
+
+        const destinoPostAuth = obtenerDestinoSeguro();
+        const vieneDePago = new URLSearchParams(window.location.search).get('motivo') === 'pago';
+
+        // Un docente nunca pasa por el checkout: su acceso es gratuito de evaluador.
+        function destinoFinal(usuario) {
+            if (usuario && usuario.rol === 'Docente') return 'dashboard.html?aviso=docente';
+            return destinoPostAuth;
+        }
+
+        if (obtenerSesion()) {
+            window.location.href = destinoFinal(obtenerSesion());
+        }
+
+        if (vieneDePago) {
+            showAlert('Inicia sesión o crea tu cuenta para continuar con tu pago seguro.', 'info');
+            document.querySelector('#btnLoginSubmit span').textContent = 'Entrar y continuar al pago';
+            document.querySelector('#btnRegSubmit span').textContent = 'Registrarme y continuar al pago';
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const tLogin = document.getElementById('tabLogin');
+            const tReg = document.getElementById('tabRegister');
+            document.getElementById('authAlert').classList.add('hidden');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                tLogin.className = 'py-2 rounded-lg font-bold bg-cyan-400 text-slate-950 transition';
+                tReg.className = 'py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition';
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                tReg.className = 'py-2 rounded-lg font-bold bg-cyan-400 text-slate-950 transition';
+                tLogin.className = 'py-2 rounded-lg font-semibold text-slate-300 hover:text-white transition';
+            }
+        }
+
+        function showAlert(msg, type = 'error') {
+            const box = document.getElementById('authAlert');
+            const estilos = {
+                success: 'mb-4 p-3 rounded-xl text-xs font-code bg-emerald-950/80 border border-emerald-400 text-emerald-300',
+                info: 'mb-4 p-3 rounded-xl text-xs font-code bg-cyan-950/80 border border-cyan-400 text-cyan-300',
+                error: 'mb-4 p-3 rounded-xl text-xs font-code bg-rose-950/80 border border-rose-400 text-rose-300'
+            };
+            box.classList.remove('hidden');
+            box.className = estilos[type] || estilos.error;
+            box.textContent = msg;
+        }
+
+        function quickFill(email, pass) {
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = pass;
+        }
+
+        function previewDetectedRole() {
+            const email = document.getElementById('regEmail').value.trim();
+            const rol = detectarRolUGB(email);
+            const esDocente = rol === 'Docente';
+            document.getElementById('roleBadgePreview').innerHTML =
+                `Rol asignado automáticamente: <strong class="${esDocente ? 'text-violet-400' : 'text-cyan-400'}">${rol}</strong>`;
+
+            // Los planes de pago son exclusivos para estudiantes.
+            document.getElementById('planField').classList.toggle('hidden', esDocente);
+            document.getElementById('teacherPlanNotice').classList.toggle('hidden', !esDocente);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            if (!db) return showAlert('No se pudo inicializar Supabase. Verifica tu conexión a internet.');
+
+            const correo = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('btnLoginSubmit');
+            btn.disabled = true;
+
+            const { data, error } = await db
+                .from('usuarios')
+                .select('*')
+                .eq('correo', correo)
+                .eq('password', password)
+                .maybeSingle();
+
+            btn.disabled = false;
+
+            if (error) return showAlert('Error de conexión con Supabase: ' + error.message);
+            if (!data) return showAlert('Correo o contraseña incorrectos. Verifica tus datos.');
+
+            guardarSesion(data);
+            const esDocente = data.rol === 'Docente';
+            showAlert(esDocente
+                ? '¡Bienvenido, Docente Evaluador! Tu acceso es gratuito, abriendo tu Dashboard...'
+                : (vieneDePago ? '¡Acceso concedido! Volviendo a tu pago...' : '¡Acceso concedido! Abriendo tu Dashboard...'), 'success');
+            setTimeout(() => window.location.href = destinoFinal(data), 600);
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            if (!db) return showAlert('No se pudo inicializar Supabase.');
+
+            const nombre_completo = document.getElementById('regName').value.trim();
+            const correo = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const rol = detectarRolUGB(correo);
+            const plan_actual = rol === 'Docente' ? 'Docente Evaluador' : document.getElementById('regPlan').value;
+
+            const btn = document.getElementById('btnRegSubmit');
+            btn.disabled = true;
+
+            const { data, error } = await db
+                .from('usuarios')
+                .insert([{ nombre_completo, correo, password, rol, plan_actual }])
+                .select()
+                .single();
+
+            btn.disabled = false;
+
+            if (error) {
+                if (error.code === '23505') return showAlert('Ese correo ya está registrado. Inicia sesión.');
+                return showAlert('Error al registrar: ' + error.message);
+            }
+
+            guardarSesion(data);
+            showAlert(rol === 'Docente'
+                ? '¡Cuenta Docente Evaluador creada! Acceso gratuito, abriendo tu Dashboard...'
+                : (vieneDePago ? `¡Cuenta creada como ${rol}! Volviendo a tu pago...` : `¡Cuenta creada como ${rol}! Guardado en Supabase...`), 'success');
+            setTimeout(() => window.location.href = destinoFinal(data), 800);
+        }
+    </script>
+</body>
+</html>

@@ -15,6 +15,23 @@
         })();
     </script>
 
+    <!-- El checkout exige sesión: sin login no se puede completar la suscripción -->
+    <script src="supabase-config.js"></script>
+    <script>
+        (function () {
+            const sesion = typeof obtenerSesion === 'function' ? obtenerSesion() : null;
+            if (!sesion) {
+                const destino = 'checkout.html' + window.location.search;
+                window.location.replace('auth.html?motivo=pago&next=' + encodeURIComponent(destino));
+                return;
+            }
+            // Los docentes no pagan: se les devuelve a su panel de evaluador.
+            if (sesion.rol === 'Docente') {
+                window.location.replace('dashboard.html?aviso=docente');
+            }
+        })();
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -140,14 +157,6 @@
             </div>
 
             <!-- Selector de Páginas Independientes (Solo Parte 1 y Parte 2) -->
-            <div class="flex items-center gap-1.5">
-                <a href="index.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-semibold bg-slate-950/80 hover:bg-slate-900 text-white border border-white/20 transition">
-                    Parte 1 (Landing)
-                </a>
-                <a href="checkout.html" class="px-3 py-1 rounded-lg text-[11px] font-code font-bold bg-cyan-400 text-slate-950 shadow transition">
-                    Parte 2 (Checkout)
-                </a>
-            </div>
         </div>
     </div>
 
@@ -534,8 +543,8 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
-                <button type="button" onclick="closePaymentModalAndGoToSandbox()" class="btn-cta-main flex-1 py-3 rounded-xl font-brand text-xs">
-                    Ir al Sandbox Interactivo →
+                <button type="button" onclick="closePaymentModalAndGoToDashboard()" class="btn-cta-main flex-1 py-3 rounded-xl font-brand text-xs">
+                    Ir a mi Dashboard →
                 </button>
                 <button type="button" onclick="closePaymentModal()" class="py-3 px-4 rounded-xl font-brand font-semibold text-xs bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
                     Cerrar
@@ -794,9 +803,9 @@
             document.getElementById('paymentSuccessModal').classList.add('hidden');
         }
 
-        function closePaymentModalAndGoToSandbox() {
+        function closePaymentModalAndGoToDashboard() {
             closePaymentModal();
-            window.location.href = 'index.html?runSandbox=1#sec-mockup';
+            window.location.href = 'dashboard.html';
         }
 
         // Selecciona automáticamente el plan enviado desde index.html (?plan=pro|team|trial)
