@@ -126,21 +126,6 @@
                         <i class="fa-solid fa-right-to-bracket"></i>
                         <span>Entrar al Dashboard</span>
                     </button>
-
-                    <div class="pt-3 border-t border-slate-800 text-[11px] font-code text-slate-400 space-y-2">
-                        <div>Accesos rápidos:</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="quickFill('smss044923@ugb.edu.sv','labflow123')" class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-cyan-300 text-left">
-                                <i class="fa-solid fa-user-graduate mr-1"></i>Estudiante UGB
-                            </button>
-                            <button type="button" onclick="quickFill('david@ugb.edu.sv','docente123')" class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-violet-300 text-left">
-                                <i class="fa-solid fa-chalkboard-user mr-1"></i>Docente UGB
-                            </button>
-                        </div>
-                        <div class="text-[10px] text-emerald-400/90 leading-relaxed">
-                            <i class="fa-solid fa-circle-info mr-1"></i>Los docentes acceden gratis como evaluadores. Los planes de pago son solo para estudiantes.
-                        </div>
-                    </div>
                 </form>
 
                 <!-- REGISTRO -->
@@ -245,11 +230,6 @@
             box.classList.remove('hidden');
             box.className = estilos[type] || estilos.error;
             box.textContent = msg;
-        }
-
-        function quickFill(email, pass) {
-            document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = pass;
         }
 
         function previewDetectedRole() {
