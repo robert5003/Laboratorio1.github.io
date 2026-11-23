@@ -41,8 +41,8 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
     <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3.5">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap xl:flex-nowrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3 shrink-0">
                 <a href="index.html" class="flex items-center gap-3 group focus:outline-none">
                     <div class="w-11 h-11 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition shrink-0">
                         <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,45 +75,41 @@
                             <span class="font-brand text-2xl font-bold tracking-tight text-cyan-400">Flow<span class="cursor-blink text-cyan-400 font-code">_</span></span>
                             <span class="ml-1 px-2.5 py-0.5 text-[11px] font-brand font-bold uppercase tracking-wider bg-violet-600 text-white rounded-full shadow-md">UNI</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-medium tracking-wide">Tu código fluye, tu equipo avanza.</p>
+                        <p class="text-[11px] text-slate-400 font-medium tracking-wide whitespace-nowrap">Tu código fluye, tu equipo avanza.</p>
                     </div>
                 </a>
-                <span id="liveStatusBadge" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px]">
+                <span id="liveStatusBadge" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px] whitespace-nowrap">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Codificando en Live
                 </span>
-                <span id="teacherHeaderBadge" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px]">
-                    <i class="fa-solid fa-user-check"></i>
-                    Evaluador
-                </span>
             </div>
 
-            <nav class="flex flex-wrap items-center gap-1.5 font-code text-xs">
-                <button onclick="switchDashTab('sandbox')" id="nav-sandbox" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold">
+            <nav class="flex flex-wrap xl:flex-nowrap items-center gap-1.5 font-code text-xs shrink-0">
+                <button onclick="switchDashTab('sandbox')" id="nav-sandbox" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap">
                     <i class="fa-solid fa-code mr-1"></i>Sandbox
                 </button>
-                <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
                     <i class="fa-solid fa-table-columns mr-1"></i>Kanban
                 </button>
-                <button onclick="switchDashTab('bonus')" id="nav-bonus" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <button onclick="switchDashTab('bonus')" id="nav-bonus" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
                     <i class="fa-solid fa-gift mr-1"></i>Bonus & Reporte
                 </button>
-                <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
                     <i class="fa-solid fa-chart-line mr-1"></i>KPIs en Vivo
                 </button>
             </nav>
 
-            <div class="flex items-center gap-3">
-                <a href="checkout.html" id="planesLink" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200">
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="checkout.html" id="planesLink" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200 whitespace-nowrap">
                     <i class="fa-solid fa-credit-card text-cyan-400"></i>Planes
                 </a>
                 <div class="text-right hidden sm:block">
-                    <div id="userNameDisplay" class="font-brand font-bold text-xs text-white">Cargando...</div>
-                    <div class="text-[10px] font-code text-cyan-400">
+                    <div id="userNameDisplay" class="font-brand font-bold text-xs text-white whitespace-nowrap">Cargando...</div>
+                    <div class="text-[10px] font-code text-cyan-400 whitespace-nowrap">
                         <span id="userRoleDisplay">Rol</span> • <span id="userPlanDisplay">Plan</span>
                     </div>
                 </div>
-                <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-xs">
+                <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-xs whitespace-nowrap">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i>Salir
                 </button>
             </div>
@@ -660,7 +656,6 @@
                                 <div>Aprobados: <strong id="certCardApproved" class="text-emerald-400">0</strong></div>
                                 <div>Sprint: <strong id="certCardSprint" class="text-cyan-300">0%</strong></div>
                             </div>
-                            <!-- Código QR vectorial verificable -->
                             <div class="w-16 h-16 p-1.5 rounded-lg bg-white shrink-0" title="Código QR de Verificación">
                                 <svg viewBox="0 0 29 29" class="w-full h-full" fill="#0F172A">
                                     <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#FFF"/><rect x="2" y="2" width="3" height="3"/>
@@ -696,7 +691,7 @@
                     <div id="bonusTemplatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
 
-                <!-- BONUS #2: GUÍA PRÁCTICA VISUAL DE GIT -->
+                <!-- BONUS #2: GUÍA PRÁCTICA VISUAL DE GIT (PROTEGIDA EN FREEMIUM) -->
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
                     <div>
                         <span class="px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-code text-[10px] font-bold uppercase">
@@ -704,7 +699,18 @@
                         </span>
                         <h3 class="font-brand font-bold text-white text-lg mt-1.5">Equivalencia visual entre LabFlow Uni y Git profesional</h3>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+
+                    <div id="bonusGitLocked" class="hidden p-4 rounded-xl bg-slate-950 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                        <div class="text-slate-300">
+                            <strong class="text-amber-300"><i class="fa-solid fa-lock mr-1"></i>Guía exclusiva Estudiante Pro y Pack Grupo:</strong>
+                            Domina ramas, commits y fusiones visuales sin miedo a la consola.
+                        </div>
+                        <a href="checkout.html?plan=pro" class="btn-cta-main px-4 py-2 rounded-xl font-code text-[11px] shrink-0 text-center">
+                            Activar Pro ($4.60)
+                        </a>
+                    </div>
+
+                    <div id="bonusGitUnlocked" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                         <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                             <div class="font-brand font-bold text-cyan-400">1. Cambiar / Crear Rama</div>
                             <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git checkout -b feature/ui</code>
@@ -986,8 +992,8 @@
             }
 
             document.getElementById('userNameDisplay').textContent = currentUser.nombre_completo;
-            document.getElementById('userRoleDisplay').textContent = esDocente ? 'Docente Evaluador' : currentUser.rol;
-            document.getElementById('userPlanDisplay').textContent = currentUser.plan_actual;
+            document.getElementById('userRoleDisplay').textContent = esDocente ? 'Docente' : currentUser.rol;
+            document.getElementById('userPlanDisplay').textContent = esDocente ? 'Evaluador UGB' : currentUser.plan_actual;
 
             if (esDocente) configurarModoDocente();
             configurarPermisosPorPlan();
@@ -1015,7 +1021,7 @@
         function configurarPermisosPorPlan() {
             const cfg = obtenerConfigPlan(currentUser.plan_actual);
 
-            // Mentor Colega: oculto para docentes, bloqueado para Freemium, activo para Pro y Pack Grupo
+            // Mentor Colega y sección de Bonus estudiantiles: ocultos para docentes
             if (esDocente) {
                 document.getElementById('mentorColegaCard')?.classList.add('hidden');
                 document.getElementById('studentBonusSection')?.classList.add('hidden');
@@ -1033,8 +1039,11 @@
                     : 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-code text-[10px] font-bold';
             }
 
-            // Banner Freemium en pestaña Bonus & Reporte
+            // Bloqueo Freemium en pestaña Bonus & Reporte (incluye Bonus #2 Guía Git)
             document.getElementById('bonusFreemiumBanner')?.classList.toggle('hidden', cfg.esPro);
+            document.getElementById('bonusGitLocked')?.classList.toggle('hidden', cfg.esPro);
+            document.getElementById('bonusGitUnlocked')?.classList.toggle('hidden', !cfg.esPro);
+
             const btnPdf = document.getElementById('btnPrintCertReport');
             if (btnPdf && !cfg.esPro) {
                 btnPdf.innerHTML = '<i class="fa-solid fa-lock"></i> Reporte PDF (Solo Pro)';
@@ -1084,16 +1093,10 @@
             const branchSel = document.getElementById('branchSelector');
             if (branchSel) branchSel.disabled = true;
 
-            const headerBadge = document.getElementById('teacherHeaderBadge');
-            if (headerBadge) {
-                headerBadge.classList.remove('hidden');
-                headerBadge.classList.add('inline-flex');
-            }
-
             const liveStatus = document.getElementById('liveStatusBadge');
             if (liveStatus) {
                 liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span> Evaluando proyectos';
-                liveStatus.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px]';
+                liveStatus.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px] whitespace-nowrap';
             }
 
             document.title = 'LabFlow Uni | Dashboard Docente Evaluador';
@@ -1148,23 +1151,26 @@
 
         // --- INVITADOS AL CREAR EL LABORATORIO ---
         async function agregarInvitadoCreacion() {
-            if (esDocente) return;
+            if (esDocente) return false;
             const cfg = obtenerConfigPlan(currentUser.plan_actual);
             const maxInvitados = cfg.maxMiembros - 1;
 
             if (invitadosPendientesCreacion.length >= maxInvitados) {
-                return showToast(`Tu plan ${cfg.nombre} permite invitar hasta ${maxInvitados} compañeros (total ${cfg.maxMiembros} contigo).`, 'error');
+                showToast(`Tu plan ${cfg.nombre} permite invitar hasta ${maxInvitados} compañeros (total ${cfg.maxMiembros} contigo).`, 'error');
+                return false;
             }
 
             const input = document.getElementById('newLabInviteInput');
             const correo = input.value.trim().toLowerCase();
-            if (!correo) return;
+            if (!correo) return false;
 
             if (correo === currentUser.correo.toLowerCase()) {
-                return showToast('Ya quedas registrado automáticamente como líder del laboratorio.', 'error');
+                showToast('Ya quedas registrado automáticamente como líder del laboratorio.', 'error');
+                return false;
             }
             if (invitadosPendientesCreacion.some(m => m.correo.toLowerCase() === correo)) {
-                return showToast('Ese compañero ya está en la lista de invitados.', 'error');
+                showToast('Ese compañero ya está en la lista de invitados.', 'error');
+                return false;
             }
 
             let targetUser = Object.values(usuariosPorId).find(u => u.correo.toLowerCase() === correo);
@@ -1178,15 +1184,18 @@
             }
 
             if (!targetUser) {
-                return showToast('Ese correo aún no está registrado en LabFlow Uni. Pídele que cree su cuenta primero.', 'error');
+                showToast('Ese correo aún no está registrado en LabFlow Uni. Pídele que cree su cuenta primero.', 'error');
+                return false;
             }
             if (targetUser.rol === 'Docente') {
-                return showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
+                showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
+                return false;
             }
 
             invitadosPendientesCreacion.push(targetUser);
             input.value = '';
             renderizarInvitadosCreacion();
+            return true;
         }
 
         function quitarInvitadoCreacion(correo) {
@@ -1249,10 +1258,10 @@
         function switchDashTab(tab) {
             ['sandbox', 'kanban', 'bonus', 'kpis'].forEach(t => {
                 document.getElementById('tab-' + t).classList.add('hidden');
-                document.getElementById('nav-' + t).className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800';
+                document.getElementById('nav-' + t).className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap';
             });
             document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.getElementById('nav-' + tab).className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold';
+            document.getElementById('nav-' + tab).className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap';
 
             if (tab === 'kanban') cargarTareasKanban();
             if (tab === 'bonus') {
@@ -1479,7 +1488,6 @@
                 conflictos++;
             }
 
-            // Verificar balanceo de paréntesis, corchetes y llaves
             const pares = { '(': ')', '[': ']', '{': '}' };
             const cierres = new Set([')', ']', '}']);
             const pila = [];
@@ -1503,7 +1511,6 @@
                 errores.push(`Falta cerrar delimitador(es): ${pila.join(' ')}`);
             }
 
-            // Reglas por plantilla
             const tpl = (plantilla || '').toLowerCase();
             if (tpl.includes('python')) {
                 const lineas = texto.split('\n');
@@ -1749,7 +1756,6 @@
             const doneSp = tasks.filter(t => t.estado === 'completado').reduce((a, t) => a + (Number(t.story_points) || 0), 0);
             const pctSprint = totalSp ? Math.round((doneSp / totalSp) * 100) : 0;
 
-            // Agrupar commits por integrante
             const mapaAportes = {};
             const registrarPersona = (nombre, rol) => {
                 if (!nombre) return;
@@ -2179,6 +2185,13 @@
             if (misLabsPropios.length >= cfg.maxLabs) {
                 actualizarTarjetaPlanEstudiante();
                 return showToast('Tu plan Freemium permite hasta 2 laboratorios propios. Mejora a Estudiante Pro para crear ilimitados.', 'error');
+            }
+
+            // Si escribió un correo en el campo de invitación sin dar clic a "+ Añadir", lo valida y agrega automáticamente
+            const correoPendiente = document.getElementById('newLabInviteInput').value.trim();
+            if (correoPendiente) {
+                const okInvitado = await agregarInvitadoCreacion();
+                if (!okInvitado) return;
             }
 
             const nombre_proyecto = document.getElementById('newLabName').value.trim();
