@@ -29,6 +29,7 @@
             transition: all 0.2s ease;
         }
         .btn-cta-main:hover { opacity: 0.92; }
+        
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
@@ -40,9 +41,13 @@
                     <span class="font-brand text-2xl font-bold text-white">Lab<span class="text-cyan-400">Flow_</span></span>
                     <span class="px-2 py-0.5 text-[10px] font-brand font-bold bg-violet-600 text-white rounded-full">UNI</span>
                 </a>
-                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px]">
+                <span id="liveStatusBadge" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px]">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Codificando en Live
+                </span>
+                <span id="teacherHeaderBadge" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px]">
+                    <i class="fa-solid fa-user-check"></i>
+                    Evaluador
                 </span>
             </div>
 
@@ -62,7 +67,7 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <a href="checkout.html" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200">
+                <a href="checkout.html" id="planesLink" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200">
                     <i class="fa-solid fa-credit-card text-cyan-400"></i>Planes
                 </a>
                 <div class="text-right hidden sm:block">
@@ -79,12 +84,65 @@
     </header>
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <!-- BANNER DE MODO DOCENTE EVALUADOR (solo visible para rol Docente) -->
+        <div id="teacherModeBanner" class="hidden rounded-2xl border-2 border-violet-500/60 bg-gradient-to-r from-violet-950/80 via-slate-900 to-blue-950/80 p-4 sm:p-5 shadow-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-violet-500/20 border border-violet-400/50 text-violet-300 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <div>
+                        <div class="font-brand font-bold text-white text-base">Modo Docente Evaluador</div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, los commits validados y aprueba las entregas desde el historial.
+                        </p>
+                    </div>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-code text-[11px] font-bold whitespace-nowrap">
+                    ACCESO DOCENTE GRATUITO
+                </span>
+            </div>
+        </div>
+
         <div id="dashToast" class="hidden p-3 rounded-xl font-code text-xs border"></div>
 
         <!-- MÓDULO 1: SANDBOX -->
         <section id="tab-sandbox" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4 space-y-5">
-                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+                <!-- RESUMEN DEL DOCENTE EVALUADOR -->
+                <div id="teacherOverview" class="hidden rounded-2xl bg-slate-900 border-2 border-violet-500/50 p-5 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-user-graduate text-violet-300"></i>
+                        <h2 class="font-brand font-bold text-white text-base">Panel Docente Evaluador</h2>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        Supervisa los proyectos de tus estudiantes y aprueba los commits que ya pasaron el sandbox.
+                    </p>
+                    <div class="grid grid-cols-2 gap-2 font-code text-center">
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                            <div id="teacherProjectsCount" class="text-xl font-bold text-cyan-400">0</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Proyectos</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                            <div id="teacherCommitsCount" class="text-xl font-bold text-white">0</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">Commits</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40">
+                            <div id="teacherApprovedCount" class="text-xl font-bold text-emerald-400">0</div>
+                            <div class="text-[10px] text-emerald-300 mt-0.5">Aprobados</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40">
+                            <div id="teacherPendingCount" class="text-xl font-bold text-amber-300">0</div>
+                            <div class="text-[10px] text-amber-200 mt-0.5">Pendientes</div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-violet-950/50 border border-violet-500/30 text-[11px] text-violet-200 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        Los commits aprobados quedan marcados con tu nombre y son visibles para el estudiante.
+                    </div>
+                </div>
+
+                <div id="newLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <h2 class="font-brand font-bold text-white text-base flex items-center gap-2">
                         <i class="fa-solid fa-plus-circle text-cyan-400"></i>Nuevo Laboratorio Cloud
                     </h2>
@@ -107,7 +165,7 @@
 
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 class="font-brand font-bold text-white text-sm">Laboratorios Guardados</h3>
+                        <h3 id="labsListTitle" class="font-brand font-bold text-white text-sm">Laboratorios Guardados</h3>
                         <span id="labsCountBadge" class="px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 font-code text-[11px]">0</span>
                     </div>
                     <div id="labsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
@@ -121,16 +179,23 @@
                             <i class="fa-solid fa-flask text-cyan-400 mr-1.5"></i>
                             <span id="activeLabTitle">Selecciona un laboratorio</span>
                             <span id="activeLabTemplate" class="ml-2 px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px]">---</span>
+                            <span id="activeLabOwner" class="ml-2 text-[10px] text-violet-300"></span>
                         </div>
                         <span class="font-code text-[11px] text-emerald-400">● Rama: main</span>
                     </div>
 
                     <div class="p-4 space-y-3">
+                        <div id="teacherReadOnlyNotice" class="hidden text-[11px] font-code text-violet-200 bg-violet-950/50 border border-violet-500/30 rounded-lg px-3 py-2">
+                            <i class="fa-solid fa-eye mr-1"></i>
+                            Vista de solo lectura como docente evaluador. Puedes aprobar commits desde el historial inferior.
+                        </div>
+
                         <textarea id="codeEditor" rows="9"
                             class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs sm:text-sm text-cyan-100 focus:border-cyan-400 focus:outline-none"></textarea>
 
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <input type="text" id="commitMsgInput" placeholder="Mensaje del commit (ej. Validación de módulo de login)"
+                        <div id="studentCommitControls" class="flex flex-col sm:flex-row gap-3">
+                            <input type="text" id="commitMsgInput" required aria-required="true" maxlength="160" placeholder="Mensaje del commit (obligatorio) — ej. Validación de módulo de login"
+                                oninput="this.classList.remove('border-rose-500')"
                                 class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
                             <button type="button" onclick="ejecutarYGuardarValidacion()" class="btn-cta-main px-5 py-2.5 rounded-xl font-code text-xs flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-play"></i>
@@ -145,7 +210,7 @@
                 </div>
 
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-                    <h3 class="font-brand font-bold text-white text-sm mb-3">
+                    <h3 id="validationsTitle" class="font-brand font-bold text-white text-sm mb-3">
                         <i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i>
                         Historial de Validaciones y Commits (Tabla: <code>validaciones_sandbox</code>)
                     </h3>
@@ -156,7 +221,7 @@
 
         <!-- MÓDULO 2: KANBAN -->
         <section id="tab-kanban" class="hidden space-y-5">
-            <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
+            <div id="kanbanCreateCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
                 <h2 class="font-brand font-bold text-white text-lg mb-3">Nueva Tarea del Equipo</h2>
                 <form onsubmit="crearTareaKanban(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <input type="text" id="kanbanTitle" required placeholder="Ej. Revisar diagrama operativo en Miro"
@@ -262,14 +327,29 @@
             window.location.href = 'auth.html';
         }
 
+        const esDocente = !!(currentUser && currentUser.rol === 'Docente');
+
         let laboratorios = [];
         let activeLabId = null;
+        let usuariosPorId = {};
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[c]));
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             if (!currentUser) return;
             document.getElementById('userNameDisplay').textContent = currentUser.nombre_completo;
-            document.getElementById('userRoleDisplay').textContent = currentUser.rol;
+            document.getElementById('userRoleDisplay').textContent = esDocente ? 'Docente Evaluador' : currentUser.rol;
             document.getElementById('userPlanDisplay').textContent = currentUser.plan_actual;
+
+            if (esDocente) configurarModoDocente();
 
             // Si un docente intentó entrar al checkout, se le avisa que su acceso es gratuito.
             if (new URLSearchParams(window.location.search).get('aviso') === 'docente') {
@@ -280,10 +360,60 @@
                 showToast('Error al conectar con Supabase.', 'error');
                 return;
             }
-            cargarLaboratorios();
+
+            await cargarLaboratorios();
             cargarTickets();
             cargarKPIs();
+            if (esDocente) cargarResumenDocente();
         });
+
+        function configurarModoDocente() {
+            document.getElementById('teacherModeBanner')?.classList.remove('hidden');
+            document.getElementById('teacherOverview')?.classList.remove('hidden');
+            document.getElementById('newLabCard')?.classList.add('hidden');
+            document.getElementById('kanbanCreateCard')?.classList.add('hidden');
+            document.getElementById('studentCommitControls')?.classList.add('hidden');
+            document.getElementById('teacherReadOnlyNotice')?.classList.remove('hidden');
+
+            const headerBadge = document.getElementById('teacherHeaderBadge');
+            if (headerBadge) {
+                headerBadge.classList.remove('hidden');
+                headerBadge.classList.add('inline-flex');
+            }
+
+            const liveStatus = document.getElementById('liveStatusBadge');
+            if (liveStatus) {
+                liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span> Evaluando proyectos';
+                liveStatus.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px]';
+            }
+
+            document.title = 'LabFlow Uni | Dashboard Docente Evaluador';
+
+            const labsTitle = document.getElementById('labsListTitle');
+            if (labsTitle) labsTitle.textContent = 'Proyectos de Estudiantes';
+
+            const validationsTitle = document.getElementById('validationsTitle');
+            if (validationsTitle) {
+                validationsTitle.innerHTML = '<i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i> Commits de los Estudiantes — Aprobación Docente';
+            }
+
+            const navSandbox = document.getElementById('nav-sandbox');
+            if (navSandbox) {
+                navSandbox.innerHTML = '<i class="fa-solid fa-folder-open mr-1"></i>Proyectos';
+            }
+
+            const planesLink = document.getElementById('planesLink');
+            if (planesLink) {
+                planesLink.classList.remove('lg:inline-flex');
+                planesLink.classList.add('hidden');
+            }
+
+            const editor = document.getElementById('codeEditor');
+            if (editor) {
+                editor.readOnly = true;
+                editor.classList.add('opacity-80', 'cursor-not-allowed');
+            }
+        }
 
         function showToast(msg, type = 'success') {
             const box = document.getElementById('dashToast');
@@ -293,6 +423,22 @@
                 : 'p-3 rounded-xl font-code text-xs bg-rose-950/80 border border-rose-400 text-rose-300';
             box.textContent = msg;
             setTimeout(() => box.classList.add('hidden'), 4000);
+        }
+
+        async function cargarResumenDocente() {
+            if (!esDocente) return;
+
+            const { data, error } = await db.from('validaciones_sandbox').select('*');
+            if (error) return;
+
+            const commits = data || [];
+            const aprobados = commits.filter(v => v.aprobado === true).length;
+            const pendientes = commits.filter(v => v.estado_validacion === 'PASSED' && v.aprobado !== true).length;
+
+            document.getElementById('teacherProjectsCount').textContent = laboratorios.length;
+            document.getElementById('teacherCommitsCount').textContent = commits.length;
+            document.getElementById('teacherApprovedCount').textContent = aprobados;
+            document.getElementById('teacherPendingCount').textContent = pendientes;
         }
 
         function switchDashTab(tab) {
@@ -309,16 +455,51 @@
         }
 
         async function cargarLaboratorios() {
-            const { data, error } = await db.from('laboratorios').select('*').order('id', { ascending: false });
+            let query = db.from('laboratorios').select('*').order('id', { ascending: false });
+            if (!esDocente) query = query.eq('usuario_id', currentUser.id);
+
+            const { data, error } = await query;
             if (error) return showToast('Error cargando laboratorios: ' + error.message, 'error');
+
+            if (esDocente) {
+                const { data: usersData } = await db
+                    .from('usuarios')
+                    .select('id, nombre_completo, correo');
+
+                usuariosPorId = {};
+                (usersData || []).forEach(u => {
+                    usuariosPorId[String(u.id)] = u;
+                });
+            }
 
             laboratorios = data || [];
             document.getElementById('labsCountBadge').textContent = laboratorios.length;
             const list = document.getElementById('labsList');
             list.innerHTML = '';
 
+            if (!laboratorios.length) {
+                activeLabId = null;
+                document.getElementById('activeLabTitle').textContent = 'Selecciona un laboratorio';
+                document.getElementById('activeLabTemplate').textContent = '---';
+                document.getElementById('activeLabOwner').textContent = '';
+                document.getElementById('codeEditor').value = '';
+                document.getElementById('validationsList').innerHTML = '';
+                list.innerHTML = `<div class="text-slate-500 text-xs p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    ${esDocente ? 'Aún no hay proyectos de estudiantes registrados.' : 'Aún no tienes laboratorios. Crea el primero.'}
+                </div>`;
+                return;
+            }
+
+            if (!laboratorios.some(l => l.id === activeLabId)) {
+                activeLabId = laboratorios[0].id;
+            }
+
             laboratorios.forEach(lab => {
-                if (!activeLabId) activeLabId = lab.id;
+                const owner = usuariosPorId[String(lab.usuario_id)];
+                const ownerLabel = esDocente
+                    ? ` • <span class="text-violet-300">${escapeHtml(owner?.nombre_completo || 'Estudiante')}</span>`
+                    : '';
+
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.onclick = () => seleccionarLaboratorio(lab.id);
@@ -328,8 +509,8 @@
                         : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-600'
                 }`;
                 btn.innerHTML = `
-                    <div class="font-bold truncate">${lab.nombre_proyecto}</div>
-                    <div class="text-[10px] text-cyan-400 mt-1">${lab.plantilla} • ${lab.estado_sandbox}</div>
+                    <div class="font-bold truncate">${escapeHtml(lab.nombre_proyecto || 'Sin nombre')}</div>
+                    <div class="text-[10px] text-cyan-400 mt-1">${escapeHtml(lab.plantilla || 'Sin plantilla')} • ${escapeHtml(lab.estado_sandbox || 'ACTIVO')}${ownerLabel}</div>
                 `;
                 list.appendChild(btn);
             });
@@ -346,21 +527,35 @@
         function mostrarLaboratorioActivo() {
             const lab = laboratorios.find(l => l.id === activeLabId);
             if (!lab) return;
-            document.getElementById('activeLabTitle').textContent = lab.nombre_proyecto;
-            document.getElementById('activeLabTemplate').textContent = lab.plantilla;
-            document.getElementById('codeEditor').value = lab.codigo_fuente;
+
+            document.getElementById('activeLabTitle').textContent = lab.nombre_proyecto || 'Sin nombre';
+            document.getElementById('activeLabTemplate').textContent = lab.plantilla || 'Sin plantilla';
+
+            const ownerEl = document.getElementById('activeLabOwner');
+            if (ownerEl) {
+                const owner = usuariosPorId[String(lab.usuario_id)];
+                ownerEl.textContent = esDocente
+                    ? `• ${owner?.nombre_completo || 'Estudiante'}`
+                    : '';
+            }
+
+            const editor = document.getElementById('codeEditor');
+            editor.value = lab.codigo_fuente || '';
+            editor.readOnly = esDocente;
             cargarValidaciones(lab.id);
         }
 
         async function crearLaboratorio(e) {
             e.preventDefault();
+            if (esDocente) return showToast('Los docentes no crean laboratorios: evalúan los proyectos de sus estudiantes.', 'error');
+
             const nombre_proyecto = document.getElementById('newLabName').value.trim();
             const plantilla = document.getElementById('newLabTemplate').value;
             const codigo_fuente = `# Proyecto: ${nombre_proyecto}\n# Plantilla: ${plantilla}\nprint("Contenedor LabFlow Uni listo para ${currentUser.nombre_completo}")`;
 
             const { data, error } = await db
                 .from('laboratorios')
-                .insert([{ usuario_id: currentUser.id, nombre_proyecto, plantilla, codigo_fuente }])
+                .insert([{ usuario_id: currentUser.id, nombre_proyecto, plantilla, codigo_fuente, estado_sandbox: 'ACTIVO' }])
                 .select()
                 .single();
 
@@ -373,10 +568,19 @@
         }
 
         async function ejecutarYGuardarValidacion() {
+            if (esDocente) return showToast('Modo evaluador: el código es de solo lectura. Puedes aprobar commits desde el historial.', 'error');
             if (!activeLabId) return showToast('Crea o selecciona un laboratorio primero.', 'error');
 
             const codigo_fuente = document.getElementById('codeEditor').value;
-            const mensaje_commit = document.getElementById('commitMsgInput').value.trim() || 'Actualización y validación desde Sandbox';
+            const commitInput = document.getElementById('commitMsgInput');
+            const mensaje_commit = commitInput.value.trim();
+
+            if (!mensaje_commit) {
+                commitInput.classList.add('border-rose-500');
+                commitInput.focus();
+                return showToast('El mensaje del commit es obligatorio. Escribe qué cambiaste antes de validar.', 'error');
+            }
+
             const consoleBox = document.getElementById('sandboxConsole');
             consoleBox.innerHTML = '<span class="text-amber-300">$ Validando código y midiendo latencia en Supabase...</span>';
 
@@ -396,7 +600,8 @@
 
             if (errUpdate || errVal) return showToast('Error guardando validación.', 'error');
 
-            document.getElementById('commitMsgInput').value = '';
+            commitInput.value = '';
+            commitInput.classList.remove('border-rose-500');
             consoleBox.innerHTML = `
                 <div class="text-emerald-400">✓ Código guardado y validado (${estado_validacion})</div>
                 <div class="text-cyan-300">→ Latencia real registrada en BD: ${latencia_ms} ms • 0 conflictos de fusión.</div>
@@ -407,41 +612,113 @@
         }
 
         async function cargarValidaciones(labId) {
-            const { data } = await db
+            const box = document.getElementById('validationsList');
+            const { data, error } = await db
                 .from('validaciones_sandbox')
                 .select('*')
                 .eq('laboratorio_id', labId)
                 .order('id', { ascending: false })
-                .limit(8);
+                .limit(20);
 
-            const box = document.getElementById('validationsList');
-            if (!data || !data.length) {
-                box.innerHTML = '<div class="text-slate-500">Sin validaciones todavía.</div>';
+            if (error) {
+                box.innerHTML = `<div class="text-rose-300">Error cargando commits: ${escapeHtml(error.message)}</div>`;
                 return;
             }
-            box.innerHTML = data.map(v => `
-                <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                        <span class="text-cyan-400 font-bold">[${v.autor_nombre}]</span>
-                        <span class="text-slate-200 ml-1">${v.mensaje_commit}</span>
+
+            if (!data || !data.length) {
+                box.innerHTML = `<div class="text-slate-500">${esDocente ? 'Este proyecto aún no tiene commits validados.' : 'Sin validaciones todavía.'}</div>`;
+                return;
+            }
+
+            box.innerHTML = data.map(v => {
+                const aprobado = v.aprobado === true;
+                const esError = v.estado_validacion !== 'PASSED';
+                const puedeAprobar = esDocente && !aprobado && !esError;
+                const aprobadoPor = v.aprobado_por ? escapeHtml(v.aprobado_por) : 'Docente';
+                const fechaAprobacion = v.fecha_aprobacion
+                    ? new Date(v.fecha_aprobacion).toLocaleString('es-SV')
+                    : '';
+
+                const approvalBadge = aprobado
+                    ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">✓ Aprobado</span>`
+                    : esError
+                        ? `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">Con errores</span>`
+                        : `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Pendiente de aprobación</span>`;
+
+                const approveButton = puedeAprobar
+                    ? `<button type="button" data-approve-id="${escapeHtml(String(v.id))}" onclick="aprobarCommit(this.dataset.approveId)" class="px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold transition">
+                           <i class="fa-solid fa-check mr-1"></i>Aprobar commit
+                       </button>`
+                    : '';
+
+                return `
+                    <div class="p-3 rounded-xl bg-slate-950 border ${aprobado ? 'border-emerald-500/40' : 'border-slate-800'} space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <span class="text-cyan-400 font-bold">[${escapeHtml(v.autor_nombre || 'Estudiante')}]</span>
+                                <span class="text-slate-200 ml-1">${escapeHtml(v.mensaje_commit || 'Sin mensaje')}</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-slate-400">${Number(v.latencia_ms) || 0} ms</span>
+                                <span class="px-2 py-0.5 rounded ${esError ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold">
+                                    ${escapeHtml(v.estado_validacion || 'PENDIENTE')}
+                                </span>
+                                ${approvalBadge}
+                            </div>
+                        </div>
+                        ${(aprobado || esDocente) ? `
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800/80">
+                                <div class="text-[11px] text-slate-400">
+                                    ${aprobado
+                                        ? `<i class="fa-solid fa-user-check text-emerald-400 mr-1"></i>Aprobado por <strong class="text-emerald-300">${aprobadoPor}</strong>${fechaAprobacion ? ` • ${escapeHtml(fechaAprobacion)}` : ''}`
+                                        : (esError ? 'Corrige el error antes de aprobar este commit.' : 'Pendiente de revisión docente.')}
+                                </div>
+                                ${approveButton}
+                            </div>
+                        ` : ''}
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-slate-400">${v.latencia_ms} ms</span>
-                        <span class="px-2 py-0.5 rounded ${v.estado_validacion === 'PASSED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'} font-bold">
-                            ${v.estado_validacion}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        async function aprobarCommit(commitId) {
+            if (!esDocente) return showToast('Solo un docente puede aprobar commits.', 'error');
+            if (!commitId) return showToast('No se pudo identificar el commit.', 'error');
+
+            const { error } = await db
+                .from('validaciones_sandbox')
+                .update({
+                    aprobado: true,
+                    aprobado_por: currentUser.nombre_completo,
+                    aprobado_por_correo: currentUser.correo,
+                    fecha_aprobacion: new Date().toISOString()
+                })
+                .eq('id', commitId)
+                .eq('estado_validacion', 'PASSED');
+
+            if (error) {
+                console.error('Error aprobando commit:', error);
+                return showToast('No se pudo aprobar. Ejecuta la migración SQL de aprobación docente.', 'error');
+            }
+
+            showToast('Commit aprobado correctamente.');
+            if (activeLabId) cargarValidaciones(activeLabId);
+            cargarResumenDocente();
+            cargarKPIs();
         }
 
         async function cargarTareasKanban() {
             if (!activeLabId) return;
-            const { data } = await db
+            const { data, error } = await db
                 .from('tareas_kanban')
                 .select('*')
                 .eq('laboratorio_id', activeLabId)
                 .order('id', { ascending: false });
+
+            if (error) {
+                showToast('Error cargando tareas: ' + error.message, 'error');
+                return;
+            }
 
             ['por_hacer', 'en_proceso', 'completado'].forEach(col => {
                 document.getElementById('col-' + col).innerHTML = '';
@@ -452,14 +729,17 @@
                 if (!container) return;
                 const nextState = t.estado === 'por_hacer' ? 'en_proceso' : (t.estado === 'en_proceso' ? 'completado' : 'por_hacer');
                 const nextLabel = t.estado === 'por_hacer' ? 'Mover a En Proceso →' : (t.estado === 'en_proceso' ? 'Completar ✓' : 'Reabrir');
+                const moveControl = esDocente
+                    ? '<span class="text-slate-500">Solo lectura</span>'
+                    : `<button type="button" data-task-id="${escapeHtml(String(t.id))}" data-next-state="${nextState}" onclick="moverTarea(this.dataset.taskId, this.dataset.nextState)" class="text-violet-300 hover:underline">${nextLabel}</button>`;
 
                 const card = document.createElement('div');
                 card.className = 'p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs';
                 card.innerHTML = `
-                    <div class="font-semibold text-white">${t.titulo}</div>
+                    <div class="font-semibold text-white">${escapeHtml(t.titulo || 'Sin título')}</div>
                     <div class="flex items-center justify-between text-[11px] font-code">
-                        <span class="text-cyan-400"><i class="fa-solid fa-user mr-1"></i>${t.asignado_a}</span>
-                        <button onclick="moverTarea(${t.id}, '${nextState}')" class="text-violet-300 hover:underline">${nextLabel}</button>
+                        <span class="text-cyan-400"><i class="fa-solid fa-user mr-1"></i>${escapeHtml(t.asignado_a || 'Sin responsable')}</span>
+                        ${moveControl}
                     </div>
                 `;
                 container.appendChild(card);
@@ -468,6 +748,7 @@
 
         async function crearTareaKanban(e) {
             e.preventDefault();
+            if (esDocente) return showToast('Los docentes no crean tareas en el tablero del equipo.', 'error');
             if (!activeLabId) return showToast('Selecciona primero un laboratorio en Sandbox.', 'error');
 
             const titulo = document.getElementById('kanbanTitle').value.trim();
@@ -485,7 +766,9 @@
         }
 
         async function moverTarea(id, nuevoEstado) {
-            await db.from('tareas_kanban').update({ estado: nuevoEstado }).eq('id', id);
+            if (esDocente) return showToast('Modo evaluador: no puedes mover tareas del equipo.', 'error');
+            const { error } = await db.from('tareas_kanban').update({ estado: nuevoEstado }).eq('id', id);
+            if (error) return showToast('Error moviendo tarea: ' + error.message, 'error');
             cargarTareasKanban();
         }
 
@@ -514,17 +797,30 @@
         }
 
         async function cargarTickets() {
-            const { data } = await db.from('tickets_soporte').select('*').order('id', { ascending: false });
+            let query = db.from('tickets_soporte').select('*').order('id', { ascending: false });
+            if (!esDocente) query = query.eq('usuario_correo', currentUser.correo);
+            const { data, error } = await query;
+
             const box = document.getElementById('ticketsList');
-            box.innerHTML = (data || []).map(tk => `
+            if (error) {
+                box.innerHTML = `<div class="text-rose-300">Error cargando tickets: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+
+            if (!data || !data.length) {
+                box.innerHTML = '<div class="text-slate-500">Sin tickets registrados.</div>';
+                return;
+            }
+
+            box.innerHTML = data.map(tk => `
                 <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
                     <div class="flex items-center justify-between font-code">
-                        <span class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-bold">${tk.nivel_soporte}</span>
-                        <span class="text-emerald-400">${tk.estado}</span>
+                        <span class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-bold">${escapeHtml(tk.nivel_soporte || 'N1')}</span>
+                        <span class="text-emerald-400">${escapeHtml(tk.estado || 'Abierto')}</span>
                     </div>
-                    <div class="font-bold text-white pt-1">${tk.asunto}</div>
-                    <div class="text-slate-400">${tk.descripcion}</div>
-                    <div class="text-[10px] font-code text-slate-500 pt-1">Reportado por: ${tk.usuario_correo}</div>
+                    <div class="font-bold text-white pt-1">${escapeHtml(tk.asunto || 'Sin asunto')}</div>
+                    <div class="text-slate-400">${escapeHtml(tk.descripcion || '')}</div>
+                    <div class="text-[10px] font-code text-slate-500 pt-1">Reportado por: ${escapeHtml(tk.usuario_correo || '—')}</div>
                 </div>
             `).join('');
         }
@@ -540,7 +836,7 @@
             const vals = vRes.data || [];
             const avgLat = vals.length ? Math.round(vals.reduce((a, b) => a + b.latencia_ms, 0) / vals.length) : 0;
             const passed = vals.filter(v => v.estado_validacion === 'PASSED').length;
-            const rate = vals.length ? ((passed / vals.length) * 100).toFixed(1) : '100.0';
+            const rate = vals.length ? ((passed / vals.length) * 100).toFixed(1) : '0.0';
 
             const tks = tRes.data || [];
             const avgResp = tks.length ? Math.round(tks.reduce((a, b) => a + (b.tiempo_respuesta_seg || 45), 0) / tks.length) : 0;
