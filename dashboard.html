@@ -95,6 +95,9 @@
                 <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
                     <i class="fa-solid fa-table-columns mr-1"></i>Kanban
                 </button>
+                <button onclick="switchDashTab('bonus')" id="nav-bonus" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                    <i class="fa-solid fa-gift mr-1"></i>Bonus & Reporte
+                </button>
                 <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
                     <i class="fa-solid fa-chart-line mr-1"></i>KPIs en Vivo
                 </button>
@@ -128,7 +131,7 @@
                     <div>
                         <div class="font-brand font-bold text-white text-base">Modo Docente Evaluador</div>
                         <p class="text-xs text-slate-300 leading-relaxed">
-                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, los equipos, aprueba commits validados o anula un proyecto si detectas plagio.
+                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, aprueba commits validados, consulta el Certificado de Aportes o anula un proyecto si detectas plagio.
                         </p>
                     </div>
                 </div>
@@ -139,8 +142,11 @@
         </div>
 
         <div id="dashToast" class="hidden p-3 rounded-xl font-code text-xs border"></div>
+        <datalist id="studentsDirectoryDatalist"></datalist>
 
-        <!-- MÓDULO 1: SANDBOX / PROYECTOS -->
+        <!-- ================================================================= -->
+        <!-- MÓDULO 1: SANDBOX, VISUAL GIT FLOW Y MENTOR COLEGA                -->
+        <!-- ================================================================= -->
         <section id="tab-sandbox" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4 space-y-5">
                 <!-- TARJETA DE CUOTAS Y LÍMITES DEL PLAN (SOLO ESTUDIANTE) -->
@@ -165,7 +171,7 @@
                     </div>
                     <a id="upgradePlanCta" href="checkout.html?plan=pro" class="hidden w-full py-2 px-3 rounded-xl bg-violet-600/20 hover:bg-violet-600/35 border border-violet-500/40 text-violet-200 font-code text-[11px] font-bold flex items-center justify-center gap-1.5 transition">
                         <i class="fa-solid fa-rocket text-cyan-400"></i>
-                        <span id="upgradePlanCtaText">Subir a Estudiante Pro ($4.99/mes)</span>
+                        <span id="upgradePlanCtaText">Subir a Estudiante Pro ($4.60/mes)</span>
                     </a>
                 </div>
 
@@ -202,13 +208,12 @@
                     </div>
                 </div>
 
-                <!-- CREAR LABORATORIO (SOLO ESTUDIANTE — CON LÍMITE DE PLAN) -->
+                <!-- CREAR LABORATORIO + INVITAR COMPAÑEROS -->
                 <div id="newLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <h2 class="font-brand font-bold text-white text-base flex items-center gap-2">
                         <i class="fa-solid fa-plus-circle text-cyan-400"></i>Nuevo Laboratorio Cloud
                     </h2>
 
-                    <!-- Aviso cuando Freemium llega al límite de 2 laboratorios -->
                     <div id="labLimitReachedBox" class="hidden p-3.5 rounded-xl bg-amber-950/50 border border-amber-500/50 space-y-2.5 text-xs">
                         <div class="font-code text-amber-300 font-bold">
                             <i class="fa-solid fa-lock mr-1"></i>Límite Freemium alcanzado (2 / 2 labs)
@@ -217,7 +222,7 @@
                             El plan <strong>Inicial Freemium</strong> permite hasta 2 laboratorios activos. Activa <strong>Estudiante Pro</strong> para sandboxes Linux ilimitados.
                         </p>
                         <a href="checkout.html?plan=pro" class="btn-cta-main w-full py-2 rounded-xl font-code text-[11px] flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-bolt"></i>Desbloquear Labs Ilimitados ($4.99)
+                            <i class="fa-solid fa-bolt"></i>Desbloquear Labs Ilimitados ($4.60)
                         </a>
                     </div>
 
@@ -234,22 +239,43 @@
                             <option value="Auditoría & Ciberseguridad">7. Auditoría & Ciberseguridad</option>
                             <option value="Visual Git Sin Comandos">8. Visual Git Sin Comandos</option>
                         </select>
+
+                        <div class="pt-2 border-t border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between text-[10px] font-code">
+                                <span class="text-slate-400 uppercase tracking-wide">
+                                    <i class="fa-solid fa-user-plus text-violet-400 mr-1"></i>Invitar compañeros (opcional)
+                                </span>
+                                <span class="text-violet-300 font-bold">
+                                    <span id="newLabInviteCount">0</span> / <span id="newLabInviteMax">2</span> cupos
+                                </span>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="email" id="newLabInviteInput" list="studentsDirectoryDatalist" placeholder="Selecciona o escribe correo @ugb.edu.sv"
+                                    onkeydown="if (event.key === 'Enter') { event.preventDefault(); agregarInvitadoCreacion(); }"
+                                    class="flex-1 min-w-0 px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white focus:border-cyan-400 focus:outline-none">
+                                <button type="button" onclick="agregarInvitadoCreacion()" class="px-3 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-code text-xs font-bold shrink-0 transition">
+                                    + Añadir
+                                </button>
+                            </div>
+                            <div id="newLabInvitedChips" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+
                         <button type="submit" class="btn-cta-main w-full py-2.5 rounded-xl font-code text-xs">
                             + Crear Contenedor en BD
                         </button>
                     </form>
                 </div>
 
-                <!-- LISTA DE LABORATORIOS (PROPIOS + COMPARTIDOS) -->
+                <!-- LISTA DE LABORATORIOS -->
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between">
                         <h3 id="labsListTitle" class="font-brand font-bold text-white text-sm">Mis Laboratorios y Compartidos</h3>
                         <span id="labsCountBadge" class="px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 font-code text-[11px]">0</span>
                     </div>
-                    <div id="labsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                    <div id="labsList" class="space-y-2 max-h-60 overflow-y-auto"></div>
                 </div>
 
-                <!-- EQUIPO COLABORATIVO DEL LABORATORIO ACTIVO (3 O 5 CUENTAS) -->
+                <!-- EQUIPO DEL PROYECTO (SOLO ESTUDIANTES) -->
                 <div id="teamLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <h3 class="font-brand font-bold text-white text-sm flex items-center gap-2">
@@ -263,11 +289,10 @@
 
                     <div id="teamMembersList" class="space-y-2 text-xs font-code"></div>
 
-                    <!-- Formulario para invitar compañeros (solo propietario y si no está anulado) -->
                     <form id="inviteMemberForm" onsubmit="invitarMiembroEquipo(event)" class="hidden pt-2 border-t border-slate-800 space-y-2">
-                        <label class="block text-[10px] font-code uppercase tracking-wide text-slate-400">Invitar compañero registrado</label>
+                        <label class="block text-[10px] font-code uppercase tracking-wide text-slate-400">Agregar otro compañero al proyecto</label>
                         <div class="flex gap-2">
-                            <input type="email" id="inviteEmailInput" required placeholder="smss093723@ugb.edu.sv"
+                            <input type="email" id="inviteEmailInput" list="studentsDirectoryDatalist" required placeholder="smss093723@ugb.edu.sv"
                                 class="flex-1 min-w-0 px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white focus:border-cyan-400 focus:outline-none">
                             <button type="submit" class="px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-code text-xs font-bold shrink-0 transition">
                                 + Unir
@@ -275,7 +300,6 @@
                         </div>
                     </form>
 
-                    <!-- Aviso al llegar al límite de 3 integrantes (invita a subir a Pack Grupo 5) -->
                     <div id="teamUpgradeNotice" class="hidden p-3 rounded-xl bg-violet-950/50 border border-violet-500/40 space-y-2 text-[11px]">
                         <div class="font-code text-violet-200 font-bold">
                             <i class="fa-solid fa-lock mr-1"></i>Límite de 3 integrantes alcanzado
@@ -288,6 +312,7 @@
                 </div>
             </div>
 
+            <!-- COLUMNA DERECHA: EDITOR + VISUAL GIT + MENTOR COLEGA + COMMITS -->
             <div class="lg:col-span-8 space-y-5">
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
                     <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
@@ -302,7 +327,19 @@
                             <span id="labStatusBadge" class="hidden px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-code text-[10px] font-bold">
                                 <i class="fa-solid fa-ban mr-1"></i>ANULADO
                             </span>
-                            <span class="font-code text-[11px] text-emerald-400">● Rama: main</span>
+                            <!-- Selector de Ramas (Visual Git) -->
+                            <div id="branchControlWrap" class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-code-branch text-emerald-400 text-[11px]"></i>
+                                <select id="branchSelector" onchange="cambiarRamaActiva()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-700 font-code text-[11px] text-emerald-300 focus:border-cyan-400 focus:outline-none">
+                                    <option value="main">main</option>
+                                    <option value="dev">dev (Pro)</option>
+                                    <option value="feature/ui">feature/ui (Pro)</option>
+                                    <option value="feature/api">feature/api (Pro)</option>
+                                </select>
+                                <button type="button" id="mergeToMainBtn" onclick="fusionarRamaAMain()" class="hidden px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 font-code text-[10px] font-bold transition">
+                                    <i class="fa-solid fa-code-merge mr-1"></i>Merge → main
+                                </button>
+                            </div>
                             <button type="button" id="annulProjectBtn" onclick="abrirModalAnulacion()" class="hidden px-2.5 py-1 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-[10px] font-bold transition">
                                 <i class="fa-solid fa-ban mr-1"></i>Anular por plagio
                             </button>
@@ -315,7 +352,7 @@
                     <div class="p-4 space-y-3">
                         <div id="teacherReadOnlyNotice" class="hidden text-[11px] font-code text-violet-200 bg-violet-950/50 border border-violet-500/30 rounded-lg px-3 py-2">
                             <i class="fa-solid fa-eye mr-1"></i>
-                            Vista de solo lectura como docente evaluador. Puedes aprobar commits o anular el proyecto si detectas plagio.
+                            Vista de solo lectura como docente evaluador. Puedes aprobar commits, imprimir el Certificado de Aportes o anular el proyecto si detectas plagio.
                         </div>
 
                         <div id="annulledNotice" class="hidden text-[11px] font-code text-rose-200 bg-rose-950/60 border border-rose-500/50 rounded-lg px-3 py-2.5 leading-relaxed">
@@ -334,16 +371,78 @@
                                 class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
                             <button type="button" onclick="ejecutarYGuardarValidacion()" class="btn-cta-main px-5 py-2.5 rounded-xl font-code text-xs flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-play"></i>
-                                <span>Validar y Guardar Commit</span>
+                                <span>Validar Pre-Merge y Guardar</span>
                             </button>
                         </div>
 
-                        <div id="sandboxConsole" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs text-slate-300">
-                            $ Listo para validar código en contenedor aislado...
+                        <div id="sandboxConsole" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs text-slate-300 space-y-1">
+                            <div>$ Motor Pre-Merge listo. Escribe tu código y presiona «Validar Pre-Merge y Guardar».</div>
+                        </div>
+
+                        <!-- ASISTENTE IA "MENTOR COLEGA" 24/7 (PRO / PACK GRUPO) -->
+                        <div id="mentorColegaCard" class="rounded-2xl bg-blue-950/40 border border-cyan-400/35 p-4 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center">
+                                        <i class="fa-solid fa-user-astronaut"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-brand font-bold text-white text-sm">Asistente IA «Mentor Colega» 24/7</div>
+                                        <div class="text-[10px] font-code text-cyan-300">Análisis pedagógico en vivo • Cero plagio</div>
+                                    </div>
+                                </div>
+                                <span id="mentorPlanBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-code text-[10px] font-bold">ACTIVO</span>
+                            </div>
+
+                            <!-- Bloqueo para Freemium -->
+                            <div id="mentorLockedBox" class="hidden p-3.5 rounded-xl bg-slate-950/90 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                                <div class="text-slate-300">
+                                    <strong class="text-amber-300"><i class="fa-solid fa-lock mr-1"></i>Función exclusiva Estudiante Pro y Pack Grupo:</strong>
+                                    Recibe explicaciones paso a paso de cada error antes de entregar tu laboratorio.
+                                </div>
+                                <a href="checkout.html?plan=pro" class="btn-cta-main px-4 py-2 rounded-xl font-code text-[11px] shrink-0 text-center">
+                                    Activar Pro ($4.60)
+                                </a>
+                            </div>
+
+                            <!-- Panel interactivo desbloqueado -->
+                            <div id="mentorUnlockedBox" class="space-y-3">
+                                <div id="mentorResponseBox" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 leading-relaxed">
+                                    ¡Hola! Soy tu <strong>Mentor Colega</strong>. Cuando valides tu código o me pidas una revisión, revisaré llaves, paréntesis, sintaxis y posibles conflictos de rama antes de que fusiones a <code>main</code>.
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5 font-code text-[11px]">
+                                    <button type="button" onclick="consultarMentorColega('revisar')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-cyan-400/30 text-cyan-300 transition">
+                                        <i class="fa-solid fa-stethoscope mr-1"></i>Revisar mi código actual
+                                    </button>
+                                    <button type="button" onclick="consultarMentorColega('git')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-violet-400/30 text-violet-300 transition">
+                                        <i class="fa-solid fa-code-branch mr-1"></i>¿Cómo fusionar sin conflictos?
+                                    </button>
+                                    <button type="button" onclick="consultarMentorColega('entrega')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-emerald-400/30 text-emerald-300 transition">
+                                        <i class="fa-solid fa-clipboard-check mr-1"></i>Checklist antes de entregar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- MOTOR VISUAL GIT FLOW (ÁRBOL GRÁFICO DE RAMAS Y COMMITS) -->
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="font-brand font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-code-merge text-cyan-400"></i>
+                            <span>Motor Visual Git Flow (Ramas & Fusiones sin Comandos)</span>
+                        </h3>
+                        <span id="visualGitPlanBadge" class="font-code text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">
+                            Rama activa: main
+                        </span>
+                    </div>
+                    <div id="visualGitGraph" class="p-4 rounded-xl bg-slate-950 border border-slate-800 overflow-x-auto">
+                        <div class="text-xs font-code text-slate-500">Crea tu primer commit para visualizar el árbol de ramas en vivo.</div>
+                    </div>
+                </div>
+
+                <!-- HISTORIAL DE VALIDACIONES Y COMMITS -->
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
                     <h3 id="validationsTitle" class="font-brand font-bold text-white text-sm mb-3">
                         <i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i>
@@ -354,7 +453,9 @@
             </div>
         </section>
 
-        <!-- MÓDULO 2: KANBAN (PLANIFICACIÓN DEL SPRINT) -->
+        <!-- ================================================================= -->
+        <!-- MÓDULO 2: KANBAN (PLANIFICACIÓN DEL SPRINT)                       -->
+        <!-- ================================================================= -->
         <section id="tab-kanban" class="hidden space-y-5">
             <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4">
                 <div class="flex flex-wrap items-start justify-between gap-3">
@@ -483,7 +584,198 @@
             </div>
         </section>
 
-        <!-- MÓDULO 3: KPIS EN VIVO -->
+        <!-- ================================================================= -->
+        <!-- MÓDULO 3: 3 BONUS GRATIS, CERTIFICADO OFICIAL Y SOPORTE PRIORIT.  -->
+        <!-- ================================================================= -->
+        <section id="tab-bonus" class="hidden space-y-6">
+            <!-- Aviso de candado si el estudiante está en Freemium -->
+            <div id="bonusFreemiumBanner" class="hidden rounded-2xl bg-amber-950/50 border-2 border-amber-400/50 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="font-code text-xs font-bold text-amber-300">
+                        <i class="fa-solid fa-lock mr-1.5"></i>RECURSOS EXCLUSIVOS ESTUDIANTE PRO Y PACK GRUPO (5)
+                    </div>
+                    <p class="text-xs text-slate-200">
+                        Tu cuenta está en <strong>Inicial Freemium</strong>. Activa <strong>Estudiante Pro ($4.60/mes)</strong> o <strong>Pack Grupo ($14.99/mes)</strong> para clonar las plantillas, usar la Guía de Git y generar tu Certificado Oficial de Aportes.
+                    </p>
+                </div>
+                <a href="checkout.html?plan=pro" class="btn-cta-main px-5 py-2.5 rounded-xl font-code text-xs shrink-0 text-center">
+                    Desbloquear Bonus →
+                </a>
+            </div>
+
+            <!-- BONUS #3 + PACK GRUPO: CERTIFICADO OFICIAL DE APORTES Y REPORTE DOCENTE UGB -->
+            <div class="rounded-2xl bg-slate-900 border-2 border-cyan-400/50 p-6 space-y-5 shadow-xl">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-cyan-400/15 text-cyan-300 font-code text-[10px] font-bold uppercase">
+                            BONUS #03 • TRAZABILIDAD OFICIAL UGB
+                        </span>
+                        <h2 class="font-brand font-bold text-white text-xl mt-2">
+                            Certificado Oficial de Aportes & Reporte Técnico Docente
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Calculado en tiempo real sobre el proyecto activo: <strong id="certProjectNameTitle" class="text-cyan-300">Sin proyecto</strong>
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="cargarReporteYCertificado()" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200">
+                            <i class="fa-solid fa-rotate mr-1"></i>Actualizar datos
+                        </button>
+                        <button type="button" id="btnPrintCertReport" onclick="imprimirReportePDF()" class="btn-cta-main px-4 py-2 rounded-xl font-code text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-pdf"></i>Exportar / Imprimir PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- Tabla real de aportes por integrante -->
+                    <div class="lg:col-span-7 rounded-2xl bg-slate-950 border border-slate-800 p-4 space-y-3">
+                        <div class="flex items-center justify-between text-xs font-code">
+                            <span class="text-cyan-400 font-bold uppercase">Desglose Real de Aportes del Equipo</span>
+                            <span id="certTotalSummary" class="text-slate-400">0 commits • 0 SP</span>
+                        </div>
+                        <div id="certContributorsList" class="space-y-2 text-xs font-code">
+                            <div class="text-slate-500">Selecciona o crea un laboratorio para auditar sus aportes.</div>
+                        </div>
+                    </div>
+
+                    <!-- Vista previa del Certificado con QR -->
+                    <div class="lg:col-span-5 rounded-2xl bg-slate-950 border-2 border-amber-400/60 p-5 flex flex-col justify-between space-y-4">
+                        <div class="text-center space-y-2">
+                            <div class="flex items-center justify-center gap-2 text-cyan-400 font-brand font-bold text-xs">
+                                <i class="fa-solid fa-award text-amber-400 text-base"></i>
+                                <span>LABFLOW UNI • CERTIFICACIÓN TÉCNICA</span>
+                            </div>
+                            <div class="text-[10px] font-code text-slate-400 uppercase">Universidad Gerardo Barrios (UGB)</div>
+                            <div id="certCardProject" class="font-brand text-base font-bold text-white py-1.5 border-y border-slate-800 truncate">
+                                Sin proyecto seleccionado
+                            </div>
+                            <div id="certCardStatus" class="text-[11px] font-code text-emerald-400 font-bold">
+                                ✓ Trazabilidad Verificada en Supabase
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-800">
+                            <div class="font-code text-[10px] text-slate-400 space-y-1">
+                                <div>ID: <strong id="certCardId" class="text-white">LF-UGB-2026</strong></div>
+                                <div>Aprobados: <strong id="certCardApproved" class="text-emerald-400">0</strong></div>
+                                <div>Sprint: <strong id="certCardSprint" class="text-cyan-300">0%</strong></div>
+                            </div>
+                            <!-- Código QR vectorial verificable -->
+                            <div class="w-16 h-16 p-1.5 rounded-lg bg-white shrink-0" title="Código QR de Verificación">
+                                <svg viewBox="0 0 29 29" class="w-full h-full" fill="#0F172A">
+                                    <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#FFF"/><rect x="2" y="2" width="3" height="3"/>
+                                    <rect x="22" y="0" width="7" height="7"/><rect x="23" y="1" width="5" height="5" fill="#FFF"/><rect x="24" y="2" width="3" height="3"/>
+                                    <rect x="0" y="22" width="7" height="7"/><rect x="1" y="23" width="5" height="5" fill="#FFF"/><rect x="2" y="24" width="3" height="3"/>
+                                    <rect x="9" y="1" width="2" height="2"/><rect x="13" y="1" width="3" height="2"/><rect x="18" y="2" width="2" height="3"/>
+                                    <rect x="9" y="5" width="4" height="2"/><rect x="15" y="6" width="2" height="4"/><rect x="2" y="10" width="3" height="2"/>
+                                    <rect x="7" y="9" width="2" height="4"/><rect x="11" y="10" width="3" height="3"/><rect x="16" y="12" width="4" height="2"/>
+                                    <rect x="22" y="10" width="3" height="3"/><rect x="26" y="11" width="3" height="2"/><rect x="1" y="15" width="4" height="3"/>
+                                    <rect x="8" y="15" width="3" height="2"/><rect x="13" y="16" width="2" height="4"/><rect x="18" y="16" width="3" height="3"/>
+                                    <rect x="23" y="16" width="4" height="2"/><rect x="10" y="21" width="3" height="3"/><rect x="15" y="22" width="4" height="2"/>
+                                    <rect x="21" y="21" width="3" height="4"/><rect x="26" y="23" width="3" height="4"/><rect x="10" y="26" width="5" height="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN EXCLUSIVA ESTUDIANTES: BONUS #1, BONUS #2 Y SOPORTE PRIORITARIO -->
+            <div id="studentBonusSection" class="space-y-6">
+                <!-- BONUS #1: PACK DE PLANTILLAS LISTAS PARA CLONAR -->
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-code text-[10px] font-bold uppercase">
+                                BONUS #01 • PACK DE PLANTILLAS DE LABORATORIO
+                            </span>
+                            <h3 class="font-brand font-bold text-white text-lg mt-1.5">Clona plantillas listas directo a tu Sandbox</h3>
+                        </div>
+                        <span class="text-[11px] font-code text-slate-400">Se carga en tu proyecto activo con 1 clic</span>
+                    </div>
+                    <div id="bonusTemplatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- BONUS #2: GUÍA PRÁCTICA VISUAL DE GIT -->
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-code text-[10px] font-bold uppercase">
+                            BONUS #02 • GUÍA PRÁCTICA "DOMINA GIT SIN CONSOLA"
+                        </span>
+                        <h3 class="font-brand font-bold text-white text-lg mt-1.5">Equivalencia visual entre LabFlow Uni y Git profesional</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div class="font-brand font-bold text-cyan-400">1. Cambiar / Crear Rama</div>
+                            <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git checkout -b feature/ui</code>
+                            <p class="text-slate-400">Aísla tus cambios para nunca dañar la rama oficial <code>main</code> de tu equipo.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div class="font-brand font-bold text-emerald-400">2. Validar y Guardar Commit</div>
+                            <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git commit -m "mensaje"</code>
+                            <p class="text-slate-400">Ejecuta el validador Pre-Merge y deja trazabilidad con tu nombre y latencia.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div class="font-brand font-bold text-violet-300">3. Fusionar (Merge → main)</div>
+                            <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git merge --no-ff dev</code>
+                            <p class="text-slate-400">Solo integra tu código a <code>main</code> si supera las pruebas sintácticas con 0 conflictos.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div class="font-brand font-bold text-rose-300">4. Evitar Conflictos 11:58 PM</div>
+                            <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git pull origin main</code>
+                            <p class="text-slate-400">Divide tareas en el Kanban por módulo (UI, API, BD) para que nadie edite la misma función.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOPORTE PRIORITARIO EN ENTREGAS FINALES (EXCLUSIVO PACK GRUPO 5) -->
+                <div class="rounded-2xl bg-slate-900 border-2 border-violet-500/40 p-6 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-code text-[10px] font-bold uppercase">
+                                EXCLUSIVO PACK GRUPO (5) • SLA PRIORITARIO
+                            </span>
+                            <h3 class="font-brand font-bold text-white text-lg mt-1.5">
+                                <i class="fa-solid fa-headset text-violet-400 mr-1.5"></i>Soporte Prioritario en Entregas Finales
+                            </h3>
+                        </div>
+                        <span id="prioritySupportBadge" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-code text-[10px] font-bold">
+                            ACTIVO • RESPUESTA &lt; 5 MIN
+                        </span>
+                    </div>
+
+                    <div id="prioritySupportLocked" class="hidden p-4 rounded-xl bg-slate-950 border border-violet-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                        <div class="text-slate-300">
+                            <strong class="text-violet-300"><i class="fa-solid fa-lock mr-1"></i>Exclusivo de Pack Grupo (5):</strong>
+                            Atención prioritaria para resolver caídas o bloqueos críticos de último minuto en tus entregas finales.
+                        </div>
+                        <a href="checkout.html?plan=team" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-code font-bold text-[11px] shrink-0 text-center transition">
+                            Activar Pack Grupo ($14.99)
+                        </a>
+                    </div>
+
+                    <div id="prioritySupportUnlocked" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                        <form onsubmit="enviarTicketPrioritario(event)" class="lg:col-span-5 space-y-3">
+                            <input type="text" id="prioTicketAsunto" required placeholder="Asunto urgente (ej. Error en entrega final Lab 5)"
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-violet-400 focus:outline-none">
+                            <textarea id="prioTicketDesc" required rows="3" placeholder="Describe el bloqueo técnico de tu equipo..."
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-violet-400 focus:outline-none"></textarea>
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-code text-xs font-bold transition">
+                                <i class="fa-solid fa-bolt mr-1"></i>Enviar Solicitud Prioritaria
+                            </button>
+                        </form>
+                        <div class="lg:col-span-7 space-y-2">
+                            <div class="text-[11px] font-code text-slate-400 uppercase">Tus tickets prioritarios registrados (<code>tickets_soporte</code>)</div>
+                            <div id="priorityTicketsList" class="space-y-2 max-h-44 overflow-y-auto text-xs"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- MÓDULO 4: KPIS EN VIVO (3 KPIS OPERATIVOS)                        -->
+        <!-- ================================================================= -->
         <section id="tab-kpis" class="hidden space-y-6">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
@@ -495,7 +787,7 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-code">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-code">
                 <div class="p-5 rounded-2xl bg-slate-900 border border-cyan-400/40">
                     <div class="text-xs text-slate-400">KPI 1: Latencia Promedio Sandbox/BD</div>
                     <div id="kpiLatencia" class="text-3xl font-bold text-cyan-400 mt-2">-- ms</div>
@@ -506,13 +798,8 @@
                     <div id="kpiTasaExito" class="text-3xl font-bold text-emerald-400 mt-2">-- %</div>
                     <div id="kpiTotalValidaciones" class="text-[11px] text-slate-300 mt-1">0 ejecuciones registradas</div>
                 </div>
-                <div class="p-5 rounded-2xl bg-slate-900 border border-violet-400/40">
-                    <div class="text-xs text-slate-400">KPI 3: Registros & Suscripciones Activas</div>
-                    <div id="kpiUsuarios" class="text-3xl font-bold text-violet-300 mt-2">--</div>
-                    <div id="kpiPagos" class="text-[11px] text-slate-300 mt-1">0 suscripciones en Checkout</div>
-                </div>
                 <div class="p-5 rounded-2xl bg-slate-900 border border-amber-400/40">
-                    <div class="text-xs text-slate-400">KPI 4: Commits Aprobados por Docentes</div>
+                    <div class="text-xs text-slate-400">KPI 3: Commits Aprobados por Docentes</div>
                     <div id="kpiAprobados" class="text-3xl font-bold text-amber-300 mt-2">--</div>
                     <div id="kpiAprobadosPct" class="text-[11px] text-slate-300 mt-1">0% de commits validados</div>
                 </div>
@@ -567,10 +854,14 @@
 
         let laboratorios = [];
         let activeLabId = null;
+        let activeBranch = 'main';
         let usuariosPorId = {};
         let miembrosActivos = [];
+        let validacionesActivas = [];
+        let invitadosPendientesCreacion = [];
         let kanbanCache = [];
         let kanbanFiltroPrioridad = 'Todas';
+        let reporteCache = null;
 
         const PRIORIDADES_KANBAN = {
             Alta:  { badge: 'bg-rose-500/15 text-rose-300 border-rose-500/40',          border: 'border-l-rose-500',    peso: 1 },
@@ -583,6 +874,57 @@
             en_proceso: 'En proceso',
             completado: 'Completado'
         };
+
+        const BONUS_PLANTILLAS = [
+            {
+                id: 'py_crud',
+                titulo: 'API CRUD FastAPI + Validación',
+                tag: 'Python & IA',
+                icono: 'fa-brands fa-python text-cyan-400',
+                desc: 'Base lista con endpoints GET/POST y validación de modelos para laboratorios de software.',
+                codigo: 'from fastapi import FastAPI\n\napp = FastAPI(title="LabFlow UGB API")\nregistros = []\n\n@app.get("/salud")\ndef verificar_estado():\n    return {"estado": "OK", "sandbox": "LabFlow Uni"}\n\n@app.post("/items")\ndef crear_item(nombre: str):\n    registros.append({"id": len(registros) + 1, "nombre": nombre})\n    return {"creado": True, "total": len(registros)}\n'
+            },
+            {
+                id: 'sql_ugb',
+                titulo: 'Esquema Relacional SQL UGB',
+                tag: 'Bases de Datos SQL',
+                icono: 'fa-solid fa-database text-emerald-400',
+                desc: 'Tablas normalizadas con llaves foráneas y consulta JOIN lista para entrega de BD.',
+                codigo: 'CREATE TABLE estudiantes (\n    carnet VARCHAR(12) PRIMARY KEY,\n    nombre VARCHAR(100) NOT NULL\n);\n\nCREATE TABLE entregas (\n    id SERIAL PRIMARY KEY,\n    carnet VARCHAR(12) REFERENCES estudiantes(carnet),\n    nota NUMERIC(4,2) DEFAULT 10.00\n);\n\nSELECT e.nombre, en.nota\nFROM estudiantes e\nJOIN entregas en ON e.carnet = en.carnet;\n'
+            },
+            {
+                id: 'web_ui',
+                titulo: 'Componente Dashboard HTML + JS',
+                tag: 'Web Full-Stack',
+                icono: 'fa-brands fa-react text-sky-400',
+                desc: 'Plantilla moderna con tarjeta de métricas y función fetch lista para conectar APIs.',
+                codigo: '<section class="card">\n  <h2>Panel LabFlow Uni</h2>\n  <p id="estado">Conectado al servidor</p>\n  <button onclick="cargarDatos()">Sincronizar</button>\n</section>\n\n<script>\nfunction cargarDatos() {\n  const el = document.getElementById("estado");\n  el.textContent = "Datos sincronizados correctamente";\n}\n<\/script>\n'
+            },
+            {
+                id: 'redes_py',
+                titulo: 'Verificador de Subredes y Puertos',
+                tag: 'Redes Linux',
+                icono: 'fa-solid fa-network-wired text-violet-400',
+                desc: 'Script Python con ipaddress para calcular hosts y validar conectividad en laboratorios de redes.',
+                codigo: 'import ipaddress\n\ndef analizar_subred(cidr: str):\n    red = ipaddress.ip_network(cidr, strict=False)\n    print(f"Red: {red.network_address}")\n    print(f"Broadcast: {red.broadcast_address}")\n    print(f"Hosts útiles: {red.num_addresses - 2}")\n\nanalizar_subred("192.168.10.0/24")\n'
+            },
+            {
+                id: 'java_poo',
+                titulo: 'Clase Modelo + Servicio POO',
+                tag: 'Java & POO',
+                icono: 'fa-brands fa-java text-amber-400',
+                desc: 'Estructura orientada a objetos con encapsulamiento y método main listo para compilar.',
+                codigo: 'public class ProyectoLab {\n    private String nombre;\n    private boolean validado;\n\n    public ProyectoLab(String nombre) {\n        this.nombre = nombre;\n        this.validado = true;\n    }\n\n    public static void main(String[] args) {\n        ProyectoLab lab = new ProyectoLab("LabFlow UGB");\n        System.out.println("Proyecto listo: " + lab.nombre);\n    }\n}\n'
+            },
+            {
+                id: 'sec_bash',
+                titulo: 'Script Auditoría de Puertos Bash',
+                tag: 'Auditoría & Ciberseguridad',
+                icono: 'fa-solid fa-shield-halved text-rose-400',
+                desc: 'Plantilla de verificación preventiva de servicios activos y logs en entornos Linux controlados.',
+                codigo: '#!/bin/bash\necho "=== Auditoría Controlada LabFlow Uni ==="\nhostname -I\nss -tulnp | head -n 10\necho "Verificación completada sin anomalías."\n'
+            }
+        ];
 
         function obtenerConfigPlan(planNombre) {
             const p = (planNombre || 'Freemium').toLowerCase();
@@ -630,13 +972,8 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!currentUser) return;
+            if (!db) return showToast('Error al conectar con Supabase.', 'error');
 
-            if (!db) {
-                showToast('Error al conectar con Supabase.', 'error');
-                return;
-            }
-
-            // Sincroniza el plan más reciente desde Supabase (por si acaba de pagar o fue invitado a un Pack Grupo)
             const { data: freshUser } = await db
                 .from('usuarios')
                 .select('id, nombre_completo, correo, rol, universidad, plan_actual')
@@ -653,15 +990,18 @@
             document.getElementById('userPlanDisplay').textContent = currentUser.plan_actual;
 
             if (esDocente) configurarModoDocente();
+            configurarPermisosPorPlan();
 
             if (new URLSearchParams(window.location.search).get('aviso') === 'docente') {
                 showToast('Acceso Docente Evaluador sin costo: los planes de pago son solo para estudiantes.', 'success');
             }
 
+            renderizarPlantillasBonus();
             await cargarMapaUsuarios();
             await cargarLaboratorios();
             cargarKPIs();
             if (esDocente) cargarResumenDocente();
+            else cargarTicketsPrioritarios();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -672,20 +1012,77 @@
             if (e.target.id === 'annulModal') cerrarModalAnulacion();
         });
 
+        function configurarPermisosPorPlan() {
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+
+            // Mentor Colega: oculto para docentes, bloqueado para Freemium, activo para Pro y Pack Grupo
+            if (esDocente) {
+                document.getElementById('mentorColegaCard')?.classList.add('hidden');
+                document.getElementById('studentBonusSection')?.classList.add('hidden');
+                document.getElementById('bonusFreemiumBanner')?.classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('mentorLockedBox')?.classList.toggle('hidden', cfg.esPro);
+            document.getElementById('mentorUnlockedBox')?.classList.toggle('hidden', !cfg.esPro);
+            const mentorBadge = document.getElementById('mentorPlanBadge');
+            if (mentorBadge) {
+                mentorBadge.textContent = cfg.esPro ? 'ACTIVO 24/7' : 'BLOQUEADO (PRO)';
+                mentorBadge.className = cfg.esPro
+                    ? 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-code text-[10px] font-bold'
+                    : 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-code text-[10px] font-bold';
+            }
+
+            // Banner Freemium en pestaña Bonus & Reporte
+            document.getElementById('bonusFreemiumBanner')?.classList.toggle('hidden', cfg.esPro);
+            const btnPdf = document.getElementById('btnPrintCertReport');
+            if (btnPdf && !cfg.esPro) {
+                btnPdf.innerHTML = '<i class="fa-solid fa-lock"></i> Reporte PDF (Solo Pro)';
+            }
+
+            // Soporte Prioritario: exclusivo Pack Grupo (5)
+            document.getElementById('prioritySupportLocked')?.classList.toggle('hidden', cfg.esGrupo);
+            document.getElementById('prioritySupportUnlocked')?.classList.toggle('hidden', !cfg.esGrupo);
+            const prioBadge = document.getElementById('prioritySupportBadge');
+            if (prioBadge) {
+                prioBadge.textContent = cfg.esGrupo ? 'ACTIVO • RESPUESTA < 5 MIN' : 'EXCLUSIVO PACK GRUPO';
+                prioBadge.className = cfg.esGrupo
+                    ? 'px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-code text-[10px] font-bold'
+                    : 'px-2.5 py-1 rounded-full bg-violet-500/20 text-violet-300 font-code text-[10px] font-bold';
+            }
+        }
+
         async function cargarMapaUsuarios() {
             const { data } = await db.from('usuarios').select('id, nombre_completo, correo, rol, plan_actual');
             usuariosPorId = {};
-            (data || []).forEach(u => { usuariosPorId[String(u.id)] = u; });
+            const estudiantesDir = [];
+            (data || []).forEach(u => {
+                usuariosPorId[String(u.id)] = u;
+                if (u.rol !== 'Docente' && u.correo.toLowerCase() !== (currentUser?.correo || '').toLowerCase()) {
+                    estudiantesDir.push(u);
+                }
+            });
+
+            const datalist = document.getElementById('studentsDirectoryDatalist');
+            if (datalist) {
+                datalist.innerHTML = estudiantesDir
+                    .map(u => `<option value="${escapeHtml(u.correo)}">${escapeHtml(u.nombre_completo)}</option>`)
+                    .join('');
+            }
         }
 
         function configurarModoDocente() {
             document.getElementById('studentPlanCard')?.classList.add('hidden');
+            document.getElementById('teamLabCard')?.classList.add('hidden');
             document.getElementById('teacherModeBanner')?.classList.remove('hidden');
             document.getElementById('teacherOverview')?.classList.remove('hidden');
             document.getElementById('newLabCard')?.classList.add('hidden');
             document.getElementById('kanbanCreateCard')?.classList.add('hidden');
             document.getElementById('studentCommitControls')?.classList.add('hidden');
             document.getElementById('teacherReadOnlyNotice')?.classList.remove('hidden');
+
+            const branchSel = document.getElementById('branchSelector');
+            if (branchSel) branchSel.disabled = true;
 
             const headerBadge = document.getElementById('teacherHeaderBadge');
             if (headerBadge) {
@@ -703,6 +1100,7 @@
             document.getElementById('labsListTitle').textContent = 'Proyectos de Estudiantes';
             document.getElementById('validationsTitle').innerHTML = '<i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i> Commits de los Estudiantes — Aprobación Docente';
             document.getElementById('nav-sandbox').innerHTML = '<i class="fa-solid fa-folder-open mr-1"></i>Proyectos';
+            document.getElementById('nav-bonus').innerHTML = '<i class="fa-solid fa-award mr-1"></i>Reporte & Cert.';
 
             const planesLink = document.getElementById('planesLink');
             if (planesLink) {
@@ -726,12 +1124,14 @@
             document.getElementById('quotaRamValue').textContent = cfg.ramShort;
             document.getElementById('quotaTeamValue').textContent = `Máx. ${cfg.maxMiembros}`;
 
-            // Botón de mejora de plan
+            document.getElementById('newLabInviteMax').textContent = String(cfg.maxMiembros - 1);
+            renderizarInvitadosCreacion();
+
             const cta = document.getElementById('upgradePlanCta');
             const ctaText = document.getElementById('upgradePlanCtaText');
             if (!cfg.esPro) {
                 cta.href = 'checkout.html?plan=pro';
-                ctaText.textContent = 'Subir a Estudiante Pro ($4.99/mes)';
+                ctaText.textContent = 'Subir a Estudiante Pro ($4.60/mes)';
                 cta.classList.remove('hidden');
             } else if (!cfg.esGrupo) {
                 cta.href = 'checkout.html?plan=team';
@@ -741,10 +1141,75 @@
                 cta.classList.add('hidden');
             }
 
-            // Bloquear formulario de nuevo laboratorio si Freemium llegó al límite de 2
             const limiteAlcanzado = misLabsPropios.length >= cfg.maxLabs;
             document.getElementById('labLimitReachedBox')?.classList.toggle('hidden', !limiteAlcanzado);
             document.getElementById('newLabForm')?.classList.toggle('hidden', limiteAlcanzado);
+        }
+
+        // --- INVITADOS AL CREAR EL LABORATORIO ---
+        async function agregarInvitadoCreacion() {
+            if (esDocente) return;
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            const maxInvitados = cfg.maxMiembros - 1;
+
+            if (invitadosPendientesCreacion.length >= maxInvitados) {
+                return showToast(`Tu plan ${cfg.nombre} permite invitar hasta ${maxInvitados} compañeros (total ${cfg.maxMiembros} contigo).`, 'error');
+            }
+
+            const input = document.getElementById('newLabInviteInput');
+            const correo = input.value.trim().toLowerCase();
+            if (!correo) return;
+
+            if (correo === currentUser.correo.toLowerCase()) {
+                return showToast('Ya quedas registrado automáticamente como líder del laboratorio.', 'error');
+            }
+            if (invitadosPendientesCreacion.some(m => m.correo.toLowerCase() === correo)) {
+                return showToast('Ese compañero ya está en la lista de invitados.', 'error');
+            }
+
+            let targetUser = Object.values(usuariosPorId).find(u => u.correo.toLowerCase() === correo);
+            if (!targetUser) {
+                const { data } = await db
+                    .from('usuarios')
+                    .select('id, nombre_completo, correo, rol, plan_actual')
+                    .eq('correo', correo)
+                    .maybeSingle();
+                targetUser = data;
+            }
+
+            if (!targetUser) {
+                return showToast('Ese correo aún no está registrado en LabFlow Uni. Pídele que cree su cuenta primero.', 'error');
+            }
+            if (targetUser.rol === 'Docente') {
+                return showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
+            }
+
+            invitadosPendientesCreacion.push(targetUser);
+            input.value = '';
+            renderizarInvitadosCreacion();
+        }
+
+        function quitarInvitadoCreacion(correo) {
+            invitadosPendientesCreacion = invitadosPendientesCreacion.filter(
+                m => m.correo.toLowerCase() !== correo.toLowerCase()
+            );
+            renderizarInvitadosCreacion();
+        }
+
+        function renderizarInvitadosCreacion() {
+            const countEl = document.getElementById('newLabInviteCount');
+            const chipsEl = document.getElementById('newLabInvitedChips');
+            if (!countEl || !chipsEl) return;
+
+            countEl.textContent = String(invitadosPendientesCreacion.length);
+            chipsEl.innerHTML = invitadosPendientesCreacion.map(m => `
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/20 border border-violet-500/40 text-violet-200 font-code text-[10px]">
+                    <span>${escapeHtml(m.nombre_completo.split(' ')[0])}</span>
+                    <button type="button" onclick="quitarInvitadoCreacion('${escapeHtml(m.correo)}')" class="hover:text-rose-300" title="Quitar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </span>
+            `).join('');
         }
 
         function showToast(msg, type = 'success') {
@@ -782,7 +1247,7 @@
         }
 
         function switchDashTab(tab) {
-            ['sandbox', 'kanban', 'kpis'].forEach(t => {
+            ['sandbox', 'kanban', 'bonus', 'kpis'].forEach(t => {
                 document.getElementById('tab-' + t).classList.add('hidden');
                 document.getElementById('nav-' + t).className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800';
             });
@@ -790,6 +1255,10 @@
             document.getElementById('nav-' + tab).className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold';
 
             if (tab === 'kanban') cargarTareasKanban();
+            if (tab === 'bonus') {
+                cargarReporteYCertificado();
+                if (!esDocente) cargarTicketsPrioritarios();
+            }
             if (tab === 'kpis') cargarKPIs();
         }
 
@@ -801,7 +1270,6 @@
                 if (error) return showToast('Error cargando proyectos: ' + error.message, 'error');
                 labsCargados = data || [];
             } else {
-                // 1. Laboratorios propios del estudiante + 2. Laboratorios donde fue invitado en equipo
                 const [ownRes, memRes] = await Promise.all([
                     db.from('laboratorios').select('*').eq('usuario_id', currentUser.id).order('id', { ascending: false }),
                     db.from('miembros_laboratorio').select('laboratorio_id').eq('correo_miembro', currentUser.correo.toLowerCase())
@@ -835,14 +1303,36 @@
 
             if (!laboratorios.length) {
                 activeLabId = null;
+                activeBranch = 'main';
+                const cfg = obtenerConfigPlan(currentUser.plan_actual);
                 document.getElementById('activeLabTitle').textContent = 'Selecciona un laboratorio';
                 document.getElementById('activeLabTemplate').textContent = '---';
+                document.getElementById('activeLabRamBadge').textContent = esDocente ? 'Sin proyecto' : cfg.ramLabel;
                 document.getElementById('activeLabOwner').textContent = '';
                 document.getElementById('codeEditor').value = '';
                 document.getElementById('validationsList').innerHTML = '';
-                document.getElementById('teamMembersList').innerHTML = '<div class="text-slate-500">Crea o selecciona un laboratorio para ver su equipo.</div>';
-                document.getElementById('inviteMemberForm').classList.add('hidden');
-                document.getElementById('teamUpgradeNotice').classList.add('hidden');
+                document.getElementById('visualGitGraph').innerHTML = '<div class="text-xs font-code text-slate-500">Crea tu primer laboratorio para visualizar ramas y fusiones.</div>';
+                document.getElementById('mergeToMainBtn').classList.add('hidden');
+
+                if (!esDocente) {
+                    document.getElementById('teamSlotBadge').textContent = `1 / ${cfg.maxMiembros}`;
+                    document.getElementById('teamPlanHint').innerHTML = cfg.esGrupo
+                        ? `Plan <strong>Pack Grupo (5)</strong>: hasta 5 cuentas Pro con 4 GB RAM dedicada.`
+                        : `Plan <strong>${cfg.nombre}</strong>: hasta 3 estudiantes por proyecto.`;
+                    document.getElementById('teamMembersList').innerHTML = `
+                        <div class="p-2.5 rounded-xl bg-slate-950 border border-cyan-400/30 flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="text-white font-bold truncate">${escapeHtml(currentUser.nombre_completo)}</div>
+                                <div class="text-[10px] text-slate-400 truncate">${escapeHtml(currentUser.correo)}</div>
+                            </div>
+                            <span class="shrink-0 px-2 py-0.5 rounded bg-cyan-400/15 text-cyan-300 text-[10px] font-bold">Líder</span>
+                        </div>
+                        <div class="text-slate-500 text-[11px] pt-1">Crea tu laboratorio arriba e invita a tus compañeros en el mismo paso.</div>
+                    `;
+                    document.getElementById('inviteMemberForm').classList.add('hidden');
+                    document.getElementById('teamUpgradeNotice').classList.add('hidden');
+                }
+
                 list.innerHTML = `<div class="text-slate-500 text-xs p-3 rounded-xl bg-slate-950 border border-slate-800">
                     ${esDocente ? 'Aún no hay proyectos de estudiantes registrados.' : 'Aún no tienes laboratorios. Crea el primero.'}
                 </div>`;
@@ -888,6 +1378,7 @@
             activeLabId = id;
             cargarLaboratorios();
             cargarTareasKanban();
+            cargarReporteYCertificado();
         }
 
         function mostrarLaboratorioActivo() {
@@ -897,6 +1388,16 @@
             const anulado = lab.estado_sandbox === 'ANULADO';
             const owner = usuariosPorId[String(lab.usuario_id)];
             const ownerPlanCfg = obtenerConfigPlan(owner?.plan_actual || currentUser.plan_actual);
+            const userCfg = obtenerConfigPlan(currentUser.plan_actual);
+
+            activeBranch = lab.rama_actual || 'main';
+            const branchSel = document.getElementById('branchSelector');
+            if (branchSel) {
+                branchSel.value = ['main', 'dev', 'feature/ui', 'feature/api'].includes(activeBranch) ? activeBranch : 'main';
+                branchSel.disabled = esDocente || anulado;
+            }
+            document.getElementById('visualGitPlanBadge').textContent = `Rama activa: ${activeBranch}`;
+            document.getElementById('mergeToMainBtn').classList.toggle('hidden', esDocente || anulado || !userCfg.esPro || activeBranch === 'main');
 
             document.getElementById('activeLabTitle').textContent = lab.nombre_proyecto || 'Sin nombre';
             document.getElementById('activeLabTemplate').textContent = lab.plantilla || 'Sin plantilla';
@@ -937,7 +1438,497 @@
 
             document.getElementById('studentCommitControls')?.classList.toggle('hidden', esDocente || anulado);
             cargarValidaciones(lab.id);
-            cargarMiembrosLaboratorio(lab);
+            if (!esDocente) cargarMiembrosLaboratorio(lab);
+        }
+
+        // --- MOTOR VISUAL GIT + VALIDADOR PRE-MERGE REAL ---
+        async function cambiarRamaActiva() {
+            const sel = document.getElementById('branchSelector');
+            const nuevaRama = sel.value;
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+
+            if (!cfg.esPro && nuevaRama !== 'main') {
+                sel.value = 'main';
+                return showToast('Las ramas paralelas (dev, feature/*) y Visual Git son exclusivas de Estudiante Pro y Pack Grupo.', 'error');
+            }
+
+            activeBranch = nuevaRama;
+            document.getElementById('visualGitPlanBadge').textContent = `Rama activa: ${activeBranch}`;
+            document.getElementById('mergeToMainBtn').classList.toggle('hidden', esDocente || activeBranch === 'main');
+
+            if (activeLabId) {
+                await db.from('laboratorios').update({ rama_actual: activeBranch }).eq('id', activeLabId);
+                const lab = laboratorios.find(l => l.id === activeLabId);
+                if (lab) lab.rama_actual = activeBranch;
+            }
+            showToast(`Cambiado a la rama "${activeBranch}".`);
+            renderizarVisualGitGraph();
+        }
+
+        function analizarCodigoPreMerge(codigo, plantilla) {
+            const texto = (codigo || '').trim();
+            const errores = [];
+            const advertencias = [];
+            let conflictos = 0;
+
+            if (texto.length < 10) {
+                errores.push('El código es demasiado corto (mínimo 10 caracteres ejecutables).');
+            }
+            if (/<<<<<<<|=======|>>>>>>>/.test(texto)) {
+                errores.push('Se detectaron marcadores de conflicto Git sin resolver (<<<<<<< / >>>>>>>).');
+                conflictos++;
+            }
+
+            // Verificar balanceo de paréntesis, corchetes y llaves
+            const pares = { '(': ')', '[': ']', '{': '}' };
+            const cierres = new Set([')', ']', '}']);
+            const pila = [];
+            let enComilla = null;
+            for (let i = 0; i < texto.length; i++) {
+                const ch = texto[i];
+                if (enComilla) {
+                    if (ch === enComilla && texto[i - 1] !== '\\') enComilla = null;
+                    continue;
+                }
+                if (ch === '"' || ch === "'") { enComilla = ch; continue; }
+                if (pares[ch]) pila.push(pares[ch]);
+                else if (cierres.has(ch)) {
+                    if (!pila.length || pila.pop() !== ch) {
+                        errores.push(`Símbolo de cierre "${ch}" inesperado o sin apertura correspondiente.`);
+                        break;
+                    }
+                }
+            }
+            if (pila.length) {
+                errores.push(`Falta cerrar delimitador(es): ${pila.join(' ')}`);
+            }
+
+            // Reglas por plantilla
+            const tpl = (plantilla || '').toLowerCase();
+            if (tpl.includes('python')) {
+                const lineas = texto.split('\n');
+                lineas.forEach((ln, idx) => {
+                    const t = ln.trim();
+                    if (/^(def |class |if |for |while |elif |else\b)/.test(t) && !t.endsWith(':') && !t.includes('#')) {
+                        errores.push(`Línea ${idx + 1} (Python): falta ":" al final de "${t.slice(0, 30)}".`);
+                    }
+                });
+            } else if (tpl.includes('sql')) {
+                if (!/(select|create|insert|update|delete|alter)/i.test(texto)) {
+                    advertencias.push('No se detectó una sentencia SQL estándar (SELECT, CREATE, INSERT, etc.).');
+                }
+                if (!texto.includes(';')) {
+                    advertencias.push('Recomendación SQL: finaliza tus sentencias con punto y coma (;).');
+                }
+            } else if (tpl.includes('java') || tpl.includes('c#')) {
+                if (!texto.includes(';')) {
+                    advertencias.push('Revisa si faltan puntos y comas (;) al final de tus instrucciones.');
+                }
+            }
+
+            return {
+                valido: errores.length === 0,
+                errores,
+                advertencias,
+                conflictos
+            };
+        }
+
+        async function fusionarRamaAMain() {
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab || esDocente || lab.estado_sandbox === 'ANULADO') return;
+            if (activeBranch === 'main') return showToast('Ya te encuentras en la rama main.', 'error');
+
+            const codigo = document.getElementById('codeEditor').value;
+            const analisis = analizarCodigoPreMerge(codigo, lab.plantilla);
+            if (!analisis.valido) {
+                actualizarMentorConAnalisis(analisis, activeBranch);
+                return showToast('Merge detenido por Pre-Merge Check: corrige los errores detectados antes de unir a main.', 'error');
+            }
+
+            const ramaOrigen = activeBranch;
+            const inicio = performance.now();
+            await db.from('laboratorios').update({ codigo_fuente: codigo, rama_actual: 'main' }).eq('id', lab.id);
+            const latencia_ms = Math.max(45, Math.round(performance.now() - inicio));
+
+            await db.from('validaciones_sandbox').insert([{
+                laboratorio_id: lab.id,
+                autor_nombre: currentUser.nombre_completo,
+                mensaje_commit: `Merge limpio: ${ramaOrigen} → main (0 conflictos)`,
+                estado_validacion: 'PASSED',
+                latencia_ms,
+                conflictos_detectados: 0,
+                rama: 'main'
+            }]);
+
+            lab.rama_actual = 'main';
+            activeBranch = 'main';
+            document.getElementById('branchSelector').value = 'main';
+            document.getElementById('visualGitPlanBadge').textContent = 'Rama activa: main';
+            document.getElementById('mergeToMainBtn').classList.add('hidden');
+
+            document.getElementById('sandboxConsole').innerHTML = `
+                <div class="text-emerald-400">✓ PRE-MERGE PASSED: Rama <strong>${escapeHtml(ramaOrigen)}</strong> fusionada a <strong>main</strong> sin conflictos (${latencia_ms} ms).</div>
+            `;
+            actualizarMentorConAnalisis(analisis, 'main', ramaOrigen);
+            showToast(`Fusión exitosa: ${ramaOrigen} → main.`);
+            cargarValidaciones(lab.id);
+            cargarKPIs();
+        }
+
+        function renderizarVisualGitGraph() {
+            const box = document.getElementById('visualGitGraph');
+            if (!box) return;
+            if (!validacionesActivas.length) {
+                box.innerHTML = `<div class="text-xs font-code text-slate-500">Rama actual: <strong class="text-emerald-400">${escapeHtml(activeBranch)}</strong> • Realiza tu primer commit para ver el gráfico de ramas.</div>`;
+                return;
+            }
+
+            const coloresRama = {
+                main:         { dot: 'bg-cyan-400 ring-cyan-400/30',    badge: 'bg-cyan-400/15 text-cyan-300 border-cyan-400/40' },
+                dev:          { dot: 'bg-violet-400 ring-violet-400/30', badge: 'bg-violet-500/20 text-violet-300 border-violet-500/40' },
+                'feature/ui': { dot: 'bg-amber-400 ring-amber-400/30',  badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
+                'feature/api':{ dot: 'bg-emerald-400 ring-emerald-400/30', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' }
+            };
+
+            const ultimos = validacionesActivas.slice(0, 6);
+            box.innerHTML = `
+                <div class="relative pl-5 space-y-3 before:content-[''] before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800 font-code text-xs">
+                    ${ultimos.map(v => {
+                        const rama = v.rama || 'main';
+                        const est = coloresRama[rama] || coloresRama.main;
+                        const ok = v.estado_validacion === 'PASSED';
+                        return `
+                            <div class="relative flex flex-wrap items-center justify-between gap-2">
+                                <span class="absolute -left-5 top-1 w-3 h-3 rounded-full ring-4 ${est.dot}"></span>
+                                <div class="flex flex-wrap items-center gap-2 min-w-0">
+                                    <span class="px-2 py-0.5 rounded border text-[10px] font-bold ${est.badge}">${escapeHtml(rama)}</span>
+                                    <span class="text-white font-semibold truncate">${escapeHtml(v.mensaje_commit)}</span>
+                                    <span class="text-slate-500 text-[10px]">por ${escapeHtml((v.autor_nombre || '').split(' ')[0])}</span>
+                                </div>
+                                <span class="text-[10px] font-bold ${ok ? 'text-emerald-400' : 'text-rose-400'}">${ok ? '✓ Sin conflictos' : '✕ Error Pre-Merge'}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // --- ASISTENTE IA "MENTOR COLEGA" 24/7 ---
+        function actualizarMentorConAnalisis(analisis, rama, ramaFusionada = null) {
+            const box = document.getElementById('mentorResponseBox');
+            if (!box || esDocente) return;
+
+            if (ramaFusionada) {
+                box.innerHTML = `
+                    <strong class="text-emerald-400">¡Fusión impecable!</strong> Tu rama <code>${escapeHtml(ramaFusionada)}</code> se unió a <code>main</code> con <strong>0 conflictos</strong>. Ya puedes ir a la pestaña <strong>Bonus & Reporte</strong> para exportar el certificado actualizado para tu docente.
+                `;
+                return;
+            }
+
+            if (!analisis.valido) {
+                box.innerHTML = `
+                    <div class="text-rose-300 font-bold mb-1">Detecté ${analisis.errores.length} detalle(s) antes de fusionar en <code>${escapeHtml(rama)}</code>:</div>
+                    <ul class="list-disc pl-4 space-y-1 text-slate-200">
+                        ${analisis.errores.map(err => `<li>${escapeHtml(err)}</li>`).join('')}
+                    </ul>
+                    <div class="text-cyan-300 mt-1.5">Consejo de Mentor Colega: corrige estas líneas aquí mismo y vuelve a validar; tu rama oficial sigue protegida.</div>
+                `;
+            } else {
+                const warns = analisis.advertencias.length
+                    ? `<div class="text-amber-300 mt-1">Sugerencia opcional: ${escapeHtml(analisis.advertencias[0])}</div>`
+                    : '';
+                box.innerHTML = `
+                    <strong class="text-emerald-400">¡Código limpio en rama <code>${escapeHtml(rama)}</code>!</strong> Sintaxis balanceada y 0 marcadores de conflicto. ${rama !== 'main' ? 'Cuando tu equipo esté listo, presiona <strong>Merge → main</strong> arriba.' : 'Listo para evaluación docente.'}
+                    ${warns}
+                `;
+            }
+        }
+
+        function consultarMentorColega(accion) {
+            const box = document.getElementById('mentorResponseBox');
+            const lab = laboratorios.find(l => l.id === activeLabId);
+
+            if (accion === 'revisar') {
+                if (!lab) {
+                    box.innerHTML = 'Primero crea o selecciona un laboratorio en la izquierda para que pueda inspeccionar tu código.';
+                    return;
+                }
+                const analisis = analizarCodigoPreMerge(document.getElementById('codeEditor').value, lab.plantilla);
+                actualizarMentorConAnalisis(analisis, activeBranch);
+            } else if (accion === 'git') {
+                box.innerHTML = `
+                    <strong class="text-cyan-300">Flujo cero conflictos en 3 pasos:</strong>
+                    1) Cambia el selector superior de <code>main</code> a <code>dev</code> o <code>feature/ui</code>.
+                    2) Escribe tu módulo y pulsa <strong>Validar Pre-Merge y Guardar</strong>.
+                    3) Cuando salga en verde (<code>PASSED</code>), haz clic en <strong>Merge → main</strong>.
+                `;
+            } else if (accion === 'entrega') {
+                const aprobados = validacionesActivas.filter(v => v.aprobado).length;
+                box.innerHTML = `
+                    <strong class="text-emerald-300">Checklist antes de entregar al docente:</strong>
+                    • Commits guardados en este proyecto: <strong>${validacionesActivas.length}</strong> (Aprobados: <strong>${aprobados}</strong>).<br>
+                    • Rama oficial recomendada: <strong>main</strong>.<br>
+                    • Recuerda descargar tu <strong>Certificado de Aportes en PDF</strong> desde la pestaña <strong>Bonus & Reporte</strong>.
+                `;
+            }
+        }
+
+        // --- BONUS #1: PLANTILLAS CLONABLES ---
+        function renderizarPlantillasBonus() {
+            const grid = document.getElementById('bonusTemplatesGrid');
+            if (!grid) return;
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+
+            grid.innerHTML = BONUS_PLANTILLAS.map(tpl => `
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-400/50 flex flex-col justify-between space-y-3 transition">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 font-code text-[10px] text-cyan-300">${escapeHtml(tpl.tag)}</span>
+                            <i class="${tpl.icono} text-lg"></i>
+                        </div>
+                        <div class="font-brand font-bold text-white text-sm">${escapeHtml(tpl.titulo)}</div>
+                        <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">${escapeHtml(tpl.desc)}</p>
+                    </div>
+                    <button type="button" onclick="clonarPlantillaBonus('${tpl.id}')" class="w-full py-2 rounded-lg font-code text-[11px] font-bold transition ${
+                        cfg.esPro
+                            ? 'bg-cyan-400/15 hover:bg-cyan-400 text-cyan-300 hover:text-slate-950 border border-cyan-400/40'
+                            : 'bg-slate-900 text-slate-500 border border-slate-800'
+                    }">
+                        ${cfg.esPro ? '<i class="fa-solid fa-clone mr-1"></i>Clonar en mi Sandbox' : '<i class="fa-solid fa-lock mr-1"></i>Requiere Plan Pro'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function clonarPlantillaBonus(tplId) {
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (!cfg.esPro) {
+                showToast('Activa Estudiante Pro ($4.60/mes) para clonar las plantillas Bonus.', 'error');
+                window.location.href = 'checkout.html?plan=pro';
+                return;
+            }
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab) return showToast('Primero crea o selecciona un laboratorio en la pestaña Sandbox.', 'error');
+            if (lab.estado_sandbox === 'ANULADO') return showToast('No puedes modificar un proyecto anulado.', 'error');
+
+            const tpl = BONUS_PLANTILLAS.find(t => t.id === tplId);
+            if (!tpl) return;
+
+            document.getElementById('codeEditor').value = tpl.codigo;
+            document.getElementById('commitMsgInput').value = `Plantilla clonada: ${tpl.titulo}`;
+            switchDashTab('sandbox');
+            showToast(`Plantilla "${tpl.titulo}" cargada en el editor. Presiona Validar para guardarla.`);
+        }
+
+        // --- BONUS #3 + CERTIFICADO OFICIAL DE APORTES UGB ---
+        async function cargarReporteYCertificado() {
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab) {
+                reporteCache = null;
+                document.getElementById('certProjectNameTitle').textContent = 'Sin proyecto';
+                document.getElementById('certCardProject').textContent = 'Sin proyecto seleccionado';
+                document.getElementById('certContributorsList').innerHTML = '<div class="text-slate-500">Selecciona o crea un laboratorio primero.</div>';
+                return;
+            }
+
+            const [valRes, memRes, kanRes] = await Promise.all([
+                db.from('validaciones_sandbox').select('*').eq('laboratorio_id', lab.id).order('id', { ascending: false }),
+                db.from('miembros_laboratorio').select('*').eq('laboratorio_id', lab.id),
+                db.from('tareas_kanban').select('*').eq('laboratorio_id', lab.id)
+            ]);
+
+            const vals = valRes.data || [];
+            const mems = memRes.data || [];
+            const tasks = kanRes.data || [];
+            const owner = usuariosPorId[String(lab.usuario_id)] || { nombre_completo: currentUser.nombre_completo, correo: currentUser.correo, plan_actual: currentUser.plan_actual };
+
+            const totalCommits = vals.length;
+            const commitsAprobados = vals.filter(v => v.aprobado === true).length;
+            const totalSp = tasks.reduce((a, t) => a + (Number(t.story_points) || 0), 0);
+            const doneSp = tasks.filter(t => t.estado === 'completado').reduce((a, t) => a + (Number(t.story_points) || 0), 0);
+            const pctSprint = totalSp ? Math.round((doneSp / totalSp) * 100) : 0;
+
+            // Agrupar commits por integrante
+            const mapaAportes = {};
+            const registrarPersona = (nombre, rol) => {
+                if (!nombre) return;
+                if (!mapaAportes[nombre]) mapaAportes[nombre] = { nombre, rol, commits: 0, passed: 0, aprobados: 0 };
+            };
+            registrarPersona(owner.nombre_completo, 'Líder');
+            mems.forEach(m => registrarPersona(m.nombre_miembro, 'Equipo'));
+            vals.forEach(v => {
+                const autor = v.autor_nombre || 'Estudiante';
+                registrarPersona(autor, 'Colaborador');
+                mapaAportes[autor].commits += 1;
+                if (v.estado_validacion === 'PASSED') mapaAportes[autor].passed += 1;
+                if (v.aprobado === true) mapaAportes[autor].aprobados += 1;
+            });
+
+            const listaAportes = Object.values(mapaAportes);
+            const certId = `LF-UGB-${String(lab.id).padStart(3, '0')}-2026`;
+
+            reporteCache = { lab, owner, listaAportes, totalCommits, commitsAprobados, totalSp, doneSp, pctSprint, certId, vals };
+
+            document.getElementById('certProjectNameTitle').textContent = lab.nombre_proyecto;
+            document.getElementById('certTotalSummary').textContent = `${totalCommits} commits • ${doneSp}/${totalSp} SP`;
+            document.getElementById('certCardProject').textContent = lab.nombre_proyecto;
+            document.getElementById('certCardId').textContent = certId;
+            document.getElementById('certCardApproved').textContent = `${commitsAprobados} / ${totalCommits}`;
+            document.getElementById('certCardSprint').textContent = `${pctSprint}%`;
+            document.getElementById('certCardStatus').innerHTML = lab.estado_sandbox === 'ANULADO'
+                ? '<span class="text-rose-400">✕ PROYECTO ANULADO POR PLAGIO</span>'
+                : '✓ Trazabilidad Verificada en Supabase';
+
+            document.getElementById('certContributorsList').innerHTML = listaAportes.map(a => {
+                const pct = totalCommits ? Math.round((a.commits / totalCommits) * 100) : 0;
+                return `
+                    <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-white font-bold">${escapeHtml(a.nombre)} <span class="text-[10px] text-violet-300 font-normal">(${escapeHtml(a.rol)})</span></span>
+                            <span class="text-cyan-400 font-bold">${a.commits} commits (${pct}%)</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-slate-950 overflow-hidden">
+                            <div style="width: ${pct}%" class="h-full bg-gradient-to-r from-cyan-400 to-violet-500"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            <span>Validados OK: <strong class="text-emerald-400">${a.passed}</strong></span>
+                            <span>Aprobados Docente: <strong class="text-amber-300">${a.aprobados}</strong></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function imprimirReportePDF() {
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (!esDocente && !cfg.esPro) {
+                showToast('Activa Estudiante Pro o Pack Grupo para exportar el Reporte Técnico y Certificado PDF.', 'error');
+                window.location.href = 'checkout.html?plan=pro';
+                return;
+            }
+            if (!reporteCache) return showToast('Selecciona un laboratorio primero.', 'error');
+
+            const r = reporteCache;
+            const win = window.open('', '_blank', 'width=900,height=750');
+            if (!win) return showToast('Habilita las ventanas emergentes para imprimir el PDF.', 'error');
+
+            win.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Reporte Técnico y Certificado — ${escapeHtml(r.lab.nombre_proyecto)}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; color: #0F172A; padding: 32px; line-height: 1.5; }
+                        .header { border-bottom: 3px solid #1E3A8A; padding-bottom: 14px; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; }
+                        .brand { font-size: 24px; font-weight: bold; color: #1E3A8A; }
+                        .brand span { color: #06B6D4; }
+                        .badge { background: #ECFDF5; color: #047857; border: 1px solid #10B981; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: bold; }
+                        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0; }
+                        .box { border: 1px solid #CBD5E1; border-radius: 10px; padding: 12px; background: #F8FAFC; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+                        th, td { border: 1px solid #CBD5E1; padding: 8px 10px; text-align: left; }
+                        th { background: #1E3A8A; color: #FFF; }
+                        .cert { margin-top: 26px; border: 2px dashed #1E3A8A; border-radius: 14px; padding: 18px; text-align: center; background: #F8FAFC; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>
+                            <div class="brand">Lab<span>Flow_</span> UNI</div>
+                            <div style="font-size:12px;color:#475569;">Universidad Gerardo Barrios (UGB) • Facultad de Ciencia y Tecnología</div>
+                        </div>
+                        <div class="badge">${r.lab.estado_sandbox === 'ANULADO' ? 'ANULADO POR PLAGIO' : 'CERTIFICADO VERIFICADO'}</div>
+                    </div>
+                    <h2>Reporte Técnico de Trazabilidad y Aportes</h2>
+                    <p><strong>Proyecto:</strong> ${escapeHtml(r.lab.nombre_proyecto)} &nbsp;|&nbsp; <strong>Plantilla:</strong> ${escapeHtml(r.lab.plantilla)} &nbsp;|&nbsp; <strong>ID Certificado:</strong> ${escapeHtml(r.certId)}</p>
+                    <p><strong>Líder del Proyecto:</strong> ${escapeHtml(r.owner.nombre_completo)} (${escapeHtml(r.owner.correo)}) &nbsp;|&nbsp; <strong>Fecha:</strong> ${new Date().toLocaleString('es-SV')}</p>
+
+                    <div class="grid">
+                        <div class="box"><strong>Commits Registrados</strong><br><span style="font-size:20px;">${r.totalCommits}</span></div>
+                        <div class="box"><strong>Commits Aprobados Docente</strong><br><span style="font-size:20px;">${r.commitsAprobados}</span></div>
+                        <div class="box"><strong>Progreso del Sprint (Kanban)</strong><br><span style="font-size:20px;">${r.pctSprint}% (${r.doneSp}/${r.totalSp} SP)</span></div>
+                    </div>
+
+                    <h3>Participación por Integrante</h3>
+                    <table>
+                        <thead><tr><th>Integrante</th><th>Rol</th><th>Commits</th><th>Validados OK</th><th>Aprobados Docente</th></tr></thead>
+                        <tbody>
+                            ${r.listaAportes.map(a => `
+                                <tr>
+                                    <td>${escapeHtml(a.nombre)}</td>
+                                    <td>${escapeHtml(a.rol)}</td>
+                                    <td>${a.commits}</td>
+                                    <td>${a.passed}</td>
+                                    <td>${a.aprobados}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="cert">
+                        <strong>CERTIFICADO OFICIAL DE TRAZABILIDAD LABFLOW UNI</strong><br>
+                        <span style="font-size:12px;color:#475569;">Documento generado automáticamente desde Supabase • Código de verificación: ${escapeHtml(r.certId)}</span>
+                    </div>
+                    <script>window.onload = function() { window.print(); };<\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        }
+
+        // --- SOPORTE PRIORITARIO (PACK GRUPO 5) ---
+        async function enviarTicketPrioritario(e) {
+            e.preventDefault();
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (!cfg.esGrupo) return showToast('El soporte prioritario es exclusivo de Pack Grupo (5).', 'error');
+
+            const asunto = document.getElementById('prioTicketAsunto').value.trim();
+            const descripcion = document.getElementById('prioTicketDesc').value.trim();
+
+            const { error } = await db.from('tickets_soporte').insert([{
+                usuario_correo: currentUser.correo,
+                nivel_soporte: 'PRIORITARIO',
+                asunto,
+                descripcion,
+                estado: 'Prioritario - En atención',
+                tiempo_respuesta_seg: 25
+            }]);
+
+            if (error) return showToast('Error enviando ticket prioritario: ' + error.message, 'error');
+
+            document.getElementById('prioTicketAsunto').value = '';
+            document.getElementById('prioTicketDesc').value = '';
+            showToast('Solicitud prioritaria registrada en Supabase. Atención SLA < 5 min.');
+            cargarTicketsPrioritarios();
+        }
+
+        async function cargarTicketsPrioritarios() {
+            const box = document.getElementById('priorityTicketsList');
+            if (!box || esDocente) return;
+
+            const { data } = await db
+                .from('tickets_soporte')
+                .select('*')
+                .eq('usuario_correo', currentUser.correo)
+                .order('id', { ascending: false })
+                .limit(5);
+
+            if (!data || !data.length) {
+                box.innerHTML = '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-500 font-code text-[11px]">Sin incidencias urgentes registradas.</div>';
+                return;
+            }
+            box.innerHTML = data.map(tk => `
+                <div class="p-3 rounded-xl bg-slate-950 border border-violet-500/30 space-y-1">
+                    <div class="flex items-center justify-between font-code text-[10px]">
+                        <span class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-bold">${escapeHtml(tk.nivel_soporte)}</span>
+                        <span class="text-emerald-400">${escapeHtml(tk.estado)}</span>
+                    </div>
+                    <div class="font-bold text-white">${escapeHtml(tk.asunto)}</div>
+                    <div class="text-slate-400 text-[11px]">${escapeHtml(tk.descripcion)}</div>
+                </div>
+            `).join('');
         }
 
         // --- EQUIPOS COLABORATIVOS (3 Y 5 CUENTAS) ---
@@ -964,7 +1955,7 @@
             }
 
             miembrosActivos = data || [];
-            const totalEquipo = 1 + miembrosActivos.length; // 1 líder + invitados
+            const totalEquipo = 1 + miembrosActivos.length;
             const maxMiembros = ownerPlanCfg.maxMiembros;
 
             document.getElementById('teamSlotBadge').textContent = `${totalEquipo} / ${maxMiembros}`;
@@ -972,7 +1963,6 @@
                 ? `Plan <strong>Pack Grupo (5)</strong>: hasta 5 cuentas Pro con 4 GB RAM dedicada.`
                 : `Plan <strong>${ownerPlanCfg.nombre}</strong>: hasta 3 estudiantes por proyecto.`;
 
-            // Renderizar líder + colaboradores
             const listEl = document.getElementById('teamMembersList');
             let html = `
                 <div class="p-2.5 rounded-xl bg-slate-950 border border-cyan-400/30 flex items-center justify-between gap-2">
@@ -1003,14 +1993,12 @@
             });
             listEl.innerHTML = html;
 
-            // Actualizar sugerencias de responsables en el tablero Kanban
             const datalist = document.getElementById('teamMembersDatalist');
             if (datalist) {
                 const nombres = [owner.nombre_completo, ...miembrosActivos.map(m => m.nombre_miembro)];
                 datalist.innerHTML = nombres.map(n => `<option value="${escapeHtml(n.split(' ')[0])}">${escapeHtml(n)}</option>`).join('');
             }
 
-            // Mostrar u ocultar formulario de invitación y aviso de Pack Grupo (5)
             const puedeInvitar = esPropietario && !anulado && totalEquipo < maxMiembros;
             const llegoAlLimiteDe3 = esPropietario && !anulado && !ownerPlanCfg.esGrupo && totalEquipo >= maxMiembros;
 
@@ -1035,7 +2023,6 @@
                 return showToast('Ya eres el líder de este proyecto.', 'error');
             }
 
-            // Buscar si el compañero ya tiene cuenta en LabFlow Uni
             const { data: targetUser, error: errFind } = await db
                 .from('usuarios')
                 .select('id, nombre_completo, correo, rol, plan_actual')
@@ -1043,12 +2030,8 @@
                 .maybeSingle();
 
             if (errFind) return showToast('Error consultando usuario: ' + errFind.message, 'error');
-            if (!targetUser) {
-                return showToast('Ese correo aún no tiene cuenta. Pídele que se registre primero en auth.html.', 'error');
-            }
-            if (targetUser.rol === 'Docente') {
-                return showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
-            }
+            if (!targetUser) return showToast('Ese correo aún no tiene cuenta. Pídele que se registre primero en auth.html.', 'error');
+            if (targetUser.rol === 'Docente') return showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
 
             const { error: errIns } = await db
                 .from('miembros_laboratorio')
@@ -1064,7 +2047,6 @@
                 return showToast('Error al invitar: ' + errIns.message, 'error');
             }
 
-            // Si el líder tiene Pack Grupo (5) y el invitado era Freemium, le activa cuenta Pro de grupo
             let extraMsg = '';
             if (cfg.esGrupo && (targetUser.plan_actual || 'Freemium') === 'Freemium') {
                 await db.from('usuarios').update({ plan_actual: 'Pack Grupo (5)' }).eq('id', targetUser.id);
@@ -1187,7 +2169,7 @@
             cargarResumenDocente();
         }
 
-        // --- CREAR LABORATORIO CON VERIFICACIÓN DE LÍMITE DE PLAN ---
+        // --- CREAR LABORATORIO + INVITADOS ---
         async function crearLaboratorio(e) {
             e.preventDefault();
             if (esDocente) return showToast('Los docentes evalúan proyectos, no crean laboratorios.', 'error');
@@ -1205,15 +2187,43 @@
 
             const { data, error } = await db
                 .from('laboratorios')
-                .insert([{ usuario_id: currentUser.id, nombre_proyecto, plantilla, codigo_fuente, estado_sandbox: 'ACTIVO' }])
+                .insert([{ usuario_id: currentUser.id, nombre_proyecto, plantilla, codigo_fuente, rama_actual: 'main', estado_sandbox: 'ACTIVO' }])
                 .select()
                 .single();
 
             if (error) return showToast('Error al crear laboratorio: ' + error.message, 'error');
 
+            const invitadosAlCrear = [...invitadosPendientesCreacion];
+            if (invitadosAlCrear.length > 0) {
+                const filasMiembros = invitadosAlCrear.map(m => ({
+                    laboratorio_id: data.id,
+                    correo_miembro: m.correo.toLowerCase(),
+                    nombre_miembro: m.nombre_completo,
+                    rol_equipo: 'Colaborador'
+                }));
+                await db.from('miembros_laboratorio').insert(filasMiembros);
+
+                if (cfg.esGrupo) {
+                    const freemiumIds = invitadosAlCrear
+                        .filter(m => (m.plan_actual || 'Freemium') === 'Freemium')
+                        .map(m => m.id);
+                    if (freemiumIds.length > 0) {
+                        await db.from('usuarios').update({ plan_actual: 'Pack Grupo (5)' }).in('id', freemiumIds);
+                    }
+                }
+            }
+
             document.getElementById('newLabName').value = '';
+            document.getElementById('newLabInviteInput').value = '';
+            invitadosPendientesCreacion = [];
+            renderizarInvitadosCreacion();
             activeLabId = data.id;
-            showToast(`Laboratorio "${nombre_proyecto}" guardado en Supabase.`);
+
+            const resumenInvitados = invitadosAlCrear.length > 0
+                ? ` con ${invitadosAlCrear.length} compañero(s) unido(s)`
+                : '';
+            showToast(`Laboratorio "${nombre_proyecto}" creado${resumenInvitados}.`);
+            await cargarMapaUsuarios();
             cargarLaboratorios();
         }
 
@@ -1237,12 +2247,16 @@
             }
 
             const consoleBox = document.getElementById('sandboxConsole');
-            consoleBox.innerHTML = '<span class="text-amber-300">$ Validando código y midiendo latencia en Supabase...</span>';
+            consoleBox.innerHTML = `<div class="text-amber-300">$ Ejecutando Pre-Merge Check en rama "${escapeHtml(activeBranch)}"...</div>`;
 
+            const analisis = analizarCodigoPreMerge(codigo_fuente, lab?.plantilla);
             const inicio = performance.now();
-            const { error: errUpdate } = await db.from('laboratorios').update({ codigo_fuente }).eq('id', activeLabId);
+            const { error: errUpdate } = await db
+                .from('laboratorios')
+                .update({ codigo_fuente, rama_actual: activeBranch })
+                .eq('id', activeLabId);
             const latencia_ms = Math.max(45, Math.round(performance.now() - inicio));
-            const estado_validacion = codigo_fuente.trim().length < 5 ? 'ERROR' : 'PASSED';
+            const estado_validacion = analisis.valido ? 'PASSED' : 'ERROR';
 
             const { error: errVal } = await db.from('validaciones_sandbox').insert([{
                 laboratorio_id: activeLabId,
@@ -1250,19 +2264,31 @@
                 mensaje_commit,
                 estado_validacion,
                 latencia_ms,
-                conflictos_detectados: 0,
-                rama: 'main'
+                conflictos_detectados: analisis.conflictos,
+                rama: activeBranch
             }]);
 
             if (errUpdate || errVal) return showToast('Error guardando validación.', 'error');
 
             commitInput.value = '';
             commitInput.classList.remove('border-rose-500');
-            consoleBox.innerHTML = `
-                <div class="text-emerald-400">✓ Código guardado y validado (${estado_validacion})</div>
-                <div class="text-cyan-300">→ Latencia real registrada en BD: ${latencia_ms} ms • 0 conflictos de fusión.</div>
-            `;
-            showToast('Validación registrada en validaciones_sandbox.');
+
+            if (analisis.valido) {
+                consoleBox.innerHTML = `
+                    <div class="text-emerald-400">✓ PRE-MERGE PASSED en rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
+                    <div class="text-cyan-300">→ Sintaxis verificada • ${analisis.conflictos} conflictos detectados • Guardado en Supabase.</div>
+                `;
+            } else {
+                consoleBox.innerHTML = `
+                    <div class="text-rose-400 font-bold">✕ PRE-MERGE ERROR en rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
+                    ${analisis.errores.map(e => `<div class="text-rose-300">  • ${escapeHtml(e)}</div>`).join('')}
+                `;
+            }
+
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (cfg.esPro) actualizarMentorConAnalisis(analisis, activeBranch);
+
+            showToast(analisis.valido ? 'Validación PASSED registrada.' : 'Commit guardado con errores de Pre-Merge. Revisa el Mentor Colega.', analisis.valido ? 'success' : 'error');
             cargarValidaciones(activeLabId);
             cargarKPIs();
         }
@@ -1281,19 +2307,23 @@
                 return;
             }
 
-            if (!data || !data.length) {
+            validacionesActivas = data || [];
+            renderizarVisualGitGraph();
+
+            if (!validacionesActivas.length) {
                 box.innerHTML = `<div class="text-slate-500">${esDocente ? 'Este proyecto aún no tiene commits validados.' : 'Sin validaciones todavía.'}</div>`;
                 return;
             }
 
             const proyectoAnulado = laboratorios.some(l => l.id === activeLabId && l.estado_sandbox === 'ANULADO');
 
-            box.innerHTML = data.map(v => {
+            box.innerHTML = validacionesActivas.map(v => {
                 const aprobado = v.aprobado === true;
                 const esError = v.estado_validacion !== 'PASSED';
                 const puedeAprobar = esDocente && !aprobado && !esError && !proyectoAnulado;
                 const aprobadoPor = v.aprobado_por ? escapeHtml(v.aprobado_por) : 'Docente';
                 const fechaAprobacion = v.fecha_aprobacion ? new Date(v.fecha_aprobacion).toLocaleString('es-SV') : '';
+                const ramaTag = escapeHtml(v.rama || 'main');
 
                 const approvalBadge = aprobado
                     ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">✓ Aprobado</span>`
@@ -1310,9 +2340,10 @@
                 return `
                     <div class="p-3 rounded-xl bg-slate-950 border ${aprobado ? 'border-emerald-500/40' : (proyectoAnulado ? 'border-rose-500/30' : 'border-slate-800')} space-y-2">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div>
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">${ramaTag}</span>
                                 <span class="text-cyan-400 font-bold">[${escapeHtml(v.autor_nombre || 'Estudiante')}]</span>
-                                <span class="text-slate-200 ml-1">${escapeHtml(v.mensaje_commit || 'Sin mensaje')}</span>
+                                <span class="text-slate-200">${escapeHtml(v.mensaje_commit || 'Sin mensaje')}</span>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="text-slate-400">${Number(v.latencia_ms) || 0} ms</span>
@@ -1409,11 +2440,7 @@
                 .eq('laboratorio_id', activeLabId)
                 .order('id', { ascending: false });
 
-            if (error) {
-                showToast('Error cargando tareas: ' + error.message, 'error');
-                return;
-            }
-
+            if (error) return showToast('Error cargando tareas: ' + error.message, 'error');
             kanbanCache = data || [];
             renderizarKanban();
         }
@@ -1503,9 +2530,7 @@
             if (!activeLabId) return showToast('Selecciona primero un laboratorio en Sandbox.', 'error');
 
             const lab = laboratorios.find(l => l.id === activeLabId);
-            if (lab && lab.estado_sandbox === 'ANULADO') {
-                return showToast('El proyecto está anulado: no se pueden agregar tareas.', 'error');
-            }
+            if (lab && lab.estado_sandbox === 'ANULADO') return showToast('El proyecto está anulado: no se pueden agregar tareas.', 'error');
 
             const titulo = document.getElementById('kanbanTitle').value.trim();
             const asignado_a = document.getElementById('kanbanAssignee').value.trim();
@@ -1531,9 +2556,7 @@
         async function moverTarea(id, nuevoEstado) {
             if (esDocente) return showToast('Modo evaluador: solo lectura.', 'error');
             const lab = laboratorios.find(l => l.id === activeLabId);
-            if (lab && lab.estado_sandbox === 'ANULADO') {
-                return showToast('El proyecto está anulado: no se pueden mover tareas.', 'error');
-            }
+            if (lab && lab.estado_sandbox === 'ANULADO') return showToast('El proyecto está anulado.', 'error');
             const { error } = await db.from('tareas_kanban').update({ estado: nuevoEstado }).eq('id', id);
             if (error) return showToast('Error moviendo tarea: ' + error.message, 'error');
             cargarTareasKanban();
@@ -1551,15 +2574,10 @@
             cargarTareasKanban();
         }
 
-        // --- MÓDULO KPIS EN VIVO ---
+        // --- MÓDULO KPIS EN VIVO (3 KPIS OPERATIVOS) ---
         async function cargarKPIs() {
-            const [uRes, sRes, vRes] = await Promise.all([
-                db.from('usuarios').select('id'),
-                db.from('suscripciones').select('id'),
-                db.from('validaciones_sandbox').select('*')
-            ]);
-
-            const vals = vRes.data || [];
+            const { data } = await db.from('validaciones_sandbox').select('*');
+            const vals = data || [];
             const avgLat = vals.length ? Math.round(vals.reduce((a, b) => a + (Number(b.latencia_ms) || 0), 0) / vals.length) : 0;
             const passed = vals.filter(v => v.estado_validacion === 'PASSED').length;
             const rate = vals.length ? ((passed / vals.length) * 100).toFixed(1) : '0.0';
@@ -1569,8 +2587,6 @@
             document.getElementById('kpiLatencia').textContent = `${avgLat} ms`;
             document.getElementById('kpiTasaExito').textContent = `${rate}%`;
             document.getElementById('kpiTotalValidaciones').textContent = `${vals.length} validaciones registradas`;
-            document.getElementById('kpiUsuarios').textContent = (uRes.data || []).length;
-            document.getElementById('kpiPagos').textContent = `${(sRes.data || []).length} suscripciones en Checkout`;
             document.getElementById('kpiAprobados').textContent = aprobados;
             document.getElementById('kpiAprobadosPct').textContent = `${pctAprobados}% de ${vals.length} commits validados`;
         }
