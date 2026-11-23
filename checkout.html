@@ -268,7 +268,7 @@
                     <div class="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-5">
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <span class="text-xs font-code text-cyan-400 uppercase font-bold">
-                                Paso 2 • Elige tu Marca de Tarjeta 
+                                Paso 2 • Elige tu Marca de Tarjeta
                             </span>
                             <span class="text-xs text-slate-300">Aceptamos todas las redes internacionales</span>
                         </div>
@@ -393,7 +393,7 @@
                     <div class="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-4">
                         <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                             <h3 class="font-brand text-lg font-bold text-white">Resumen de tu Pedido</h3>
-                            <span id="summarySavingsBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-code text-xs font-bold">Ahorro 93%</span>
+                            <span id="summarySavingsBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-code text-xs font-bold">Ahorro 90%</span>
                         </div>
 
                         <div class="space-y-2.5 text-sm">
@@ -411,7 +411,7 @@
                             </div>
                             <div id="summaryCouponRow" class="hidden flex justify-between text-xs text-cyan-300">
                                 <span>Cupón adicional aplicado (<strong id="summaryCouponCode">UGB10</strong>)</span>
-                                <span id="summaryCouponAmount" class="font-code">-$1.00</span>
+                                <span id="summaryCouponAmount" class="font-code">-$0.92</span>
                             </div>
                         </div>
 
@@ -488,7 +488,7 @@
                     <div class="font-brand font-bold text-cyan-400 text-sm uppercase tracking-wider">Universidad Gerardo Barrios (UGB)</div>
                     <p>Facultad de Ciencia y Tecnología</p>
                     <p><strong>Carrera:</strong> Ingeniería en Sistemas y Redes Informáticas</p>
-                    <p><strong>Asignatura:</strong> Emprendimiento </p>
+                    <p><strong>Asignatura:</strong> Emprendimiento</p>
                     <p><strong>Docente:</strong> Ing. David Eduardo Márquez Chávez</p>
                 </div>
                 <div class="md:col-span-3 space-y-2">
@@ -542,8 +542,8 @@
                 name: 'Pack Grupo de Laboratorio (5 Cuentas Pro)',
                 dbPlan: 'Pack Grupo (5)',
                 basePrice: 14.99,
-                anchorPrice: 24.95,
-                badge: 'Ahorro 40%',
+                anchorPrice: 23.00,
+                badge: 'Ahorro 35%',
                 discountLabel: 'Descuento Pack de 5 cuentas ($2.99 c/u)',
                 bonusLabel: '4 GB RAM + Certificado Docente + 3 Bonus'
             },
@@ -551,7 +551,7 @@
                 name: 'Prueba Gratis 14 Días (Acceso Pro)',
                 dbPlan: 'Estudiante Pro',
                 basePrice: 0.00,
-                anchorPrice: 4.99,
+                anchorPrice: 4.60,
                 badge: '14 Días Gratis',
                 discountLabel: 'Bonificación de prueba estudiantil (14 días)',
                 bonusLabel: 'Sandboxes ilimitados + 3 Bonus incluidos'
@@ -777,11 +777,11 @@
             selectCheckoutPlan(planParam && plansData[planParam] ? planParam : 'pro');
         });
 
-        // Cronómetro sincronizado con sessionStorage
+        // Cronómetro sincronizado con sessionStorage (05h 14m 48s)
         const storedSeconds = parseInt(sessionStorage.getItem('labflowCountdown'), 10);
         let countdownSecondsRemaining = Number.isFinite(storedSeconds) && storedSeconds > 0
             ? storedSeconds
-            : (2 * 3600) + (14 * 60) + 48;
+            : (5 * 3600) + (14 * 60) + 48;
 
         function renderTopTimer() {
             document.getElementById('topTimerHours').textContent = String(Math.floor(countdownSecondsRemaining / 3600)).padStart(2, '0');

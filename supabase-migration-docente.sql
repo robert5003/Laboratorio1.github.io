@@ -1,36 +1,49 @@
 -- =====================================================================
--- LabFlow Uni · Migración para aprobación de commits por docentes
+-- LabFlow Uni · Migración Completa del MVP (Semana 17 - UGB)
+-- Incluye: Aprobación docente, Anulación por plagio, Visual Git,
+--          Kanban Sprint (Prioridad + Story Points) y Equipos (3 y 5)
 -- Ejecutar en Supabase → SQL Editor → New query → Run
 -- =====================================================================
 
-alter table public.validaciones_sandbox
-    add column if not exists aprobado boolean not null default false,
-    add column if not exists aprobado_por text,
-    add column if not exists aprobado_por_correo text,
-    add column if not exists fecha_aprobacion timestamptz;
+-- 1. Columnas de anulación por plagio en "laboratorios"
+ALTER TABLE public.laboratorios
+    ADD COLUMN IF NOT EXISTS anulado_por TEXT,
+    ADD COLUMN IF NOT EXISTS anulado_por_correo TEXT,
+    ADD COLUMN IF NOT EXISTS fecha_anulacion TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS motivo_anulacion TEXT;
 
-create index if not exists idx_validaciones_sandbox_lab_aprobado
-    on public.validaciones_sandbox (laboratorio_id, aprobado);
+-- 2. Columnas de aprobación docente y rama en "validaciones_sandbox"
+ALTER TABLE public.validaciones_sandbox
+    ADD COLUMN IF NOT EXISTS aprobado BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN IF NOT EXISTS aprobado_por TEXT,
+    ADD COLUMN IF NOT EXISTS aprobado_por_correo TEXT,
+    ADD COLUMN IF NOT EXISTS fecha_aprobacion TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS rama TEXT NOT NULL DEFAULT 'main';
 
--- ---------------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_validaciones_sandbox_lab_aprobado
+    ON public.validaciones_sandbox (laboratorio_id, aprobado);
+
+-- 3. Columnas de prioridad y story points en "tareas_kanban"
+ALTER TABLE public.tareas_kanban
+    ADD COLUMN IF NOT EXISTS prioridad TEXT NOT NULL DEFAULT 'Media',
+    ADD COLUMN IF NOT EXISTS story_points INTEGER NOT NULL DEFAULT 3;
+
+-- 4. Tabla de miembros colaborativos por laboratorio (equipos de 3 y 5 cuentas)
+CREATE TABLE IF NOT EXISTS public.miembros_laboratorio (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    laboratorio_id BIGINT NOT NULL REFERENCES public.laboratorios(id) ON DELETE CASCADE,
+    correo_miembro TEXT NOT NULL,
+    nombre_miembro TEXT NOT NULL,
+    rol_equipo TEXT NOT NULL DEFAULT 'Colaborador',
+    agregado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (laboratorio_id, correo_miembro)
+);
+
+CREATE INDEX IF NOT EXISTS idx_miembros_lab_correo
+    ON public.miembros_laboratorio (correo_miembro);
+
+ALTER TABLE public.miembros_laboratorio DISABLE ROW LEVEL SECURITY;
+
 -- Nota sobre RLS:
--- Este MVP usa autenticación propia basada en localStorage, no Supabase
--- Auth. Por eso no se incluyen políticas con auth.uid(): la base no puede
--- distinguir de forma segura entre un docente y un estudiante.
---
--- Si más adelante migras a Supabase Auth, agrega políticas como:
---
---   create policy "docentes_aprueban_commits"
---   on public.validaciones_sandbox
---   for update
---   using (
---       exists (
---           select 1 from public.perfiles
---           where perfiles.id = auth.uid()
---             and perfiles.rol = 'Docente'
---       )
---   );
---
--- Mientras sigas con la autenticación actual, mantén la base como demo
--- y no almacenes contraseñas ni datos reales.
--- ---------------------------------------------------------------------
+-- Este MVP académico usa autenticación simplificada con localStorage y
+-- tablas sin RLS habilitado únicamente para fines de demostración.
