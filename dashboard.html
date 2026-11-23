@@ -128,7 +128,7 @@
                     <div>
                         <div class="font-brand font-bold text-white text-base">Modo Docente Evaluador</div>
                         <p class="text-xs text-slate-300 leading-relaxed">
-                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, aprueba commits validados o anula un proyecto si detectas plagio.
+                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, los equipos, aprueba commits validados o anula un proyecto si detectas plagio.
                         </p>
                     </div>
                 </div>
@@ -143,6 +143,32 @@
         <!-- MÓDULO 1: SANDBOX / PROYECTOS -->
         <section id="tab-sandbox" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4 space-y-5">
+                <!-- TARJETA DE CUOTAS Y LÍMITES DEL PLAN (SOLO ESTUDIANTE) -->
+                <div id="studentPlanCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-code text-[10px] uppercase tracking-wider text-slate-400">Tu Plan Activo</span>
+                        <span id="planCardBadge" class="px-2.5 py-0.5 rounded-full border font-code text-[11px] font-bold">Freemium</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 font-code text-center text-[11px]">
+                        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div id="quotaLabsValue" class="font-bold text-white text-sm">0 / 2</div>
+                            <div class="text-[9px] text-slate-400 mt-0.5">Labs Propios</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div id="quotaRamValue" class="font-bold text-cyan-400 text-sm">512 MB</div>
+                            <div class="text-[9px] text-slate-400 mt-0.5">RAM Sandbox</div>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div id="quotaTeamValue" class="font-bold text-violet-300 text-sm">Máx. 3</div>
+                            <div class="text-[9px] text-slate-400 mt-0.5">Por Equipo</div>
+                        </div>
+                    </div>
+                    <a id="upgradePlanCta" href="checkout.html?plan=pro" class="hidden w-full py-2 px-3 rounded-xl bg-violet-600/20 hover:bg-violet-600/35 border border-violet-500/40 text-violet-200 font-code text-[11px] font-bold flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-rocket text-cyan-400"></i>
+                        <span id="upgradePlanCtaText">Subir a Estudiante Pro ($4.99/mes)</span>
+                    </a>
+                </div>
+
                 <!-- RESUMEN DEL DOCENTE EVALUADOR -->
                 <div id="teacherOverview" class="hidden rounded-2xl bg-slate-900 border-2 border-violet-500/50 p-5 space-y-4">
                     <div class="flex items-center gap-2">
@@ -176,21 +202,37 @@
                     </div>
                 </div>
 
-                <!-- CREAR LABORATORIO (SOLO ESTUDIANTE) -->
+                <!-- CREAR LABORATORIO (SOLO ESTUDIANTE — CON LÍMITE DE PLAN) -->
                 <div id="newLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <h2 class="font-brand font-bold text-white text-base flex items-center gap-2">
                         <i class="fa-solid fa-plus-circle text-cyan-400"></i>Nuevo Laboratorio Cloud
                     </h2>
-                    <form onsubmit="crearLaboratorio(event)" class="space-y-3">
+
+                    <!-- Aviso cuando Freemium llega al límite de 2 laboratorios -->
+                    <div id="labLimitReachedBox" class="hidden p-3.5 rounded-xl bg-amber-950/50 border border-amber-500/50 space-y-2.5 text-xs">
+                        <div class="font-code text-amber-300 font-bold">
+                            <i class="fa-solid fa-lock mr-1"></i>Límite Freemium alcanzado (2 / 2 labs)
+                        </div>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">
+                            El plan <strong>Inicial Freemium</strong> permite hasta 2 laboratorios activos. Activa <strong>Estudiante Pro</strong> para sandboxes Linux ilimitados.
+                        </p>
+                        <a href="checkout.html?plan=pro" class="btn-cta-main w-full py-2 rounded-xl font-code text-[11px] flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-bolt"></i>Desbloquear Labs Ilimitados ($4.99)
+                        </a>
+                    </div>
+
+                    <form id="newLabForm" onsubmit="crearLaboratorio(event)" class="space-y-3">
                         <input type="text" id="newLabName" required placeholder="Ej. API_Redes_Lab5"
                             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white focus:border-cyan-400 focus:outline-none">
                         <select id="newLabTemplate" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white">
-                            <option value="Python & IA">Python, Algoritmos & IA</option>
-                            <option value="Web Full-Stack">Desarrollo Web Full-Stack</option>
-                            <option value="Redes Linux">Redes & Servidores Linux</option>
-                            <option value="Bases de Datos SQL">Bases de Datos SQL</option>
-                            <option value="Java & POO">Java & POO Universitario</option>
-                            <option value="C# / .NET">C# / .NET & Estructuras</option>
+                            <option value="Python & IA">1. Python, Algoritmos & IA</option>
+                            <option value="Web Full-Stack">2. Desarrollo Web Full-Stack</option>
+                            <option value="Redes Linux">3. Redes & Servidores Linux</option>
+                            <option value="Bases de Datos SQL">4. Bases de Datos SQL</option>
+                            <option value="Java & POO">5. Java & POO Universitario</option>
+                            <option value="C# / .NET">6. C# / .NET & Estructuras</option>
+                            <option value="Auditoría & Ciberseguridad">7. Auditoría & Ciberseguridad</option>
+                            <option value="Visual Git Sin Comandos">8. Visual Git Sin Comandos</option>
                         </select>
                         <button type="submit" class="btn-cta-main w-full py-2.5 rounded-xl font-code text-xs">
                             + Crear Contenedor en BD
@@ -198,23 +240,63 @@
                     </form>
                 </div>
 
+                <!-- LISTA DE LABORATORIOS (PROPIOS + COMPARTIDOS) -->
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 id="labsListTitle" class="font-brand font-bold text-white text-sm">Laboratorios Guardados</h3>
+                        <h3 id="labsListTitle" class="font-brand font-bold text-white text-sm">Mis Laboratorios y Compartidos</h3>
                         <span id="labsCountBadge" class="px-2 py-0.5 rounded bg-cyan-400/20 text-cyan-300 font-code text-[11px]">0</span>
                     </div>
-                    <div id="labsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+                    <div id="labsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                </div>
+
+                <!-- EQUIPO COLABORATIVO DEL LABORATORIO ACTIVO (3 O 5 CUENTAS) -->
+                <div id="teamLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="font-brand font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-users text-violet-400"></i>Equipo del Proyecto
+                        </h3>
+                        <span id="teamSlotBadge" class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-code text-[11px] font-bold">1 / 3</span>
+                    </div>
+                    <p id="teamPlanHint" class="text-[11px] text-slate-400 leading-relaxed">
+                        Comparte este laboratorio con tus compañeros por correo <code>@ugb.edu.sv</code>.
+                    </p>
+
+                    <div id="teamMembersList" class="space-y-2 text-xs font-code"></div>
+
+                    <!-- Formulario para invitar compañeros (solo propietario y si no está anulado) -->
+                    <form id="inviteMemberForm" onsubmit="invitarMiembroEquipo(event)" class="hidden pt-2 border-t border-slate-800 space-y-2">
+                        <label class="block text-[10px] font-code uppercase tracking-wide text-slate-400">Invitar compañero registrado</label>
+                        <div class="flex gap-2">
+                            <input type="email" id="inviteEmailInput" required placeholder="smss093723@ugb.edu.sv"
+                                class="flex-1 min-w-0 px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-code text-white focus:border-cyan-400 focus:outline-none">
+                            <button type="submit" class="px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-code text-xs font-bold shrink-0 transition">
+                                + Unir
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Aviso al llegar al límite de 3 integrantes (invita a subir a Pack Grupo 5) -->
+                    <div id="teamUpgradeNotice" class="hidden p-3 rounded-xl bg-violet-950/50 border border-violet-500/40 space-y-2 text-[11px]">
+                        <div class="font-code text-violet-200 font-bold">
+                            <i class="fa-solid fa-lock mr-1"></i>Límite de 3 integrantes alcanzado
+                        </div>
+                        <p class="text-slate-300">Activa <strong>Pack Grupo (5)</strong> para conectar hasta <strong>5 cuentas Pro</strong> y 4 GB de RAM dedicada.</p>
+                        <a href="checkout.html?plan=team" class="w-full py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-code font-bold text-center block transition">
+                            Activar Pack Grupo (5) — $14.99/mes →
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <div class="lg:col-span-8 space-y-5">
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
                     <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                        <div class="font-code text-xs text-white">
-                            <i class="fa-solid fa-flask text-cyan-400 mr-1.5"></i>
+                        <div class="font-code text-xs text-white flex flex-wrap items-center gap-1.5">
+                            <i class="fa-solid fa-flask text-cyan-400"></i>
                             <span id="activeLabTitle">Selecciona un laboratorio</span>
-                            <span id="activeLabTemplate" class="ml-2 px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px]">---</span>
-                            <span id="activeLabOwner" class="ml-2 text-[10px] text-violet-300"></span>
+                            <span id="activeLabTemplate" class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px]">---</span>
+                            <span id="activeLabRamBadge" class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 text-[10px]">512 MB RAM</span>
+                            <span id="activeLabOwner" class="text-[10px] text-violet-300"></span>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <span id="labStatusBadge" class="hidden px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-code text-[10px] font-bold">
@@ -278,14 +360,13 @@
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h2 class="font-brand font-bold text-white text-lg">Planificación del Sprint (Kanban)</h2>
-                        <p class="text-xs text-slate-400">Gestiona entregas con etiquetas de prioridad y estimación en Story Points.</p>
+                        <p class="text-xs text-slate-400">Gestiona entregas en equipo con etiquetas de prioridad y Story Points.</p>
                     </div>
                     <div class="font-code text-[11px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 rounded-lg px-3 py-1.5">
                         <i class="fa-solid fa-flask mr-1"></i>Proyecto: <span id="kanbanProjectName">Sin seleccionar</span>
                     </div>
                 </div>
 
-                <!-- Aviso en Kanban si el proyecto fue anulado -->
                 <div id="kanbanAnnulledNotice" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/50 font-code text-xs text-rose-200">
                     <i class="fa-solid fa-ban mr-1.5"></i>
                     Este proyecto fue <strong>anulado por plagio</strong>. El tablero Kanban está bloqueado en modo de solo lectura.
@@ -326,8 +407,9 @@
                         </div>
                         <div class="md:col-span-2">
                             <label for="kanbanAssignee" class="block text-[10px] font-code uppercase tracking-wide text-slate-400 mb-1">Responsable</label>
-                            <input type="text" id="kanbanAssignee" required placeholder="Ej. Roberto"
+                            <input type="text" id="kanbanAssignee" list="teamMembersDatalist" required placeholder="Ej. Roberto"
                                 class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-cyan-400 focus:outline-none">
+                            <datalist id="teamMembersDatalist"></datalist>
                         </div>
                         <div class="md:col-span-2">
                             <label for="kanbanPriority" class="block text-[10px] font-code uppercase tracking-wide text-slate-400 mb-1">Prioridad</label>
@@ -356,7 +438,6 @@
                     </form>
                 </div>
 
-                <!-- Filtros rápidos por prioridad -->
                 <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 font-code text-xs">
                     <span class="text-slate-400 text-[11px]"><i class="fa-solid fa-filter text-cyan-400 mr-1.5"></i>Filtrar por prioridad:</span>
                     <div class="flex flex-wrap items-center gap-1.5">
@@ -371,9 +452,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="font-code text-xs font-bold text-cyan-400 uppercase">
-                            <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 mr-1"></span>Por Hacer
-                        </div>
+                        <div class="font-code text-xs font-bold text-cyan-400 uppercase"><span class="inline-block w-2 h-2 rounded-full bg-cyan-400 mr-1"></span>Por Hacer</div>
                         <div class="flex items-center gap-1.5 font-code text-[10px]">
                             <span id="count-por_hacer" class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0</span>
                             <span id="sp-por_hacer" class="px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">0 SP</span>
@@ -383,9 +462,7 @@
                 </div>
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="font-code text-xs font-bold text-amber-400 uppercase">
-                            <span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1"></span>En Proceso
-                        </div>
+                        <div class="font-code text-xs font-bold text-amber-400 uppercase"><span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1"></span>En Proceso</div>
                         <div class="flex items-center gap-1.5 font-code text-[10px]">
                             <span id="count-en_proceso" class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0</span>
                             <span id="sp-en_proceso" class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">0 SP</span>
@@ -395,9 +472,7 @@
                 </div>
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="font-code text-xs font-bold text-emerald-400 uppercase">
-                            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>Completado
-                        </div>
+                        <div class="font-code text-xs font-bold text-emerald-400 uppercase"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>Completado</div>
                         <div class="flex items-center gap-1.5 font-code text-[10px]">
                             <span id="count-completado" class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0</span>
                             <span id="sp-completado" class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">0 SP</span>
@@ -407,8 +482,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Módulo de Soporte N1-N3 reservado para el futuro panel de administración. -->
 
         <!-- MÓDULO 3: KPIS EN VIVO -->
         <section id="tab-kpis" class="hidden space-y-6">
@@ -456,7 +529,7 @@
                     <h3 class="font-brand font-bold text-white text-lg">Anular proyecto por plagio</h3>
                 </div>
                 <p class="text-xs text-slate-400 mt-1">
-                    El proyecto quedará congelado y marcado como anulado. El estudiante podrá ver el motivo, pero no podrá seguir trabajando en él.
+                    El proyecto quedará congelado y marcado como anulado. El equipo podrá ver el motivo, pero no podrá seguir trabajando en él.
                 </p>
             </div>
 
@@ -467,7 +540,7 @@
                 </div>
                 <div>
                     <label for="annulReason" class="block text-[11px] font-code uppercase tracking-wide text-slate-400 mb-1">Motivo / evidencia del plagio</label>
-                    <textarea id="annulReason" rows="4" required placeholder="Ej. Copia idéntica del código del proyecto API_Redes_Lab4 de otro compañero."
+                    <textarea id="annulReason" rows="4" required placeholder="Ej. Copia idéntica del código del proyecto API_Redes_Lab4 de otro equipo."
                         class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-rose-400 focus:outline-none"></textarea>
                 </div>
                 <div id="annulError" class="hidden p-2.5 rounded-lg bg-rose-950/70 border border-rose-500/50 text-[11px] font-code text-rose-300"></div>
@@ -485,7 +558,7 @@
     </div>
 
     <script>
-        const currentUser = obtenerSesion();
+        let currentUser = obtenerSesion();
         if (!currentUser) {
             window.location.href = 'auth.html';
         }
@@ -495,12 +568,13 @@
         let laboratorios = [];
         let activeLabId = null;
         let usuariosPorId = {};
+        let miembrosActivos = [];
         let kanbanCache = [];
         let kanbanFiltroPrioridad = 'Todas';
 
         const PRIORIDADES_KANBAN = {
-            Alta:  { badge: 'bg-rose-500/15 text-rose-300 border-rose-500/40',       border: 'border-l-rose-500',    peso: 1 },
-            Media: { badge: 'bg-amber-500/15 text-amber-300 border-amber-500/40',    border: 'border-l-amber-400',   peso: 2 },
+            Alta:  { badge: 'bg-rose-500/15 text-rose-300 border-rose-500/40',          border: 'border-l-rose-500',    peso: 1 },
+            Media: { badge: 'bg-amber-500/15 text-amber-300 border-amber-500/40',       border: 'border-l-amber-400',   peso: 2 },
             Baja:  { badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40', border: 'border-l-emerald-400', peso: 3 }
         };
 
@@ -510,6 +584,44 @@
             completado: 'Completado'
         };
 
+        function obtenerConfigPlan(planNombre) {
+            const p = (planNombre || 'Freemium').toLowerCase();
+            if (p.includes('grupo') || p.includes('pack')) {
+                return {
+                    nombre: 'Pack Grupo (5)',
+                    maxLabs: Infinity,
+                    maxMiembros: 5,
+                    ramShort: '4 GB',
+                    ramLabel: '4 GB RAM Dedicada',
+                    esPro: true,
+                    esGrupo: true,
+                    badgeClass: 'bg-violet-500/20 text-violet-300 border-violet-500/40'
+                };
+            }
+            if (p.includes('pro')) {
+                return {
+                    nombre: 'Estudiante Pro',
+                    maxLabs: Infinity,
+                    maxMiembros: 3,
+                    ramShort: '2 GB',
+                    ramLabel: '2 GB RAM Cloud',
+                    esPro: true,
+                    esGrupo: false,
+                    badgeClass: 'bg-cyan-400/20 text-cyan-300 border-cyan-400/40'
+                };
+            }
+            return {
+                nombre: 'Freemium',
+                maxLabs: 2,
+                maxMiembros: 3,
+                ramShort: '512 MB',
+                ramLabel: '512 MB RAM Básica',
+                esPro: false,
+                esGrupo: false,
+                badgeClass: 'bg-slate-800 text-slate-300 border-slate-700'
+            };
+        }
+
         function escapeHtml(value) {
             return String(value ?? '').replace(/[&<>"']/g, c => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -518,6 +630,24 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!currentUser) return;
+
+            if (!db) {
+                showToast('Error al conectar con Supabase.', 'error');
+                return;
+            }
+
+            // Sincroniza el plan más reciente desde Supabase (por si acaba de pagar o fue invitado a un Pack Grupo)
+            const { data: freshUser } = await db
+                .from('usuarios')
+                .select('id, nombre_completo, correo, rol, universidad, plan_actual')
+                .eq('id', currentUser.id)
+                .maybeSingle();
+
+            if (freshUser) {
+                currentUser = { ...currentUser, ...freshUser };
+                guardarSesion(currentUser);
+            }
+
             document.getElementById('userNameDisplay').textContent = currentUser.nombre_completo;
             document.getElementById('userRoleDisplay').textContent = esDocente ? 'Docente Evaluador' : currentUser.rol;
             document.getElementById('userPlanDisplay').textContent = currentUser.plan_actual;
@@ -528,11 +658,7 @@
                 showToast('Acceso Docente Evaluador sin costo: los planes de pago son solo para estudiantes.', 'success');
             }
 
-            if (!db) {
-                showToast('Error al conectar con Supabase.', 'error');
-                return;
-            }
-
+            await cargarMapaUsuarios();
             await cargarLaboratorios();
             cargarKPIs();
             if (esDocente) cargarResumenDocente();
@@ -546,7 +672,14 @@
             if (e.target.id === 'annulModal') cerrarModalAnulacion();
         });
 
+        async function cargarMapaUsuarios() {
+            const { data } = await db.from('usuarios').select('id, nombre_completo, correo, rol, plan_actual');
+            usuariosPorId = {};
+            (data || []).forEach(u => { usuariosPorId[String(u.id)] = u; });
+        }
+
         function configurarModoDocente() {
+            document.getElementById('studentPlanCard')?.classList.add('hidden');
             document.getElementById('teacherModeBanner')?.classList.remove('hidden');
             document.getElementById('teacherOverview')?.classList.remove('hidden');
             document.getElementById('newLabCard')?.classList.add('hidden');
@@ -578,6 +711,42 @@
             }
         }
 
+        function actualizarTarjetaPlanEstudiante() {
+            if (esDocente) return;
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            const misLabsPropios = laboratorios.filter(l => String(l.usuario_id) === String(currentUser.id));
+
+            const badge = document.getElementById('planCardBadge');
+            badge.textContent = cfg.nombre;
+            badge.className = `px-2.5 py-0.5 rounded-full border font-code text-[11px] font-bold ${cfg.badgeClass}`;
+
+            document.getElementById('quotaLabsValue').textContent = cfg.maxLabs === Infinity
+                ? `${misLabsPropios.length} / ∞`
+                : `${misLabsPropios.length} / ${cfg.maxLabs}`;
+            document.getElementById('quotaRamValue').textContent = cfg.ramShort;
+            document.getElementById('quotaTeamValue').textContent = `Máx. ${cfg.maxMiembros}`;
+
+            // Botón de mejora de plan
+            const cta = document.getElementById('upgradePlanCta');
+            const ctaText = document.getElementById('upgradePlanCtaText');
+            if (!cfg.esPro) {
+                cta.href = 'checkout.html?plan=pro';
+                ctaText.textContent = 'Subir a Estudiante Pro ($4.99/mes)';
+                cta.classList.remove('hidden');
+            } else if (!cfg.esGrupo) {
+                cta.href = 'checkout.html?plan=team';
+                ctaText.textContent = 'Subir a Pack Grupo 5 Cuentas ($14.99)';
+                cta.classList.remove('hidden');
+            } else {
+                cta.classList.add('hidden');
+            }
+
+            // Bloquear formulario de nuevo laboratorio si Freemium llegó al límite de 2
+            const limiteAlcanzado = misLabsPropios.length >= cfg.maxLabs;
+            document.getElementById('labLimitReachedBox')?.classList.toggle('hidden', !limiteAlcanzado);
+            document.getElementById('newLabForm')?.classList.toggle('hidden', limiteAlcanzado);
+        }
+
         function showToast(msg, type = 'success') {
             const box = document.getElementById('dashToast');
             box.classList.remove('hidden');
@@ -585,19 +754,17 @@
                 ? 'p-3 rounded-xl font-code text-xs bg-emerald-950/80 border border-emerald-400 text-emerald-300'
                 : 'p-3 rounded-xl font-code text-xs bg-rose-950/80 border border-rose-400 text-rose-300';
             box.textContent = msg;
-            setTimeout(() => box.classList.add('hidden'), 4000);
+            setTimeout(() => box.classList.add('hidden'), 4500);
         }
 
         async function cargarResumenDocente() {
             if (!esDocente) return;
-
             const { data, error } = await db.from('validaciones_sandbox').select('*');
             if (error) return;
 
             const anuladosIds = new Set(
                 laboratorios.filter(l => l.estado_sandbox === 'ANULADO').map(l => l.id)
             );
-
             const commits = data || [];
             const aprobados = commits.filter(v => v.aprobado === true).length;
             const pendientes = commits.filter(v =>
@@ -610,10 +777,8 @@
             document.getElementById('teacherCommitsCount').textContent = commits.length;
             document.getElementById('teacherApprovedCount').textContent = aprobados;
             document.getElementById('teacherPendingCount').textContent = pendientes;
-
-            const annulledBox = document.getElementById('teacherAnnulledStat');
             document.getElementById('teacherAnnulledCount').textContent = anuladosIds.size;
-            annulledBox.classList.toggle('hidden', anuladosIds.size === 0);
+            document.getElementById('teacherAnnulledStat').classList.toggle('hidden', anuladosIds.size === 0);
         }
 
         function switchDashTab(tab) {
@@ -629,20 +794,42 @@
         }
 
         async function cargarLaboratorios() {
-            let query = db.from('laboratorios').select('*').order('id', { ascending: false });
-            if (!esDocente) query = query.eq('usuario_id', currentUser.id);
-
-            const { data, error } = await query;
-            if (error) return showToast('Error cargando laboratorios: ' + error.message, 'error');
+            let labsCargados = [];
 
             if (esDocente) {
-                const { data: usersData } = await db.from('usuarios').select('id, nombre_completo, correo');
-                usuariosPorId = {};
-                (usersData || []).forEach(u => { usuariosPorId[String(u.id)] = u; });
+                const { data, error } = await db.from('laboratorios').select('*').order('id', { ascending: false });
+                if (error) return showToast('Error cargando proyectos: ' + error.message, 'error');
+                labsCargados = data || [];
+            } else {
+                // 1. Laboratorios propios del estudiante + 2. Laboratorios donde fue invitado en equipo
+                const [ownRes, memRes] = await Promise.all([
+                    db.from('laboratorios').select('*').eq('usuario_id', currentUser.id).order('id', { ascending: false }),
+                    db.from('miembros_laboratorio').select('laboratorio_id').eq('correo_miembro', currentUser.correo.toLowerCase())
+                ]);
+
+                if (ownRes.error) return showToast('Error cargando laboratorios: ' + ownRes.error.message, 'error');
+
+                const propios = ownRes.data || [];
+                const idsCompartidos = [...new Set((memRes.data || []).map(m => m.laboratorio_id))]
+                    .filter(id => !propios.some(p => p.id === id));
+
+                let compartidos = [];
+                if (idsCompartidos.length) {
+                    const { data: sharedData } = await db
+                        .from('laboratorios')
+                        .select('*')
+                        .in('id', idsCompartidos)
+                        .order('id', { ascending: false });
+                    compartidos = sharedData || [];
+                }
+
+                labsCargados = [...propios, ...compartidos].sort((a, b) => b.id - a.id);
             }
 
-            laboratorios = data || [];
+            laboratorios = labsCargados;
             document.getElementById('labsCountBadge').textContent = laboratorios.length;
+            actualizarTarjetaPlanEstudiante();
+
             const list = document.getElementById('labsList');
             list.innerHTML = '';
 
@@ -653,6 +840,9 @@
                 document.getElementById('activeLabOwner').textContent = '';
                 document.getElementById('codeEditor').value = '';
                 document.getElementById('validationsList').innerHTML = '';
+                document.getElementById('teamMembersList').innerHTML = '<div class="text-slate-500">Crea o selecciona un laboratorio para ver su equipo.</div>';
+                document.getElementById('inviteMemberForm').classList.add('hidden');
+                document.getElementById('teamUpgradeNotice').classList.add('hidden');
                 list.innerHTML = `<div class="text-slate-500 text-xs p-3 rounded-xl bg-slate-950 border border-slate-800">
                     ${esDocente ? 'Aún no hay proyectos de estudiantes registrados.' : 'Aún no tienes laboratorios. Crea el primero.'}
                 </div>`;
@@ -666,9 +856,10 @@
             laboratorios.forEach(lab => {
                 const owner = usuariosPorId[String(lab.usuario_id)];
                 const anulado = lab.estado_sandbox === 'ANULADO';
+                const esCompartido = !esDocente && String(lab.usuario_id) !== String(currentUser.id);
                 const ownerLabel = esDocente
                     ? ` • <span class="text-violet-300">${escapeHtml(owner?.nombre_completo || 'Estudiante')}</span>`
-                    : '';
+                    : (esCompartido ? ` • <span class="text-violet-300">De ${escapeHtml(owner?.nombre_completo?.split(' ')[0] || 'Compañero')}</span>` : '');
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
@@ -681,7 +872,9 @@
                 btn.innerHTML = `
                     <div class="flex items-center justify-between gap-2">
                         <div class="font-bold truncate">${escapeHtml(lab.nombre_proyecto || 'Sin nombre')}</div>
-                        ${anulado ? '<span class="shrink-0 px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[9px] font-bold">ANULADO</span>' : ''}
+                        ${anulado
+                            ? '<span class="shrink-0 px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[9px] font-bold">ANULADO</span>'
+                            : (esCompartido ? '<span class="shrink-0 px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/40 text-[9px] font-bold">EQUIPO</span>' : '')}
                     </div>
                     <div class="text-[10px] mt-1 ${anulado ? 'text-rose-300' : 'text-cyan-400'}">${escapeHtml(lab.plantilla || 'Sin plantilla')} • ${escapeHtml(lab.estado_sandbox || 'ACTIVO')}${ownerLabel}</div>
                 `;
@@ -702,14 +895,19 @@
             if (!lab) return;
 
             const anulado = lab.estado_sandbox === 'ANULADO';
+            const owner = usuariosPorId[String(lab.usuario_id)];
+            const ownerPlanCfg = obtenerConfigPlan(owner?.plan_actual || currentUser.plan_actual);
 
             document.getElementById('activeLabTitle').textContent = lab.nombre_proyecto || 'Sin nombre';
             document.getElementById('activeLabTemplate').textContent = lab.plantilla || 'Sin plantilla';
+            document.getElementById('activeLabRamBadge').textContent = ownerPlanCfg.ramLabel;
 
             const ownerEl = document.getElementById('activeLabOwner');
             if (ownerEl) {
-                const owner = usuariosPorId[String(lab.usuario_id)];
-                ownerEl.textContent = esDocente ? `• ${owner?.nombre_completo || 'Estudiante'}` : '';
+                const esCompartido = !esDocente && String(lab.usuario_id) !== String(currentUser.id);
+                ownerEl.textContent = (esDocente || esCompartido)
+                    ? `• Líder: ${owner?.nombre_completo || 'Estudiante'}`
+                    : '';
             }
 
             document.getElementById('annulProjectBtn')?.classList.toggle('hidden', !esDocente || anulado);
@@ -727,7 +925,6 @@
                 }
             }
 
-            // Sincronizar bloqueo visual también en el módulo Kanban
             document.getElementById('kanbanProjectName').textContent = `${lab.nombre_proyecto || 'Sin nombre'}${anulado ? ' (anulado)' : ''}`;
             document.getElementById('kanbanAnnulledNotice')?.classList.toggle('hidden', !anulado);
             document.getElementById('kanbanCreateCard')?.classList.toggle('hidden', esDocente || anulado);
@@ -740,8 +937,159 @@
 
             document.getElementById('studentCommitControls')?.classList.toggle('hidden', esDocente || anulado);
             cargarValidaciones(lab.id);
+            cargarMiembrosLaboratorio(lab);
         }
 
+        // --- EQUIPOS COLABORATIVOS (3 Y 5 CUENTAS) ---
+        async function cargarMiembrosLaboratorio(lab) {
+            const owner = usuariosPorId[String(lab.usuario_id)] || {
+                nombre_completo: currentUser.nombre_completo,
+                correo: currentUser.correo,
+                plan_actual: currentUser.plan_actual
+            };
+            const ownerPlanCfg = obtenerConfigPlan(owner.plan_actual);
+            const esPropietario = !esDocente && String(lab.usuario_id) === String(currentUser.id);
+            const anulado = lab.estado_sandbox === 'ANULADO';
+
+            const { data, error } = await db
+                .from('miembros_laboratorio')
+                .select('*')
+                .eq('laboratorio_id', lab.id)
+                .order('id', { ascending: true });
+
+            if (error) {
+                document.getElementById('teamMembersList').innerHTML =
+                    '<div class="text-amber-300 text-[11px]">Ejecuta la migración SQL de <code>miembros_laboratorio</code> para activar equipos.</div>';
+                return;
+            }
+
+            miembrosActivos = data || [];
+            const totalEquipo = 1 + miembrosActivos.length; // 1 líder + invitados
+            const maxMiembros = ownerPlanCfg.maxMiembros;
+
+            document.getElementById('teamSlotBadge').textContent = `${totalEquipo} / ${maxMiembros}`;
+            document.getElementById('teamPlanHint').innerHTML = ownerPlanCfg.esGrupo
+                ? `Plan <strong>Pack Grupo (5)</strong>: hasta 5 cuentas Pro con 4 GB RAM dedicada.`
+                : `Plan <strong>${ownerPlanCfg.nombre}</strong>: hasta 3 estudiantes por proyecto.`;
+
+            // Renderizar líder + colaboradores
+            const listEl = document.getElementById('teamMembersList');
+            let html = `
+                <div class="p-2.5 rounded-xl bg-slate-950 border border-cyan-400/30 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="text-white font-bold truncate">${escapeHtml(owner.nombre_completo)}</div>
+                        <div class="text-[10px] text-slate-400 truncate">${escapeHtml(owner.correo)}</div>
+                    </div>
+                    <span class="shrink-0 px-2 py-0.5 rounded bg-cyan-400/15 text-cyan-300 text-[10px] font-bold">Líder</span>
+                </div>
+            `;
+
+            miembrosActivos.forEach(m => {
+                const removeBtn = (esPropietario && !anulado)
+                    ? `<button type="button" onclick="eliminarMiembroEquipo(${m.id})" title="Quitar del equipo" class="text-slate-500 hover:text-rose-400 px-1"><i class="fa-solid fa-xmark"></i></button>`
+                    : '';
+                html += `
+                    <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="text-slate-200 font-semibold truncate">${escapeHtml(m.nombre_miembro)}</div>
+                            <div class="text-[10px] text-slate-500 truncate">${escapeHtml(m.correo_miembro)}</div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="px-2 py-0.5 rounded bg-violet-500/15 text-violet-300 text-[10px]">Equipo</span>
+                            ${removeBtn}
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
+
+            // Actualizar sugerencias de responsables en el tablero Kanban
+            const datalist = document.getElementById('teamMembersDatalist');
+            if (datalist) {
+                const nombres = [owner.nombre_completo, ...miembrosActivos.map(m => m.nombre_miembro)];
+                datalist.innerHTML = nombres.map(n => `<option value="${escapeHtml(n.split(' ')[0])}">${escapeHtml(n)}</option>`).join('');
+            }
+
+            // Mostrar u ocultar formulario de invitación y aviso de Pack Grupo (5)
+            const puedeInvitar = esPropietario && !anulado && totalEquipo < maxMiembros;
+            const llegoAlLimiteDe3 = esPropietario && !anulado && !ownerPlanCfg.esGrupo && totalEquipo >= maxMiembros;
+
+            document.getElementById('inviteMemberForm').classList.toggle('hidden', !puedeInvitar);
+            document.getElementById('teamUpgradeNotice').classList.toggle('hidden', !llegoAlLimiteDe3);
+        }
+
+        async function invitarMiembroEquipo(e) {
+            e.preventDefault();
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab || esDocente || String(lab.usuario_id) !== String(currentUser.id)) return;
+            if (lab.estado_sandbox === 'ANULADO') return showToast('Proyecto anulado: no se pueden agregar miembros.', 'error');
+
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (1 + miembrosActivos.length >= cfg.maxMiembros) {
+                return showToast(`Alcanzaste el límite de ${cfg.maxMiembros} integrantes de tu plan.`, 'error');
+            }
+
+            const input = document.getElementById('inviteEmailInput');
+            const correo = input.value.trim().toLowerCase();
+            if (correo === currentUser.correo.toLowerCase()) {
+                return showToast('Ya eres el líder de este proyecto.', 'error');
+            }
+
+            // Buscar si el compañero ya tiene cuenta en LabFlow Uni
+            const { data: targetUser, error: errFind } = await db
+                .from('usuarios')
+                .select('id, nombre_completo, correo, rol, plan_actual')
+                .eq('correo', correo)
+                .maybeSingle();
+
+            if (errFind) return showToast('Error consultando usuario: ' + errFind.message, 'error');
+            if (!targetUser) {
+                return showToast('Ese correo aún no tiene cuenta. Pídele que se registre primero en auth.html.', 'error');
+            }
+            if (targetUser.rol === 'Docente') {
+                return showToast('Los docentes ya ven todos los proyectos en Modo Evaluador.', 'error');
+            }
+
+            const { error: errIns } = await db
+                .from('miembros_laboratorio')
+                .insert([{
+                    laboratorio_id: lab.id,
+                    correo_miembro: targetUser.correo.toLowerCase(),
+                    nombre_miembro: targetUser.nombre_completo,
+                    rol_equipo: 'Colaborador'
+                }]);
+
+            if (errIns) {
+                if (errIns.code === '23505') return showToast('Ese compañero ya forma parte de este equipo.', 'error');
+                return showToast('Error al invitar: ' + errIns.message, 'error');
+            }
+
+            // Si el líder tiene Pack Grupo (5) y el invitado era Freemium, le activa cuenta Pro de grupo
+            let extraMsg = '';
+            if (cfg.esGrupo && (targetUser.plan_actual || 'Freemium') === 'Freemium') {
+                await db.from('usuarios').update({ plan_actual: 'Pack Grupo (5)' }).eq('id', targetUser.id);
+                extraMsg = ' (¡Cuenta actualizada a Pack Grupo Pro!)';
+            }
+
+            input.value = '';
+            showToast(`${targetUser.nombre_completo} se unió al equipo.${extraMsg}`);
+            await cargarMapaUsuarios();
+            cargarMiembrosLaboratorio(lab);
+        }
+
+        async function eliminarMiembroEquipo(miembroId) {
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab || esDocente || String(lab.usuario_id) !== String(currentUser.id)) return;
+            if (!confirm('¿Quitar a este integrante del proyecto?')) return;
+
+            const { error } = await db.from('miembros_laboratorio').delete().eq('id', miembroId);
+            if (error) return showToast('Error quitando integrante: ' + error.message, 'error');
+
+            showToast('Integrante removido del proyecto.');
+            cargarMiembrosLaboratorio(lab);
+        }
+
+        // --- ANULACIÓN POR PLAGIO Y REACTIVACIÓN ---
         function abrirModalAnulacion() {
             if (!esDocente) return showToast('Solo un docente puede anular proyectos.', 'error');
             const lab = laboratorios.find(l => l.id === activeLabId);
@@ -839,13 +1187,21 @@
             cargarResumenDocente();
         }
 
+        // --- CREAR LABORATORIO CON VERIFICACIÓN DE LÍMITE DE PLAN ---
         async function crearLaboratorio(e) {
             e.preventDefault();
             if (esDocente) return showToast('Los docentes evalúan proyectos, no crean laboratorios.', 'error');
 
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            const misLabsPropios = laboratorios.filter(l => String(l.usuario_id) === String(currentUser.id));
+            if (misLabsPropios.length >= cfg.maxLabs) {
+                actualizarTarjetaPlanEstudiante();
+                return showToast('Tu plan Freemium permite hasta 2 laboratorios propios. Mejora a Estudiante Pro para crear ilimitados.', 'error');
+            }
+
             const nombre_proyecto = document.getElementById('newLabName').value.trim();
             const plantilla = document.getElementById('newLabTemplate').value;
-            const codigo_fuente = `# Proyecto: ${nombre_proyecto}\n# Plantilla: ${plantilla}\nprint("Contenedor LabFlow Uni listo para ${currentUser.nombre_completo}")`;
+            const codigo_fuente = `# Proyecto: ${nombre_proyecto}\n# Plantilla: ${plantilla} (${cfg.ramLabel})\nprint("Contenedor LabFlow Uni listo para ${currentUser.nombre_completo}")`;
 
             const { data, error } = await db
                 .from('laboratorios')
@@ -894,7 +1250,8 @@
                 mensaje_commit,
                 estado_validacion,
                 latencia_ms,
-                conflictos_detectados: 0
+                conflictos_detectados: 0,
+                rama: 'main'
             }]);
 
             if (errUpdate || errVal) return showToast('Error guardando validación.', 'error');
@@ -1074,7 +1431,6 @@
             const proyectoAnulado = laboratorios.some(l => l.id === activeLabId && l.estado_sandbox === 'ANULADO');
             const soloLectura = esDocente || proyectoAnulado;
 
-            // Filtrar por prioridad y ordenar Alta -> Media -> Baja
             const tareasFiltradas = kanbanCache
                 .filter(t => kanbanFiltroPrioridad === 'Todas' || (t.prioridad || 'Media') === kanbanFiltroPrioridad)
                 .sort((a, b) => {
@@ -1138,7 +1494,6 @@
                 }
             });
 
-            // El resumen del sprint siempre refleja el total real del proyecto
             actualizarResumenKanban(kanbanCache);
         }
 

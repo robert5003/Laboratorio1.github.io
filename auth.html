@@ -48,7 +48,7 @@
 </head>
 <body class="bg-tech-grid min-h-screen flex flex-col justify-between">
 
-<header class="backdrop-blur-xl bg-slate-950/95 border-b border-slate-800 shadow-xl">
+    <header class="backdrop-blur-xl bg-slate-950/95 border-b border-slate-800 shadow-xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-center">
             <a href="index.html" class="flex items-center gap-3 group focus:outline-none">
                 <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition">
@@ -142,11 +142,11 @@
                         <div id="roleBadgePreview" class="mt-2 text-[11px] font-code text-slate-400"></div>
                     </div>
                     <div id="planField">
-                        <label class="block text-xs font-code text-slate-300 mb-1.5">Plan Inicial <span class="text-slate-500">(solo estudiantes)</span></label>
+                        <label class="block text-xs font-code text-slate-300 mb-1.5">Plan deseado <span class="text-slate-500">(los planes de pago pasan al checkout)</span></label>
                         <select id="regPlan" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white font-code">
-                            <option value="Freemium">Inicial Freemium ($0.00)</option>
-                            <option value="Estudiante Pro">Estudiante Pro ($4.99/mes)</option>
-                            <option value="Pack Grupo (5)">Pack Grupo 5 Integrantes ($14.99/mes)</option>
+                            <option value="Freemium">Inicial Freemium ($0.00/mes — Acceso directo)</option>
+                            <option value="pro">Estudiante Pro ($4.99/mes — Ir al Checkout)</option>
+                            <option value="team">Pack Grupo 5 Integrantes ($14.99/mes — Ir al Checkout)</option>
                         </select>
                     </div>
                     <div id="teacherPlanNotice" class="hidden p-3 rounded-xl text-[11px] font-code bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 leading-relaxed">
@@ -168,23 +168,22 @@
     </main>
 
     <footer class="text-center py-4 text-[11px] font-code text-slate-500 border-t border-slate-900">
-        LabFlow Uni MVP • Semana 17 Emprendimiento UGB
+        LabFlow Uni MVP • Emprendimiento UGB
     </footer>
 
     <script>
-        // Destino posterior al login: solo se permiten páginas internas
-        // (por ejemplo "checkout.html?plan=pro" cuando viene de la landing).
+        const urlParams = new URLSearchParams(window.location.search);
+
         function obtenerDestinoSeguro() {
-            const next = new URLSearchParams(window.location.search).get('next');
+            const next = urlParams.get('next');
             if (!next) return 'dashboard.html';
             if (/^[\w.-]+\.html(\?[\w%&=.-]*)?(#[\w-]+)?$/.test(next)) return next;
             return 'dashboard.html';
         }
 
         const destinoPostAuth = obtenerDestinoSeguro();
-        const vieneDePago = new URLSearchParams(window.location.search).get('motivo') === 'pago';
+        const vieneDePago = urlParams.get('motivo') === 'pago';
 
-        // Un docente nunca pasa por el checkout: su acceso es gratuito de evaluador.
         function destinoFinal(usuario) {
             if (usuario && usuario.rol === 'Docente') return 'dashboard.html?aviso=docente';
             return destinoPostAuth;
@@ -195,9 +194,14 @@
         }
 
         if (vieneDePago) {
-            showAlert('Inicia sesión o crea tu cuenta para continuar con tu pago seguro.', 'info');
+            showAlert('Inicia sesión o crea tu cuenta para activar tu plan en el checkout.', 'info');
             document.querySelector('#btnLoginSubmit span').textContent = 'Entrar y continuar al pago';
-            document.querySelector('#btnRegSubmit span').textContent = 'Registrarme y continuar al pago';
+            document.querySelector('#btnRegSubmit span').textContent = 'Crear cuenta y continuar al pago';
+            document.getElementById('planField').classList.add('hidden');
+        }
+
+        if (urlParams.get('tab') === 'register') {
+            switchAuthTab('register');
         }
 
         function switchAuthTab(tab) {
@@ -205,7 +209,7 @@
             const regForm = document.getElementById('registerForm');
             const tLogin = document.getElementById('tabLogin');
             const tReg = document.getElementById('tabRegister');
-            document.getElementById('authAlert').classList.add('hidden');
+            if (!vieneDePago) document.getElementById('authAlert').classList.add('hidden');
 
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
@@ -239,8 +243,9 @@
             document.getElementById('roleBadgePreview').innerHTML =
                 `Rol asignado automáticamente: <strong class="${esDocente ? 'text-violet-400' : 'text-cyan-400'}">${rol}</strong>`;
 
-            // Los planes de pago son exclusivos para estudiantes.
-            document.getElementById('planField').classList.toggle('hidden', esDocente);
+            if (!vieneDePago) {
+                document.getElementById('planField').classList.toggle('hidden', esDocente);
+            }
             document.getElementById('teacherPlanNotice').classList.toggle('hidden', !esDocente);
         }
 
@@ -281,14 +286,17 @@
             const correo = document.getElementById('regEmail').value.trim().toLowerCase();
             const password = document.getElementById('regPassword').value;
             const rol = detectarRolUGB(correo);
-            const plan_actual = rol === 'Docente' ? 'Docente Evaluador' : document.getElementById('regPlan').value;
+
+            // Toda cuenta estudiantil nace como Freemium y solo se actualiza a Pro/Pack Grupo al completar el checkout.
+            const planInicialBD = rol === 'Docente' ? 'Docente Evaluador' : 'Freemium';
+            const seleccionPlan = document.getElementById('regPlan').value;
 
             const btn = document.getElementById('btnRegSubmit');
             btn.disabled = true;
 
             const { data, error } = await db
                 .from('usuarios')
-                .insert([{ nombre_completo, correo, password, rol, plan_actual }])
+                .insert([{ nombre_completo, correo, password, rol, plan_actual: planInicialBD }])
                 .select()
                 .single();
 
@@ -300,10 +308,18 @@
             }
 
             guardarSesion(data);
+
+            // Determinar redirección: si es docente va a Dashboard; si eligió plan pago va al Checkout a activarlo.
+            let destino = destinoFinal(data);
+            if (rol !== 'Docente' && !vieneDePago && (seleccionPlan === 'pro' || seleccionPlan === 'team')) {
+                destino = `checkout.html?plan=${seleccionPlan}`;
+            }
+
+            const vaAlPago = destino.startsWith('checkout.html');
             showAlert(rol === 'Docente'
                 ? '¡Cuenta Docente Evaluador creada! Acceso gratuito, abriendo tu Dashboard...'
-                : (vieneDePago ? `¡Cuenta creada como ${rol}! Volviendo a tu pago...` : `¡Cuenta creada como ${rol}! Guardado en Supabase...`), 'success');
-            setTimeout(() => window.location.href = destinoFinal(data), 800);
+                : (vaAlPago ? '¡Cuenta creada! Llevándote al Checkout para activar tu plan...' : '¡Cuenta Freemium creada! Abriendo tu Dashboard...'), 'success');
+            setTimeout(() => window.location.href = destino, 700);
         }
     </script>
 </body>
