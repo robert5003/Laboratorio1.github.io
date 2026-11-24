@@ -271,11 +271,11 @@
                     <div id="labsList" class="space-y-2 max-h-60 overflow-y-auto"></div>
                 </div>
 
-                <!-- EQUIPO DEL PROYECTO (SOLO ESTUDIANTES) -->
+                <!-- EQUIPO / INTEGRANTES DEL PROYECTO -->
                 <div id="teamLabCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <h3 class="font-brand font-bold text-white text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-users text-violet-400"></i>Equipo del Proyecto
+                            <i class="fa-solid fa-users text-violet-400"></i><span id="teamCardTitleText">Equipo del Proyecto</span>
                         </h3>
                         <span id="teamSlotBadge" class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-code text-[11px] font-bold">1 / 3</span>
                     </div>
@@ -1082,13 +1082,18 @@
 
         function configurarModoDocente() {
             document.getElementById('studentPlanCard')?.classList.add('hidden');
-            document.getElementById('teamLabCard')?.classList.add('hidden');
             document.getElementById('teacherModeBanner')?.classList.remove('hidden');
             document.getElementById('teacherOverview')?.classList.remove('hidden');
             document.getElementById('newLabCard')?.classList.add('hidden');
             document.getElementById('kanbanCreateCard')?.classList.add('hidden');
             document.getElementById('studentCommitControls')?.classList.add('hidden');
             document.getElementById('teacherReadOnlyNotice')?.classList.remove('hidden');
+
+            // Modo lectura limpio para la tarjeta de integrantes (sin cuotas ni textos de plan)
+            const teamTitle = document.getElementById('teamCardTitleText');
+            if (teamTitle) teamTitle.textContent = 'Integrantes del Proyecto';
+            document.getElementById('teamSlotBadge')?.classList.add('hidden');
+            document.getElementById('teamPlanHint')?.classList.add('hidden');
 
             const branchSel = document.getElementById('branchSelector');
             if (branchSel) branchSel.disabled = true;
@@ -1338,9 +1343,12 @@
                         </div>
                         <div class="text-slate-500 text-[11px] pt-1">Crea tu laboratorio arriba e invita a tus compañeros en el mismo paso.</div>
                     `;
-                    document.getElementById('inviteMemberForm').classList.add('hidden');
-                    document.getElementById('teamUpgradeNotice').classList.add('hidden');
+                } else {
+                    document.getElementById('teamMembersList').innerHTML =
+                        '<div class="text-slate-500 text-[11px]">Aún no hay proyectos con integrantes registrados.</div>';
                 }
+                document.getElementById('inviteMemberForm').classList.add('hidden');
+                document.getElementById('teamUpgradeNotice').classList.add('hidden');
 
                 list.innerHTML = `<div class="text-slate-500 text-xs p-3 rounded-xl bg-slate-950 border border-slate-800">
                     ${esDocente ? 'Aún no hay proyectos de estudiantes registrados.' : 'Aún no tienes laboratorios. Crea el primero.'}
@@ -1447,7 +1455,7 @@
 
             document.getElementById('studentCommitControls')?.classList.toggle('hidden', esDocente || anulado);
             cargarValidaciones(lab.id);
-            if (!esDocente) cargarMiembrosLaboratorio(lab);
+            cargarMiembrosLaboratorio(lab);
         }
 
         // --- MOTOR VISUAL GIT + VALIDADOR PRE-MERGE REAL ---
@@ -1964,10 +1972,12 @@
             const totalEquipo = 1 + miembrosActivos.length;
             const maxMiembros = ownerPlanCfg.maxMiembros;
 
-            document.getElementById('teamSlotBadge').textContent = `${totalEquipo} / ${maxMiembros}`;
-            document.getElementById('teamPlanHint').innerHTML = ownerPlanCfg.esGrupo
-                ? `Plan <strong>Pack Grupo (5)</strong>: hasta 5 cuentas Pro con 4 GB RAM dedicada.`
-                : `Plan <strong>${ownerPlanCfg.nombre}</strong>: hasta 3 estudiantes por proyecto.`;
+            if (!esDocente) {
+                document.getElementById('teamSlotBadge').textContent = `${totalEquipo} / ${maxMiembros}`;
+                document.getElementById('teamPlanHint').innerHTML = ownerPlanCfg.esGrupo
+                    ? `Plan <strong>Pack Grupo (5)</strong>: hasta 5 cuentas Pro con 4 GB RAM dedicada.`
+                    : `Plan <strong>${ownerPlanCfg.nombre}</strong>: hasta 3 estudiantes por proyecto.`;
+            }
 
             const listEl = document.getElementById('teamMembersList');
             let html = `
@@ -2187,7 +2197,6 @@
                 return showToast('Tu plan Freemium permite hasta 2 laboratorios propios. Mejora a Estudiante Pro para crear ilimitados.', 'error');
             }
 
-            // Si escribió un correo en el campo de invitación sin dar clic a "+ Añadir", lo valida y agrega automáticamente
             const correoPendiente = document.getElementById('newLabInviteInput').value.trim();
             if (correoPendiente) {
                 const okInvitado = await agregarInvitadoCreacion();
