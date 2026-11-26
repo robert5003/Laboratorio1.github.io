@@ -19,7 +19,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <style>
-        body { background-color: #0F172A; color: #F8FAFC; font-family: 'Inter', sans-serif; }
+        html, body {
+            background-color: #0F172A;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
         .font-brand { font-family: 'Space Grotesk', sans-serif; }
         .font-code { font-family: 'JetBrains Mono', monospace; }
         .btn-cta-main {
@@ -40,11 +45,13 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3.5">
-        <div class="max-w-7xl mx-auto flex flex-wrap xl:flex-nowrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3 shrink-0">
-                <a href="index.html" class="flex items-center gap-3 group focus:outline-none">
-                    <div class="w-11 h-11 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition shrink-0">
+    <!-- NAVBAR PRINCIPAL (ESCRITORIO 1 FILA + MENÚ DESPLEGABLE MÓVIL COMO INDEX.HTML) -->
+    <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
+            <!-- Logo + Indicador de estado (en escritorio) -->
+            <div class="flex items-center gap-3 min-w-0 shrink-0">
+                <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group focus:outline-none">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-slate-900 border border-cyan-400/50 flex items-center justify-center p-1.5 shadow-inner group-hover:border-cyan-400 transition shrink-0">
                         <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="flaskBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -71,46 +78,102 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <span class="font-brand text-2xl font-bold tracking-tight text-white">Lab</span>
-                            <span class="font-brand text-2xl font-bold tracking-tight text-cyan-400">Flow<span class="cursor-blink text-cyan-400 font-code">_</span></span>
-                            <span class="ml-1 px-2.5 py-0.5 text-[11px] font-brand font-bold uppercase tracking-wider bg-violet-600 text-white rounded-full shadow-md">UNI</span>
+                            <span class="font-brand text-xl sm:text-2xl font-bold tracking-tight text-white">Lab</span>
+                            <span class="font-brand text-xl sm:text-2xl font-bold tracking-tight text-cyan-400">Flow<span class="cursor-blink text-cyan-400 font-code">_</span></span>
+                            <span class="ml-0.5 px-2 py-0.5 text-[10px] sm:text-[11px] font-brand font-bold uppercase tracking-wider bg-violet-600 text-white rounded-full shadow-md">UNI</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-medium tracking-wide whitespace-nowrap">Tu código fluye, tu equipo avanza.</p>
+                        <p class="hidden sm:block text-[11px] text-slate-400 font-medium tracking-wide whitespace-nowrap">Tu código fluye, tu equipo avanza.</p>
                     </div>
                 </a>
-                <span id="liveStatusBadge" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px] whitespace-nowrap">
+                <span id="liveStatusBadge" class="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[11px] whitespace-nowrap">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Codificando en Live
                 </span>
             </div>
 
-            <nav class="flex flex-wrap xl:flex-nowrap items-center gap-1.5 font-code text-xs shrink-0">
-                <button onclick="switchDashTab('sandbox')" id="nav-sandbox" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap">
+            <!-- Navegación Desktop -->
+            <nav class="hidden xl:flex items-center gap-1.5 font-code text-xs shrink-0">
+                <button onclick="switchDashTab('sandbox')" id="nav-sandbox" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap transition">
                     <i class="fa-solid fa-code mr-1"></i>Sandbox
                 </button>
-                <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
+                <button onclick="switchDashTab('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap transition">
                     <i class="fa-solid fa-table-columns mr-1"></i>Kanban
                 </button>
-                <button onclick="switchDashTab('bonus')" id="nav-bonus" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
+                <button onclick="switchDashTab('bonus')" id="nav-bonus" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap transition">
                     <i class="fa-solid fa-gift mr-1"></i>Bonus & Reporte
                 </button>
-                <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap">
+                <button onclick="switchDashTab('kpis')" id="nav-kpis" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap transition">
                     <i class="fa-solid fa-chart-line mr-1"></i>KPIs en Vivo
                 </button>
             </nav>
 
-            <div class="flex items-center gap-3 shrink-0">
-                <a href="checkout.html" id="planesLink" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200 whitespace-nowrap">
+            <!-- Acciones Desktop -->
+            <div class="hidden xl:flex items-center gap-3 shrink-0">
+                <a href="checkout.html" id="planesLink" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 font-code text-xs text-slate-200 whitespace-nowrap transition">
                     <i class="fa-solid fa-credit-card text-cyan-400"></i>Planes
                 </a>
-                <div class="text-right hidden sm:block">
+                <div class="text-right">
                     <div id="userNameDisplay" class="font-brand font-bold text-xs text-white whitespace-nowrap">Cargando...</div>
                     <div class="text-[10px] font-code text-cyan-400 whitespace-nowrap">
                         <span id="userRoleDisplay">Rol</span> • <span id="userPlanDisplay">Plan</span>
                     </div>
                 </div>
-                <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-xs whitespace-nowrap">
+                <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-code text-xs whitespace-nowrap transition">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i>Salir
+                </button>
+            </div>
+
+            <!-- Botón Hamburguesa Móvil / Tablet (ambos roles) -->
+            <div class="flex xl:hidden items-center gap-2 shrink-0">
+                <span id="mobileActiveTabPill" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 font-code text-[11px] text-cyan-300 font-semibold">
+                    Sandbox
+                </span>
+                <button type="button" id="dashMobileMenuBtn" onclick="toggleDashMobileMenu()" aria-expanded="false" aria-label="Abrir Menú del Dashboard"
+                    class="w-10 h-10 rounded-xl bg-slate-900 text-slate-200 hover:text-cyan-400 border border-slate-700 flex items-center justify-center transition">
+                    <i id="dashMobileMenuIcon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENÚ DESPLEGABLE MÓVIL (ESTILO INDEX.HTML PARA ESTUDIANTE Y DOCENTE) -->
+        <div id="dashMobileMenu" class="hidden xl:hidden bg-slate-900 border-t border-slate-800 px-4 pt-3.5 pb-5 space-y-3 shadow-2xl">
+            <!-- Resumen de cuenta y estado -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <div id="mobileUserNameDisplay" class="font-brand font-bold text-xs text-white truncate">Cargando...</div>
+                    <div class="text-[10px] font-code text-cyan-400 truncate">
+                        <span id="mobileUserRoleDisplay">Rol</span> • <span id="mobileUserPlanDisplay">Plan</span>
+                    </div>
+                </div>
+                <span id="mobileLiveStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-code text-[10px] whitespace-nowrap shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    En Live
+                </span>
+            </div>
+
+            <!-- Cuadrícula 2x2 de pestañas del Dashboard -->
+            <div class="grid grid-cols-2 gap-2 font-code text-xs">
+                <button type="button" onclick="switchDashTab('sandbox')" id="mnav-sandbox" class="px-3 py-2.5 rounded-xl bg-cyan-400 text-slate-950 font-bold text-left flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-code"></i><span>Sandbox</span>
+                </button>
+                <button type="button" onclick="switchDashTab('kanban')" id="mnav-kanban" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:text-cyan-400 border border-slate-700 text-left flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-table-columns"></i><span>Kanban</span>
+                </button>
+                <button type="button" onclick="switchDashTab('bonus')" id="mnav-bonus" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:text-cyan-400 border border-slate-700 text-left flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-gift"></i><span>Bonus & Reporte</span>
+                </button>
+                <button type="button" onclick="switchDashTab('kpis')" id="mnav-kpis" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:text-cyan-400 border border-slate-700 text-left flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-chart-line"></i><span>KPIs en Vivo</span>
+                </button>
+            </div>
+
+            <!-- Botones de acción inferior (Planes + Salir) -->
+            <div class="pt-2 border-t border-slate-800 flex items-center gap-2 font-code text-xs">
+                <a href="checkout.html" id="mobilePlanesLink" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-bold flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-credit-card text-cyan-400"></i><span>Planes</span>
+                </a>
+                <button type="button" onclick="cerrarSesion()" class="flex-1 py-2.5 px-3 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-bold flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Salir</span>
                 </button>
             </div>
         </div>
@@ -127,11 +190,11 @@
                     <div>
                         <div class="font-brand font-bold text-white text-base">Modo Docente Evaluador</div>
                         <p class="text-xs text-slate-300 leading-relaxed">
-                            Estás evaluando los proyectos de tus estudiantes. Revisa el código, aprueba commits validados, consulta el Certificado de Aportes o anula un proyecto si detectas plagio.
+                            Estás evaluando los proyectos de tus estudiantes. Explora los archivos del proyecto, aprueba commits validados, consulta el Certificado de Aportes o anula un proyecto si detectas plagio.
                         </p>
                     </div>
                 </div>
-                <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-code text-[11px] font-bold whitespace-nowrap">
+                <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-code text-[11px] font-bold whitespace-nowrap self-start sm:self-center">
                     ACCESO DOCENTE GRATUITO
                 </span>
             </div>
@@ -141,10 +204,10 @@
         <datalist id="studentsDirectoryDatalist"></datalist>
 
         <!-- ================================================================= -->
-        <!-- MÓDULO 1: SANDBOX, VISUAL GIT FLOW Y MENTOR COLEGA                -->
+        <!-- MÓDULO 1: SANDBOX, EXPLORADOR DE ARCHIVOS, VISUAL GIT Y MENTOR    -->
         <!-- ================================================================= -->
         <section id="tab-sandbox" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 space-y-5">
+            <div class="lg:col-span-4 min-w-0 space-y-5">
                 <!-- TARJETA DE CUOTAS Y LÍMITES DEL PLAN (SOLO ESTUDIANTE) -->
                 <div id="studentPlanCard" class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
                     <div class="flex items-center justify-between gap-2">
@@ -308,13 +371,13 @@
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: EDITOR + VISUAL GIT + MENTOR COLEGA + COMMITS -->
-            <div class="lg:col-span-8 space-y-5">
+            <!-- COLUMNA DERECHA: IDE CON EXPLORADOR + VISUAL GIT + MENTOR COLEGA + COMMITS -->
+            <div class="lg:col-span-8 min-w-0 space-y-5">
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
                     <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                        <div class="font-code text-xs text-white flex flex-wrap items-center gap-1.5">
+                        <div class="font-code text-xs text-white flex flex-wrap items-center gap-1.5 min-w-0">
                             <i class="fa-solid fa-flask text-cyan-400"></i>
-                            <span id="activeLabTitle">Selecciona un laboratorio</span>
+                            <span id="activeLabTitle" class="truncate">Selecciona un laboratorio</span>
                             <span id="activeLabTemplate" class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px]">---</span>
                             <span id="activeLabRamBadge" class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 text-[10px]">512 MB RAM</span>
                             <span id="activeLabOwner" class="text-[10px] text-violet-300"></span>
@@ -348,18 +411,76 @@
                     <div class="p-4 space-y-3">
                         <div id="teacherReadOnlyNotice" class="hidden text-[11px] font-code text-violet-200 bg-violet-950/50 border border-violet-500/30 rounded-lg px-3 py-2">
                             <i class="fa-solid fa-eye mr-1"></i>
-                            Vista de solo lectura como docente evaluador. Puedes aprobar commits, imprimir el Certificado de Aportes o anular el proyecto si detectas plagio.
+                            Vista de solo lectura como docente evaluador. Puedes explorar todos los archivos, aprobar commits, imprimir el Certificado de Aportes o anular el proyecto si detectas plagio.
                         </div>
 
                         <div id="annulledNotice" class="hidden text-[11px] font-code text-rose-200 bg-rose-950/60 border border-rose-500/50 rounded-lg px-3 py-2.5 leading-relaxed">
                             <i class="fa-solid fa-ban mr-1"></i>
                             <strong>Proyecto anulado por plagio.</strong>
                             <span id="annulledDetails"></span>
-                            <div class="mt-1 text-rose-300/80">El proyecto está congelado: no admite nuevos commits, cambios de tareas ni aprobaciones.</div>
+                            <div class="mt-1 text-rose-300/80">El proyecto está congelado: no admite nuevos commits, cambios de archivos, tareas ni aprobaciones.</div>
                         </div>
 
-                        <textarea id="codeEditor" rows="9"
-                            class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs sm:text-sm text-cyan-100 focus:border-cyan-400 focus:outline-none"></textarea>
+                        <!-- IDE MULTI-ARCHIVO: EXPLORADOR ESTILO VS CODE + EDITOR -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden">
+                            <!-- Sidebar: Explorador de Archivos -->
+                            <aside class="md:col-span-4 lg:col-span-3 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-950/90 flex flex-col min-w-0">
+                                <div class="px-3 py-2.5 border-b border-slate-800 flex items-center justify-between gap-1.5">
+                                    <div class="flex items-center gap-1.5 font-code text-[10px] uppercase tracking-wider text-slate-400 font-bold">
+                                        <i class="fa-solid fa-folder-tree text-cyan-400"></i>
+                                        <span>Archivos</span>
+                                        <span id="filesCountBadge" class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px]">0</span>
+                                    </div>
+                                    <button type="button" id="btnToggleNewFile" onclick="toggleNuevoArchivoForm()" title="Nuevo archivo (ej. css/styles.css)"
+                                        class="px-2 py-0.5 rounded-md bg-cyan-500/15 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 font-code text-[10px] font-bold transition">
+                                        + Nuevo
+                                    </button>
+                                </div>
+
+                                <!-- Formulario inline para crear nuevo archivo -->
+                                <form id="newFileInlineForm" onsubmit="crearArchivoProyecto(event)" class="hidden p-2.5 border-b border-slate-800 bg-slate-900/80 space-y-2">
+                                    <input type="text" id="newFilePathInput" required maxlength="80" placeholder="ej. styles.css o js/app.js"
+                                        class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none font-code text-[11px] text-white">
+                                    <div class="flex items-center gap-1.5 font-code text-[10px]">
+                                        <button type="submit" class="flex-1 py-1 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold transition">
+                                            Crear
+                                        </button>
+                                        <button type="button" onclick="toggleNuevoArchivoForm(false)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div id="filesExplorerNotice" class="hidden px-2.5 py-2 bg-amber-950/50 border-b border-amber-500/30 font-code text-[10px] text-amber-300 leading-snug"></div>
+
+                                <div id="filesExplorerList" class="p-2 space-y-1 max-h-48 md:max-h-[300px] overflow-y-auto font-code text-[11px] flex-1">
+                                    <div class="text-slate-600 p-2 text-[10px]">Selecciona un laboratorio...</div>
+                                </div>
+                            </aside>
+
+                            <!-- Panel principal del editor -->
+                            <div class="md:col-span-8 lg:col-span-9 flex flex-col min-w-0">
+                                <div class="px-3.5 py-2 border-b border-slate-800 bg-slate-900/60 flex flex-wrap items-center justify-between gap-2 font-code text-[11px]">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span id="activeFileIcon"><i class="fa-solid fa-file-code text-cyan-400"></i></span>
+                                        <span id="activeFileNameLabel" class="text-white font-bold truncate">Sin archivo</span>
+                                        <span id="activeFileDirtyDot" class="hidden text-amber-400 text-[10px]" title="Cambios sin guardar">●</span>
+                                        <span id="activeFileLangBadge" class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] uppercase">TEXT</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" id="btnPreviewWeb" onclick="previsualizarWebProyecto()" class="hidden px-2.5 py-1 rounded-lg bg-violet-600/25 hover:bg-violet-600/45 text-violet-200 border border-violet-500/40 text-[10px] font-bold transition">
+                                            <i class="fa-solid fa-globe mr-1"></i>Vista Previa Web
+                                        </button>
+                                        <button type="button" id="btnSaveActiveFile" onclick="guardarArchivoActivo()" class="hidden px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-[10px] font-bold transition">
+                                            <i class="fa-solid fa-floppy-disk mr-1"></i>Guardar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <textarea id="codeEditor" rows="12" spellcheck="false" oninput="alEditarCodigo()"
+                                    class="w-full flex-1 p-4 bg-slate-950 font-code text-xs sm:text-sm text-cyan-100 focus:outline-none resize-y leading-relaxed"></textarea>
+                            </div>
+                        </div>
 
                         <div id="studentCommitControls" class="flex flex-col sm:flex-row gap-3">
                             <input type="text" id="commitMsgInput" required aria-required="true" maxlength="160" placeholder="Mensaje del commit (obligatorio) — ej. Validación de módulo de login"
@@ -372,14 +493,14 @@
                         </div>
 
                         <div id="sandboxConsole" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-code text-xs text-slate-300 space-y-1">
-                            <div>$ Motor Pre-Merge listo. Escribe tu código y presiona «Validar Pre-Merge y Guardar».</div>
+                            <div>$ Motor Pre-Merge listo. Organiza tus archivos, edita tu código y presiona «Validar Pre-Merge y Guardar».</div>
                         </div>
 
                         <!-- ASISTENTE «MENTOR COLEGA» (BÁSICO GRATIS + CHAT IA AVANZADO PRO/GRUPO) -->
                         <div id="mentorColegaCard" class="rounded-2xl bg-blue-950/40 border border-cyan-400/35 p-4 space-y-3.5">
                             <div class="flex flex-wrap items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center">
+                                    <div class="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center shrink-0">
                                         <i class="fa-solid fa-user-astronaut"></i>
                                     </div>
                                     <div>
@@ -393,11 +514,11 @@
                             <!-- 1. MENTOR COLEGA BÁSICO (DISPONIBLE EN TODOS LOS PLANES, INCLUIDO FREEMIUM) -->
                             <div id="mentorBasicBox" class="space-y-2.5">
                                 <div id="mentorResponseBox" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 leading-relaxed">
-                                    ¡Hola! Soy tu <strong>Mentor Colega</strong>. Cuando valides tu código o uses las guías rápidas, revisaré llaves, paréntesis, sintaxis básica y posibles conflictos antes de que fusiones a <code>main</code>.
+                                    ¡Hola! Soy tu <strong>Mentor Colega</strong>. Cuando valides tu archivo o uses las guías rápidas, revisaré llaves, paréntesis, sintaxis básica y posibles conflictos antes de que fusiones a <code>main</code>.
                                 </div>
                                 <div class="flex flex-wrap items-center gap-1.5 font-code text-[11px]">
                                     <button type="button" onclick="consultarMentorColega('revisar')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-cyan-400/30 text-cyan-300 transition">
-                                        <i class="fa-solid fa-stethoscope mr-1"></i>Revisar mi código actual
+                                        <i class="fa-solid fa-stethoscope mr-1"></i>Revisar archivo actual
                                     </button>
                                     <button type="button" onclick="consultarMentorColega('git')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-violet-400/30 text-violet-300 transition">
                                         <i class="fa-solid fa-code-branch mr-1"></i>¿Cómo fusionar sin conflictos?
@@ -447,8 +568,8 @@
                                         <button type="button" onclick="usarSugerenciaMentorIA('¿Para qué sirve el Kanban y los Story Points en LabFlow Uni?')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
                                             ¿Cómo usar Kanban y SP?
                                         </button>
-                                        <button type="button" onclick="usarSugerenciaMentorIA('Explícame qué significa una llave foránea en SQL sin darme el ejercicio resuelto')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
-                                            ¿Qué es una llave foránea?
+                                        <button type="button" onclick="usarSugerenciaMentorIA('Explícame cómo organizar archivos HTML, CSS y JS en un proyecto web sin darme la tarea hecha')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+                                            ¿Cómo organizar archivos web?
                                         </button>
                                     </div>
 
@@ -729,9 +850,9 @@
                             <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-code text-[10px] font-bold uppercase">
                                 BONUS #01 • PACK DE PLANTILLAS DE LABORATORIO
                             </span>
-                            <h3 class="font-brand font-bold text-white text-lg mt-1.5">Clona plantillas listas directo a tu Sandbox</h3>
+                            <h3 class="font-brand font-bold text-white text-lg mt-1.5">Clona plantillas listas directo a tu Explorador</h3>
                         </div>
-                        <span class="text-[11px] font-code text-slate-400">Se carga en tu proyecto activo con 1 clic</span>
+                        <span class="text-[11px] font-code text-slate-400">Agrega un archivo dedicado sin sobrescribir tu proyecto</span>
                     </div>
                     <div id="bonusTemplatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
@@ -774,7 +895,7 @@
                         <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                             <div class="font-brand font-bold text-rose-300">4. Evitar Conflictos 11:58 PM</div>
                             <code class="block p-2 rounded bg-slate-900 text-amber-300 font-code text-[11px]">git pull origin main</code>
-                            <p class="text-slate-400">Divide tareas en el Kanban por módulo (UI, API, BD) para que nadie edite la misma función.</p>
+                            <p class="text-slate-400">Divide tareas en el Kanban y separa archivos (<code>index.html</code>, <code>styles.css</code>, <code>app.js</code>) para que nadie pise el trabajo de otro.</p>
                         </div>
                     </div>
                 </div>
@@ -906,6 +1027,10 @@
         let laboratorios = [];
         let activeLabId = null;
         let activeBranch = 'main';
+        let archivosActivos = [];
+        let activeFileId = null;
+        let archivosModificados = new Set();
+        let archivosTablaDisponible = true;
         let usuariosPorId = {};
         let miembrosActivos = [];
         let validacionesActivas = [];
@@ -931,6 +1056,7 @@
         const BONUS_PLANTILLAS = [
             {
                 id: 'py_crud',
+                nombreArchivo: 'api_crud.py',
                 titulo: 'API CRUD FastAPI + Validación',
                 tag: 'Python & IA',
                 icono: 'fa-brands fa-python text-cyan-400',
@@ -939,6 +1065,7 @@
             },
             {
                 id: 'sql_ugb',
+                nombreArchivo: 'esquema_ugb.sql',
                 titulo: 'Esquema Relacional SQL UGB',
                 tag: 'Bases de Datos SQL',
                 icono: 'fa-solid fa-database text-emerald-400',
@@ -947,6 +1074,7 @@
             },
             {
                 id: 'web_ui',
+                nombreArchivo: 'componente_panel.html',
                 titulo: 'Componente Dashboard HTML + JS',
                 tag: 'Web Full-Stack',
                 icono: 'fa-brands fa-react text-sky-400',
@@ -955,6 +1083,7 @@
             },
             {
                 id: 'redes_py',
+                nombreArchivo: 'verificador_subredes.py',
                 titulo: 'Verificador de Subredes y Puertos',
                 tag: 'Redes Linux',
                 icono: 'fa-solid fa-network-wired text-violet-400',
@@ -963,6 +1092,7 @@
             },
             {
                 id: 'java_poo',
+                nombreArchivo: 'ProyectoLab.java',
                 titulo: 'Clase Modelo + Servicio POO',
                 tag: 'Java & POO',
                 icono: 'fa-brands fa-java text-amber-400',
@@ -971,6 +1101,7 @@
             },
             {
                 id: 'sec_bash',
+                nombreArchivo: 'auditoria_puertos.sh',
                 titulo: 'Script Auditoría de Puertos Bash',
                 tag: 'Auditoría & Ciberseguridad',
                 icono: 'fa-solid fa-shield-halved text-rose-400',
@@ -985,6 +1116,7 @@
                 return {
                     nombre: 'Pack Grupo (5)',
                     maxLabs: Infinity,
+                    maxFiles: Infinity,
                     maxMiembros: 5,
                     ramShort: '4 GB',
                     ramLabel: '4 GB RAM Dedicada',
@@ -997,6 +1129,7 @@
                 return {
                     nombre: 'Estudiante Pro',
                     maxLabs: Infinity,
+                    maxFiles: Infinity,
                     maxMiembros: 3,
                     ramShort: '2 GB',
                     ramLabel: '2 GB RAM Cloud',
@@ -1008,6 +1141,7 @@
             return {
                 nombre: 'Freemium',
                 maxLabs: 2,
+                maxFiles: 5,
                 maxMiembros: 3,
                 ramShort: '512 MB',
                 ramLabel: '512 MB RAM Básica',
@@ -1031,6 +1165,165 @@
             return safe;
         }
 
+        function toggleDashMobileMenu(forceState = null) {
+            const menu = document.getElementById('dashMobileMenu');
+            const icon = document.getElementById('dashMobileMenuIcon');
+            const btn = document.getElementById('dashMobileMenuBtn');
+            if (!menu) return;
+
+            const abrir = forceState === null ? menu.classList.contains('hidden') : forceState;
+            menu.classList.toggle('hidden', !abrir);
+            if (icon) icon.className = abrir ? 'fa-solid fa-xmark text-lg' : 'fa-solid fa-bars text-lg';
+            if (btn) btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+        }
+
+        // --- UTILIDADES DEL EXPLORADOR DE ARCHIVOS ---
+        function obtenerMetaArchivo(ruta) {
+            const ext = (ruta || '').split('.').pop().toLowerCase();
+            const mapa = {
+                html: { icon: 'fa-brands fa-html5 text-orange-400',   lang: 'HTML' },
+                htm:  { icon: 'fa-brands fa-html5 text-orange-400',   lang: 'HTML' },
+                css:  { icon: 'fa-brands fa-css3-alt text-sky-400',   lang: 'CSS' },
+                js:   { icon: 'fa-brands fa-js text-amber-300',       lang: 'JavaScript' },
+                ts:   { icon: 'fa-solid fa-code text-blue-400',       lang: 'TypeScript' },
+                py:   { icon: 'fa-brands fa-python text-cyan-400',    lang: 'Python' },
+                sql:  { icon: 'fa-solid fa-database text-emerald-400', lang: 'SQL' },
+                java: { icon: 'fa-brands fa-java text-amber-400',     lang: 'Java' },
+                cs:   { icon: 'fa-solid fa-cubes text-violet-400',    lang: 'C#' },
+                sh:   { icon: 'fa-solid fa-terminal text-rose-400',   lang: 'Bash' },
+                json: { icon: 'fa-solid fa-brackets-curly text-yellow-300', lang: 'JSON' },
+                md:   { icon: 'fa-solid fa-file-lines text-slate-400', lang: 'Markdown' },
+                txt:  { icon: 'fa-solid fa-file-lines text-slate-400', lang: 'Texto' }
+            };
+            return mapa[ext] || { icon: 'fa-solid fa-file-code text-slate-300', lang: (ext || 'TEXT').toUpperCase() };
+        }
+
+        function inferirNombreArchivoLegacy(plantilla, codigo) {
+            const c = (codigo || '').trim();
+            if (/@app\.|def |import |print\(/.test(c)) return 'main.py';
+            if (/<!DOCTYPE|<html|<section|<div/i.test(c)) return 'index.html';
+            if (/CREATE TABLE|SELECT /i.test(c)) return 'schema.sql';
+            if (/public class /i.test(c)) return 'Main.java';
+            if (/^#!\/bin\/bash/.test(c)) return 'auditoria.sh';
+
+            const tpl = (plantilla || '').toLowerCase();
+            if (tpl.includes('web')) return 'index.html';
+            if (tpl.includes('sql')) return 'schema.sql';
+            if (tpl.includes('java')) return 'Main.java';
+            if (tpl.includes('c#')) return 'Program.cs';
+            if (tpl.includes('ciberseguridad')) return 'auditoria.sh';
+            if (tpl.includes('git')) return 'app.js';
+            return 'main.py';
+        }
+
+        function generarArchivosInicialesPlantilla(nombreProyecto, plantilla, autor, ramLabel) {
+            const tpl = (plantilla || '').toLowerCase();
+            if (tpl.includes('web')) {
+                return [
+                    {
+                        ruta_archivo: 'index.html',
+                        contenido: `<!DOCTYPE html>\n<html lang="es">\n<head>\n  <meta charset="UTF-8">\n  <title>${nombreProyecto} | LabFlow Uni</title>\n  <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n  <main class="card">\n    <h1>${nombreProyecto}</h1>\n    <p id="estado">Proyecto Web creado por ${autor}</p>\n    <button onclick="saludar()">Probar interacción</button>\n  </main>\n  <script src="app.js"><\/script>\n</body>\n</html>\n`
+                    },
+                    {
+                        ruta_archivo: 'styles.css',
+                        contenido: `body {\n  font-family: system-ui, sans-serif;\n  background: #0F172A;\n  color: #F8FAFC;\n  display: grid;\n  place-items: center;\n  min-height: 100vh;\n  margin: 0;\n}\n\n.card {\n  background: #1E293B;\n  border: 1px solid #06B6D4;\n  border-radius: 16px;\n  padding: 24px 32px;\n  text-align: center;\n}\n\nbutton {\n  background: #06B6D4;\n  color: #020617;\n  border: none;\n  padding: 10px 18px;\n  border-radius: 10px;\n  font-weight: 700;\n  cursor: pointer;\n}\n`
+                    },
+                    {
+                        ruta_archivo: 'app.js',
+                        contenido: `function saludar() {\n  const el = document.getElementById("estado");\n  el.textContent = "LabFlow Uni conectado correctamente.";\n}\n`
+                    }
+                ];
+            }
+            if (tpl.includes('sql')) {
+                return [
+                    {
+                        ruta_archivo: 'schema.sql',
+                        contenido: `-- Esquema de Base de Datos: ${nombreProyecto}\nCREATE TABLE estudiantes (\n    carnet VARCHAR(12) PRIMARY KEY,\n    nombre VARCHAR(100) NOT NULL\n);\n`
+                    },
+                    {
+                        ruta_archivo: 'consultas.sql',
+                        contenido: `-- Consultas de prueba para ${nombreProyecto}\nSELECT carnet, nombre\nFROM estudiantes\nORDER BY nombre ASC;\n`
+                    }
+                ];
+            }
+            if (tpl.includes('java')) {
+                return [
+                    {
+                        ruta_archivo: 'Main.java',
+                        contenido: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("LabFlow Uni listo: ${nombreProyecto}");\n    }\n}\n`
+                    },
+                    {
+                        ruta_archivo: 'README.md',
+                        contenido: `# ${nombreProyecto}\n\nEntorno: ${plantilla} (${ramLabel})\nLíder: ${autor}\n`
+                    }
+                ];
+            }
+            if (tpl.includes('c#')) {
+                return [
+                    {
+                        ruta_archivo: 'Program.cs',
+                        contenido: `using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("LabFlow Uni listo: ${nombreProyecto}");\n    }\n}\n`
+                    },
+                    {
+                        ruta_archivo: 'README.md',
+                        contenido: `# ${nombreProyecto}\n\nEntorno: ${plantilla} (${ramLabel})\nLíder: ${autor}\n`
+                    }
+                ];
+            }
+            if (tpl.includes('ciberseguridad')) {
+                return [
+                    {
+                        ruta_archivo: 'auditoria.sh',
+                        contenido: `#!/bin/bash\necho "=== ${nombreProyecto} (${ramLabel}) ==="\nhostname -I\necho "Entorno de auditoría listo para ${autor}"\n`
+                    },
+                    {
+                        ruta_archivo: 'README.md',
+                        contenido: `# ${nombreProyecto}\n\nChecklist de auditoría controlada en LabFlow Uni.\n`
+                    }
+                ];
+            }
+            if (tpl.includes('redes')) {
+                return [
+                    {
+                        ruta_archivo: 'red_lab.py',
+                        contenido: `# Proyecto de Redes: ${nombreProyecto}\nimport ipaddress\n\ndef mostrar_red(cidr: str):\n    red = ipaddress.ip_network(cidr, strict=False)\n    print(f"Red activa: {red}")\n\nmostrar_red("192.168.10.0/24")\n`
+                    },
+                    {
+                        ruta_archivo: 'README.md',
+                        contenido: `# ${nombreProyecto}\n\nTopología y documentación de pruebas de red (${ramLabel}).\n`
+                    }
+                ];
+            }
+            return [
+                {
+                    ruta_archivo: 'main.py',
+                    contenido: `# Proyecto: ${nombreProyecto}\n# Plantilla: ${plantilla} (${ramLabel})\nprint("Contenedor LabFlow Uni listo para ${autor}")\n`
+                },
+                {
+                    ruta_archivo: 'README.md',
+                    contenido: `# ${nombreProyecto}\n\nLaboratorio colaborativo en LabFlow Uni (${plantilla}).\n`
+                }
+            ];
+        }
+
+        function generarPlantillaArchivoNuevo(ruta) {
+            const ext = (ruta || '').split('.').pop().toLowerCase();
+            if (ext === 'html' || ext === 'htm') {
+                return `<!DOCTYPE html>\n<html lang="es">\n<head>\n  <meta charset="UTF-8">\n  <title>${ruta}</title>\n</head>\n<body>\n  <h1>${ruta}</h1>\n</body>\n</html>\n`;
+            }
+            if (ext === 'css') return `/* Estilos de ${ruta} */\nbody {\n  margin: 0;\n}\n`;
+            if (ext === 'js') return `// Módulo ${ruta}\nconsole.log("${ruta} cargado");\n`;
+            if (ext === 'py') return `# Archivo ${ruta}\ndef ejecutar():\n    print("Listo desde ${ruta}")\n`;
+            if (ext === 'sql') return `-- Script SQL: ${ruta}\nSELECT 1;\n`;
+            if (ext === 'java') {
+                const cls = ruta.split('/').pop().replace(/\.java$/i, '').replace(/[^a-zA-Z0-9_]/g, '') || 'ClaseLab';
+                return `public class ${cls} {\n    public static void main(String[] args) {\n        System.out.println("${cls} listo");\n    }\n}\n`;
+            }
+            if (ext === 'sh') return `#!/bin/bash\necho "Ejecutando ${ruta}"\n`;
+            if (ext === 'json') return `{\n  "archivo": "${ruta}",\n  "plataforma": "LabFlow Uni"\n}\n`;
+            return `# ${ruta}\n`;
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!currentUser) return;
             if (!db) return showToast('Error al conectar con Supabase.', 'error');
@@ -1046,9 +1339,16 @@
                 guardarSesion(currentUser);
             }
 
+            const roleLabel = esDocente ? 'Docente' : currentUser.rol;
+            const planLabel = esDocente ? 'Evaluador UGB' : currentUser.plan_actual;
+
             document.getElementById('userNameDisplay').textContent = currentUser.nombre_completo;
-            document.getElementById('userRoleDisplay').textContent = esDocente ? 'Docente' : currentUser.rol;
-            document.getElementById('userPlanDisplay').textContent = esDocente ? 'Evaluador UGB' : currentUser.plan_actual;
+            document.getElementById('userRoleDisplay').textContent = roleLabel;
+            document.getElementById('userPlanDisplay').textContent = planLabel;
+
+            document.getElementById('mobileUserNameDisplay').textContent = currentUser.nombre_completo;
+            document.getElementById('mobileUserRoleDisplay').textContent = roleLabel;
+            document.getElementById('mobileUserPlanDisplay').textContent = planLabel;
 
             if (esDocente) configurarModoDocente();
             configurarPermisosPorPlan();
@@ -1066,7 +1366,15 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') cerrarModalAnulacion();
+            if (e.key === 'Escape') {
+                cerrarModalAnulacion();
+                toggleNuevoArchivoForm(false);
+                toggleDashMobileMenu(false);
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && document.activeElement?.id === 'codeEditor') {
+                e.preventDefault();
+                guardarArchivoActivo();
+            }
         });
 
         document.getElementById('annulModal')?.addEventListener('click', (e) => {
@@ -1076,7 +1384,6 @@
         function configurarPermisosPorPlan() {
             const cfg = obtenerConfigPlan(currentUser.plan_actual);
 
-            // Mentor Colega y sección de Bonus estudiantiles: ocultos para docentes
             if (esDocente) {
                 document.getElementById('mentorColegaCard')?.classList.add('hidden');
                 document.getElementById('studentBonusSection')?.classList.add('hidden');
@@ -1084,7 +1391,6 @@
                 return;
             }
 
-            // Mentor Colega Básico es GRATIS para todos; Chat IA Avanzado solo para Estudiante Pro y Pack Grupo
             document.getElementById('mentorAiLockedBox')?.classList.toggle('hidden', cfg.esPro);
             document.getElementById('mentorAiChatBox')?.classList.toggle('hidden', !cfg.esPro);
             const mentorBadge = document.getElementById('mentorPlanBadge');
@@ -1095,7 +1401,6 @@
                     : 'px-2.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 font-code text-[10px] font-bold';
             }
 
-            // Bloqueo Freemium en pestaña Bonus & Reporte (incluye Bonus #2 Guía Git)
             document.getElementById('bonusFreemiumBanner')?.classList.toggle('hidden', cfg.esPro);
             document.getElementById('bonusGitLocked')?.classList.toggle('hidden', cfg.esPro);
             document.getElementById('bonusGitUnlocked')?.classList.toggle('hidden', !cfg.esPro);
@@ -1105,7 +1410,6 @@
                 btnPdf.innerHTML = '<i class="fa-solid fa-lock"></i> Reporte PDF (Solo Pro)';
             }
 
-            // Soporte Prioritario: exclusivo Pack Grupo (5)
             document.getElementById('prioritySupportLocked')?.classList.toggle('hidden', cfg.esGrupo);
             document.getElementById('prioritySupportUnlocked')?.classList.toggle('hidden', !cfg.esGrupo);
             const prioBadge = document.getElementById('prioritySupportBadge');
@@ -1144,8 +1448,9 @@
             document.getElementById('kanbanCreateCard')?.classList.add('hidden');
             document.getElementById('studentCommitControls')?.classList.add('hidden');
             document.getElementById('teacherReadOnlyNotice')?.classList.remove('hidden');
+            document.getElementById('btnToggleNewFile')?.classList.add('hidden');
+            document.getElementById('btnSaveActiveFile')?.classList.add('hidden');
 
-            // Modo lectura limpio para la tarjeta de integrantes (sin cuotas ni textos de plan)
             const teamTitle = document.getElementById('teamCardTitleText');
             if (teamTitle) teamTitle.textContent = 'Integrantes del Proyecto';
             document.getElementById('teamSlotBadge')?.classList.add('hidden');
@@ -1157,20 +1462,27 @@
             const liveStatus = document.getElementById('liveStatusBadge');
             if (liveStatus) {
                 liveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span> Evaluando proyectos';
-                liveStatus.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px] whitespace-nowrap';
+                liveStatus.className = 'hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[11px] whitespace-nowrap';
+            }
+
+            const mobileLiveStatus = document.getElementById('mobileLiveStatusBadge');
+            if (mobileLiveStatus) {
+                mobileLiveStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span> Evaluando';
+                mobileLiveStatus.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 font-code text-[10px] whitespace-nowrap shrink-0';
             }
 
             document.title = 'LabFlow Uni | Dashboard Docente Evaluador';
             document.getElementById('labsListTitle').textContent = 'Proyectos de Estudiantes';
             document.getElementById('validationsTitle').innerHTML = '<i class="fa-solid fa-clock-rotate-left text-cyan-400 mr-1.5"></i> Commits de los Estudiantes — Aprobación Docente';
+
             document.getElementById('nav-sandbox').innerHTML = '<i class="fa-solid fa-folder-open mr-1"></i>Proyectos';
             document.getElementById('nav-bonus').innerHTML = '<i class="fa-solid fa-award mr-1"></i>Reporte & Cert.';
+            document.getElementById('mnav-sandbox').innerHTML = '<i class="fa-solid fa-folder-open"></i><span>Proyectos</span>';
+            document.getElementById('mnav-bonus').innerHTML = '<i class="fa-solid fa-award"></i><span>Reporte & Cert.</span>';
+            document.getElementById('mobileActiveTabPill').textContent = 'Proyectos';
 
-            const planesLink = document.getElementById('planesLink');
-            if (planesLink) {
-                planesLink.classList.remove('lg:inline-flex');
-                planesLink.classList.add('hidden');
-            }
+            document.getElementById('planesLink')?.classList.add('hidden');
+            document.getElementById('mobilePlanesLink')?.classList.add('hidden');
         }
 
         function actualizarTarjetaPlanEstudiante() {
@@ -1317,12 +1629,31 @@
         }
 
         function switchDashTab(tab) {
+            const tabLabels = {
+                sandbox: esDocente ? 'Proyectos' : 'Sandbox',
+                kanban: 'Kanban',
+                bonus: esDocente ? 'Reporte & Cert.' : 'Bonus & Reporte',
+                kpis: 'KPIs en Vivo'
+            };
+
             ['sandbox', 'kanban', 'bonus', 'kpis'].forEach(t => {
                 document.getElementById('tab-' + t).classList.add('hidden');
-                document.getElementById('nav-' + t).className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap';
+                const desktopBtn = document.getElementById('nav-' + t);
+                if (desktopBtn) desktopBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 whitespace-nowrap transition';
+                const mobileBtn = document.getElementById('mnav-' + t);
+                if (mobileBtn) mobileBtn.className = 'px-3 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:text-cyan-400 border border-slate-700 text-left flex items-center gap-1.5 transition';
             });
+
             document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.getElementById('nav-' + tab).className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap';
+            const activeDesktop = document.getElementById('nav-' + tab);
+            if (activeDesktop) activeDesktop.className = 'px-3 py-1.5 rounded-lg bg-cyan-400 text-slate-950 font-bold whitespace-nowrap transition';
+            const activeMobile = document.getElementById('mnav-' + tab);
+            if (activeMobile) activeMobile.className = 'px-3 py-2.5 rounded-xl bg-cyan-400 text-slate-950 font-bold text-left flex items-center gap-1.5 transition';
+
+            const pill = document.getElementById('mobileActiveTabPill');
+            if (pill) pill.textContent = tabLabels[tab] || 'Sandbox';
+
+            toggleDashMobileMenu(false);
 
             if (tab === 'kanban') cargarTareasKanban();
             if (tab === 'bonus') {
@@ -1374,6 +1705,9 @@
             if (!laboratorios.length) {
                 activeLabId = null;
                 activeBranch = 'main';
+                archivosActivos = [];
+                activeFileId = null;
+                archivosModificados.clear();
                 const cfg = obtenerConfigPlan(currentUser.plan_actual);
                 document.getElementById('activeLabTitle').textContent = 'Selecciona un laboratorio';
                 document.getElementById('activeLabTemplate').textContent = '---';
@@ -1381,6 +1715,12 @@
                 document.getElementById('activeLabOwner').textContent = '';
                 document.getElementById('codeEditor').value = '';
                 document.getElementById('validationsList').innerHTML = '';
+                document.getElementById('filesCountBadge').textContent = '0';
+                document.getElementById('filesExplorerList').innerHTML = '<div class="text-slate-600 p-2 text-[10px]">Crea un laboratorio para organizar sus archivos.</div>';
+                document.getElementById('activeFileNameLabel').textContent = 'Sin archivo';
+                document.getElementById('activeFileLangBadge').textContent = 'TEXT';
+                document.getElementById('btnPreviewWeb')?.classList.add('hidden');
+                document.getElementById('btnSaveActiveFile')?.classList.add('hidden');
                 document.getElementById('visualGitGraph').innerHTML = '<div class="text-xs font-code text-slate-500">Crea tu primer laboratorio para visualizar ramas y fusiones.</div>';
                 document.getElementById('mergeToMainBtn').classList.add('hidden');
 
@@ -1449,6 +1789,9 @@
 
         function seleccionarLaboratorio(id) {
             activeLabId = id;
+            activeFileId = null;
+            archivosModificados.clear();
+            toggleNuevoArchivoForm(false);
             cargarLaboratorios();
             cargarTareasKanban();
             cargarReporteYCertificado();
@@ -1487,6 +1830,9 @@
             document.getElementById('annulProjectBtn')?.classList.toggle('hidden', !esDocente || anulado);
             document.getElementById('reactivateProjectBtn')?.classList.toggle('hidden', !esDocente || !anulado);
             document.getElementById('labStatusBadge')?.classList.toggle('hidden', !anulado);
+            document.getElementById('btnToggleNewFile')?.classList.toggle('hidden', esDocente || anulado);
+            document.getElementById('btnSaveActiveFile')?.classList.toggle('hidden', esDocente || anulado);
+            if (esDocente || anulado) toggleNuevoArchivoForm(false);
 
             const annulledNotice = document.getElementById('annulledNotice');
             if (annulledNotice) {
@@ -1504,14 +1850,366 @@
             document.getElementById('kanbanCreateCard')?.classList.toggle('hidden', esDocente || anulado);
 
             const editor = document.getElementById('codeEditor');
-            editor.value = lab.codigo_fuente || '';
             editor.readOnly = esDocente || anulado;
             editor.classList.toggle('opacity-75', esDocente || anulado);
             editor.classList.toggle('cursor-not-allowed', esDocente || anulado);
 
             document.getElementById('studentCommitControls')?.classList.toggle('hidden', esDocente || anulado);
+            cargarArchivosLaboratorio(lab);
             cargarValidaciones(lab.id);
             cargarMiembrosLaboratorio(lab);
+        }
+
+        // --- EXPLORADOR DE ARCHIVOS MULTI-ARCHIVO (ESTILO VS CODE) ---
+        function obtenerArchivoActivo() {
+            return archivosActivos.find(f => String(f.id) === String(activeFileId)) || null;
+        }
+
+        async function cargarArchivosLaboratorio(lab) {
+            const noticeEl = document.getElementById('filesExplorerNotice');
+            noticeEl.classList.add('hidden');
+            archivosModificados.clear();
+
+            const { data, error } = await db
+                .from('archivos_laboratorio')
+                .select('*')
+                .eq('laboratorio_id', lab.id)
+                .order('ruta_archivo', { ascending: true });
+
+            if (error) {
+                archivosTablaDisponible = false;
+                const rutaFallback = inferirNombreArchivoLegacy(lab.plantilla, lab.codigo_fuente);
+                archivosActivos = [{
+                    id: 'legacy',
+                    laboratorio_id: lab.id,
+                    ruta_archivo: rutaFallback,
+                    contenido: lab.codigo_fuente || ''
+                }];
+                activeFileId = 'legacy';
+                noticeEl.innerHTML = 'Ejecuta el SQL de <code>archivos_laboratorio</code> en Supabase para habilitar múltiples archivos.';
+                noticeEl.classList.remove('hidden');
+                renderizarExploradorArchivos();
+                sincronizarEditorConArchivoActivo();
+                return;
+            }
+
+            archivosTablaDisponible = true;
+            let lista = data || [];
+
+            if (!lista.length) {
+                const rutaInicial = inferirNombreArchivoLegacy(lab.plantilla, lab.codigo_fuente);
+                const contenidoInicial = lab.codigo_fuente || '';
+                if (!esDocente && lab.estado_sandbox !== 'ANULADO') {
+                    const { data: inserted } = await db
+                        .from('archivos_laboratorio')
+                        .insert([{
+                            laboratorio_id: lab.id,
+                            ruta_archivo: rutaInicial,
+                            contenido: contenidoInicial,
+                            actualizado_por: currentUser.nombre_completo
+                        }])
+                        .select()
+                        .single();
+                    if (inserted) lista = [inserted];
+                }
+                if (!lista.length) {
+                    lista = [{
+                        id: 'virtual',
+                        laboratorio_id: lab.id,
+                        ruta_archivo: rutaInicial,
+                        contenido: contenidoInicial
+                    }];
+                }
+            }
+
+            archivosActivos = lista;
+            if (!archivosActivos.some(f => String(f.id) === String(activeFileId))) {
+                const preferido = archivosActivos.find(f => /^index\.html$|^main\.py$|^schema\.sql$|^Main\.java$/i.test(f.ruta_archivo));
+                activeFileId = (preferido || archivosActivos[0]).id;
+            }
+
+            renderizarExploradorArchivos();
+            sincronizarEditorConArchivoActivo();
+        }
+
+        function renderizarExploradorArchivos() {
+            const listEl = document.getElementById('filesExplorerList');
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            const anulado = lab?.estado_sandbox === 'ANULADO';
+            const owner = lab ? usuariosPorId[String(lab.usuario_id)] : null;
+            const ownerCfg = obtenerConfigPlan(owner?.plan_actual || currentUser.plan_actual);
+            const puedeEditar = !esDocente && !anulado && archivosTablaDisponible;
+
+            document.getElementById('filesCountBadge').textContent = (!esDocente && ownerCfg.maxFiles !== Infinity)
+                ? `${archivosActivos.length}/${ownerCfg.maxFiles}`
+                : String(archivosActivos.length);
+
+            const tieneHtml = archivosActivos.some(f => /\.html?$/i.test(f.ruta_archivo));
+            document.getElementById('btnPreviewWeb')?.classList.toggle('hidden', !tieneHtml);
+
+            if (!archivosActivos.length) {
+                listEl.innerHTML = '<div class="text-slate-600 p-2 text-[10px]">Sin archivos.</div>';
+                return;
+            }
+
+            const ordenados = [...archivosActivos].sort((a, b) => a.ruta_archivo.localeCompare(b.ruta_archivo));
+            const carpetasVistas = new Set();
+            let html = '';
+
+            ordenados.forEach(file => {
+                const partes = file.ruta_archivo.split('/');
+                const carpeta = partes.length > 1 ? partes.slice(0, -1).join('/') : '';
+                const nombreCorto = partes[partes.length - 1];
+
+                if (carpeta && !carpetasVistas.has(carpeta)) {
+                    carpetasVistas.add(carpeta);
+                    html += `
+                        <div class="pt-1.5 pb-0.5 px-2 text-[10px] text-slate-400 flex items-center gap-1.5 select-none">
+                            <i class="fa-solid fa-folder-open text-amber-400/80 text-[10px]"></i>
+                            <span class="truncate">${escapeHtml(carpeta)}/</span>
+                        </div>
+                    `;
+                }
+
+                const meta = obtenerMetaArchivo(file.ruta_archivo);
+                const esActivo = String(file.id) === String(activeFileId);
+                const estaSucio = archivosModificados.has(String(file.id));
+                const puedeBorrar = puedeEditar && archivosActivos.length > 1 && file.id !== 'legacy' && file.id !== 'virtual';
+
+                html += `
+                    <div class="group flex items-center justify-between gap-1 rounded-lg transition ${carpeta ? 'pl-4' : 'pl-2'} pr-1.5 py-1.5 cursor-pointer ${
+                        esActivo
+                            ? 'bg-blue-950/80 border-l-2 border-cyan-400 text-white font-bold'
+                            : 'text-slate-300 hover:bg-slate-900'
+                    }" onclick="seleccionarArchivo('${escapeHtml(String(file.id))}')">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <i class="${meta.icon} text-[11px] shrink-0"></i>
+                            <span class="truncate">${escapeHtml(nombreCorto)}</span>
+                            ${estaSucio ? '<span class="text-amber-400 text-[9px] shrink-0" title="Sin guardar">●</span>' : ''}
+                        </div>
+                        ${puedeBorrar ? `
+                            <button type="button" onclick="event.stopPropagation(); eliminarArchivoProyecto('${escapeHtml(String(file.id))}')" title="Eliminar archivo"
+                                class="opacity-60 group-hover:opacity-100 text-slate-500 hover:text-rose-400 px-1 transition shrink-0">
+                                <i class="fa-solid fa-trash-can text-[10px]"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        function sincronizarEditorConArchivoActivo() {
+            const file = obtenerArchivoActivo();
+            const editor = document.getElementById('codeEditor');
+            const nameEl = document.getElementById('activeFileNameLabel');
+            const iconEl = document.getElementById('activeFileIcon');
+            const langEl = document.getElementById('activeFileLangBadge');
+            const dirtyEl = document.getElementById('activeFileDirtyDot');
+
+            if (!file) {
+                editor.value = '';
+                nameEl.textContent = 'Sin archivo';
+                langEl.textContent = 'TEXT';
+                dirtyEl.classList.add('hidden');
+                return;
+            }
+
+            const meta = obtenerMetaArchivo(file.ruta_archivo);
+            editor.value = file.contenido || '';
+            nameEl.textContent = file.ruta_archivo;
+            iconEl.innerHTML = `<i class="${meta.icon}"></i>`;
+            langEl.textContent = meta.lang;
+            dirtyEl.classList.toggle('hidden', !archivosModificados.has(String(file.id)));
+        }
+
+        function seleccionarArchivo(fileId) {
+            const actual = obtenerArchivoActivo();
+            if (actual) {
+                actual.contenido = document.getElementById('codeEditor').value;
+            }
+            activeFileId = fileId;
+            renderizarExploradorArchivos();
+            sincronizarEditorConArchivoActivo();
+        }
+
+        function alEditarCodigo() {
+            const file = obtenerArchivoActivo();
+            if (!file || esDocente) return;
+            file.contenido = document.getElementById('codeEditor').value;
+            archivosModificados.add(String(file.id));
+            document.getElementById('activeFileDirtyDot')?.classList.remove('hidden');
+            renderizarExploradorArchivos();
+        }
+
+        function toggleNuevoArchivoForm(forceState = null) {
+            const form = document.getElementById('newFileInlineForm');
+            if (!form) return;
+            const mostrar = forceState === null ? form.classList.contains('hidden') : forceState;
+            form.classList.toggle('hidden', !mostrar);
+            if (mostrar) {
+                const input = document.getElementById('newFilePathInput');
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        async function crearArchivoProyecto(e) {
+            e.preventDefault();
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab || esDocente || lab.estado_sandbox === 'ANULADO') return;
+            if (!archivosTablaDisponible) {
+                return showToast('Primero ejecuta el script SQL de archivos_laboratorio en Supabase.', 'error');
+            }
+
+            const owner = usuariosPorId[String(lab.usuario_id)];
+            const ownerCfg = obtenerConfigPlan(owner?.plan_actual || currentUser.plan_actual);
+            if (archivosActivos.length >= ownerCfg.maxFiles) {
+                return showToast(`El plan ${ownerCfg.nombre} permite hasta ${ownerCfg.maxFiles} archivos por proyecto. Activa Estudiante Pro para archivos ilimitados.`, 'error');
+            }
+
+            const input = document.getElementById('newFilePathInput');
+            const rutaLimpia = input.value.trim().replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+
+            if (!rutaLimpia || rutaLimpia.includes('..') || !/^[a-zA-Z0-9._/-]+$/.test(rutaLimpia)) {
+                return showToast('Nombre inválido. Usa letras, números, puntos, guiones o carpetas (ej. css/styles.css).', 'error');
+            }
+            if (archivosActivos.some(f => f.ruta_archivo.toLowerCase() === rutaLimpia.toLowerCase())) {
+                return showToast(`El archivo "${rutaLimpia}" ya existe en este laboratorio.`, 'error');
+            }
+
+            const contenidoBase = generarPlantillaArchivoNuevo(rutaLimpia);
+            const { data, error } = await db
+                .from('archivos_laboratorio')
+                .insert([{
+                    laboratorio_id: lab.id,
+                    ruta_archivo: rutaLimpia,
+                    contenido: contenidoBase,
+                    actualizado_por: currentUser.nombre_completo
+                }])
+                .select()
+                .single();
+
+            if (error) return showToast('Error creando archivo: ' + error.message, 'error');
+
+            archivosActivos.push(data);
+            activeFileId = data.id;
+            toggleNuevoArchivoForm(false);
+            renderizarExploradorArchivos();
+            sincronizarEditorConArchivoActivo();
+            showToast(`Archivo "${rutaLimpia}" creado en el proyecto.`);
+        }
+
+        async function eliminarArchivoProyecto(fileId) {
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (!lab || esDocente || lab.estado_sandbox === 'ANULADO' || !archivosTablaDisponible) return;
+            if (archivosActivos.length <= 1) {
+                return showToast('El laboratorio debe conservar al menos un archivo.', 'error');
+            }
+
+            const file = archivosActivos.find(f => String(f.id) === String(fileId));
+            if (!file) return;
+            if (!confirm(`¿Eliminar el archivo "${file.ruta_archivo}" de este proyecto?`)) return;
+
+            const { error } = await db.from('archivos_laboratorio').delete().eq('id', file.id);
+            if (error) return showToast('Error eliminando archivo: ' + error.message, 'error');
+
+            archivosActivos = archivosActivos.filter(f => String(f.id) !== String(file.id));
+            archivosModificados.delete(String(file.id));
+            if (String(activeFileId) === String(file.id)) {
+                activeFileId = archivosActivos[0]?.id || null;
+            }
+            renderizarExploradorArchivos();
+            sincronizarEditorConArchivoActivo();
+            showToast(`Archivo "${file.ruta_archivo}" eliminado.`);
+        }
+
+        async function persistirArchivosModificados(labId) {
+            const actual = obtenerArchivoActivo();
+            if (actual) actual.contenido = document.getElementById('codeEditor').value;
+
+            if (!archivosTablaDisponible) {
+                const codigo = document.getElementById('codeEditor').value;
+                return await db.from('laboratorios').update({ codigo_fuente: codigo, rama_actual: activeBranch }).eq('id', labId);
+            }
+
+            const aGuardar = archivosActivos.filter(f =>
+                f.id !== 'legacy' && f.id !== 'virtual' &&
+                (archivosModificados.has(String(f.id)) || String(f.id) === String(activeFileId))
+            );
+
+            for (const f of aGuardar) {
+                const { error } = await db
+                    .from('archivos_laboratorio')
+                    .update({
+                        contenido: f.contenido || '',
+                        actualizado_por: currentUser.nombre_completo,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', f.id);
+                if (error) return { error };
+                archivosModificados.delete(String(f.id));
+            }
+
+            const lab = laboratorios.find(l => l.id === labId);
+            const codigoPrincipal = actual ? actual.contenido : document.getElementById('codeEditor').value;
+            if (lab) lab.codigo_fuente = codigoPrincipal;
+            return await db.from('laboratorios').update({ codigo_fuente: codigoPrincipal, rama_actual: activeBranch }).eq('id', labId);
+        }
+
+        async function guardarArchivoActivo() {
+            if (esDocente || !activeLabId) return;
+            const lab = laboratorios.find(l => l.id === activeLabId);
+            if (lab?.estado_sandbox === 'ANULADO') return showToast('Proyecto anulado: no se puede guardar.', 'error');
+
+            const file = obtenerArchivoActivo();
+            const { error } = await persistirArchivosModificados(activeLabId);
+            if (error) return showToast('Error guardando archivo: ' + error.message, 'error');
+
+            document.getElementById('activeFileDirtyDot')?.classList.add('hidden');
+            renderizarExploradorArchivos();
+            showToast(`Archivo "${file?.ruta_archivo || 'principal'}" guardado en Supabase.`);
+        }
+
+        function previsualizarWebProyecto() {
+            const actual = obtenerArchivoActivo();
+            if (actual) actual.contenido = document.getElementById('codeEditor').value;
+
+            const htmlFile = (actual && /\.html?$/i.test(actual.ruta_archivo))
+                ? actual
+                : archivosActivos.find(f => /^index\.html?$/i.test(f.ruta_archivo)) || archivosActivos.find(f => /\.html?$/i.test(f.ruta_archivo));
+
+            if (!htmlFile) return showToast('Agrega un archivo .html para usar la Vista Previa Web.', 'error');
+
+            const cssCombinado = archivosActivos
+                .filter(f => /\.css$/i.test(f.ruta_archivo))
+                .map(f => `/* ${f.ruta_archivo} */\n${f.contenido || ''}`)
+                .join('\n\n');
+
+            const jsCombinado = archivosActivos
+                .filter(f => /\.js$/i.test(f.ruta_archivo))
+                .map(f => `// ${f.ruta_archivo}\n${f.contenido || ''}`)
+                .join('\n\n');
+
+            let docHtml = htmlFile.contenido || '';
+            docHtml = docHtml.replace(/<link[^>]+href=["'][^"':]+\.css["'][^>]*>/gi, '');
+            docHtml = docHtml.replace(/<script[^>]+src=["'][^"':]+\.js["'][^>]*><\/script>/gi, '');
+
+            if (cssCombinado) {
+                const styleTag = `<style>\n${cssCombinado}\n</style>`;
+                docHtml = /<\/head>/i.test(docHtml) ? docHtml.replace(/<\/head>/i, `${styleTag}\n</head>`) : `${styleTag}\n${docHtml}`;
+            }
+            if (jsCombinado) {
+                const scriptTag = `<script>\n${jsCombinado}\n<\/script>`;
+                docHtml = /<\/body>/i.test(docHtml) ? docHtml.replace(/<\/body>/i, `${scriptTag}\n</body>`) : `${docHtml}\n${scriptTag}`;
+            }
+
+            const win = window.open('', '_blank', 'width=960,height=680');
+            if (!win) return showToast('Habilita las ventanas emergentes para abrir la Vista Previa Web.', 'error');
+            win.document.open();
+            win.document.write(docHtml);
+            win.document.close();
         }
 
         // --- MOTOR VISUAL GIT + VALIDADOR PRE-MERGE REAL ---
@@ -1538,45 +2236,58 @@
             renderizarVisualGitGraph();
         }
 
-        function analizarCodigoPreMerge(codigo, plantilla) {
+        function analizarCodigoPreMerge(codigo, plantilla, rutaArchivo = '') {
             const texto = (codigo || '').trim();
             const errores = [];
             const advertencias = [];
             let conflictos = 0;
 
             if (texto.length < 10) {
-                errores.push('El código es demasiado corto (mínimo 10 caracteres ejecutables).');
+                errores.push('El archivo es demasiado corto (mínimo 10 caracteres ejecutables).');
             }
             if (/<<<<<<<|=======|>>>>>>>/.test(texto)) {
                 errores.push('Se detectaron marcadores de conflicto Git sin resolver (<<<<<<< / >>>>>>>).');
                 conflictos++;
             }
 
-            const pares = { '(': ')', '[': ']', '{': '}' };
-            const cierres = new Set([')', ']', '}']);
-            const pila = [];
-            let enComilla = null;
-            for (let i = 0; i < texto.length; i++) {
-                const ch = texto[i];
-                if (enComilla) {
-                    if (ch === enComilla && texto[i - 1] !== '\\') enComilla = null;
-                    continue;
-                }
-                if (ch === '"' || ch === "'") { enComilla = ch; continue; }
-                if (pares[ch]) pila.push(pares[ch]);
-                else if (cierres.has(ch)) {
-                    if (!pila.length || pila.pop() !== ch) {
-                        errores.push(`Símbolo de cierre "${ch}" inesperado o sin apertura correspondiente.`);
-                        break;
+            const ext = (rutaArchivo || '').split('.').pop().toLowerCase();
+            const esMarkdown = ext === 'md' || ext === 'txt';
+
+            if (!esMarkdown) {
+                const pares = { '(': ')', '[': ']', '{': '}' };
+                const cierres = new Set([')', ']', '}']);
+                const pila = [];
+                let enComilla = null;
+                for (let i = 0; i < texto.length; i++) {
+                    const ch = texto[i];
+                    if (enComilla) {
+                        if (ch === enComilla && texto[i - 1] !== '\\') enComilla = null;
+                        continue;
+                    }
+                    if (ch === '"' || ch === "'") { enComilla = ch; continue; }
+                    if (pares[ch]) pila.push(pares[ch]);
+                    else if (cierres.has(ch)) {
+                        if (!pila.length || pila.pop() !== ch) {
+                            errores.push(`Símbolo de cierre "${ch}" inesperado o sin apertura correspondiente.`);
+                            break;
+                        }
                     }
                 }
-            }
-            if (pila.length) {
-                errores.push(`Falta cerrar delimitador(es): ${pila.join(' ')}`);
+                if (pila.length) {
+                    errores.push(`Falta cerrar delimitador(es): ${pila.join(' ')}`);
+                }
             }
 
             const tpl = (plantilla || '').toLowerCase();
-            if (tpl.includes('python')) {
+            const esPython = ext === 'py' || (!ext && tpl.includes('python'));
+            const esSql = ext === 'sql' || (!ext && tpl.includes('sql'));
+            const esJavaCs = ext === 'java' || ext === 'cs' || (!ext && (tpl.includes('java') || tpl.includes('c#')));
+            const esJson = ext === 'json';
+            const esHtml = ext === 'html' || ext === 'htm';
+
+            if (esJson) {
+                try { JSON.parse(texto); } catch (e) { errores.push(`JSON inválido: ${e.message}`); }
+            } else if (esPython) {
                 const lineas = texto.split('\n');
                 lineas.forEach((ln, idx) => {
                     const t = ln.trim();
@@ -1584,16 +2295,20 @@
                         errores.push(`Línea ${idx + 1} (Python): falta ":" al final de "${t.slice(0, 30)}".`);
                     }
                 });
-            } else if (tpl.includes('sql')) {
+            } else if (esSql) {
                 if (!/(select|create|insert|update|delete|alter)/i.test(texto)) {
                     advertencias.push('No se detectó una sentencia SQL estándar (SELECT, CREATE, INSERT, etc.).');
                 }
                 if (!texto.includes(';')) {
                     advertencias.push('Recomendación SQL: finaliza tus sentencias con punto y coma (;).');
                 }
-            } else if (tpl.includes('java') || tpl.includes('c#')) {
+            } else if (esJavaCs) {
                 if (!texto.includes(';')) {
                     advertencias.push('Revisa si faltan puntos y comas (;) al final de tus instrucciones.');
+                }
+            } else if (esHtml) {
+                if (!/<[a-z][\s\S]*>/i.test(texto)) {
+                    errores.push('No se detectaron etiquetas HTML válidas en el archivo.');
                 }
             }
 
@@ -1610,8 +2325,9 @@
             if (!lab || esDocente || lab.estado_sandbox === 'ANULADO') return;
             if (activeBranch === 'main') return showToast('Ya te encuentras en la rama main.', 'error');
 
+            const file = obtenerArchivoActivo();
             const codigo = document.getElementById('codeEditor').value;
-            const analisis = analizarCodigoPreMerge(codigo, lab.plantilla);
+            const analisis = analizarCodigoPreMerge(codigo, lab.plantilla, file?.ruta_archivo || '');
             if (!analisis.valido) {
                 actualizarMentorConAnalisis(analisis, activeBranch);
                 return showToast('Merge detenido por Pre-Merge Check: corrige los errores detectados antes de unir a main.', 'error');
@@ -1619,7 +2335,8 @@
 
             const ramaOrigen = activeBranch;
             const inicio = performance.now();
-            await db.from('laboratorios').update({ codigo_fuente: codigo, rama_actual: 'main' }).eq('id', lab.id);
+            activeBranch = 'main';
+            await persistirArchivosModificados(lab.id);
             const latencia_ms = Math.max(45, Math.round(performance.now() - inicio));
 
             await db.from('validaciones_sandbox').insert([{
@@ -1633,10 +2350,11 @@
             }]);
 
             lab.rama_actual = 'main';
-            activeBranch = 'main';
             document.getElementById('branchSelector').value = 'main';
             document.getElementById('visualGitPlanBadge').textContent = 'Rama activa: main';
             document.getElementById('mergeToMainBtn').classList.add('hidden');
+            document.getElementById('activeFileDirtyDot')?.classList.add('hidden');
+            renderizarExploradorArchivos();
 
             document.getElementById('sandboxConsole').innerHTML = `
                 <div class="text-emerald-400">✓ PRE-MERGE PASSED: Rama <strong>${escapeHtml(ramaOrigen)}</strong> fusionada a <strong>main</strong> sin conflictos (${latencia_ms} ms).</div>
@@ -1689,6 +2407,8 @@
         function actualizarMentorConAnalisis(analisis, rama, ramaFusionada = null) {
             const box = document.getElementById('mentorResponseBox');
             if (!box || esDocente) return;
+            const file = obtenerArchivoActivo();
+            const nombreArchivo = file ? ` (<code>${escapeHtml(file.ruta_archivo)}</code>)` : '';
 
             if (ramaFusionada) {
                 box.innerHTML = `
@@ -1699,7 +2419,7 @@
 
             if (!analisis.valido) {
                 box.innerHTML = `
-                    <div class="text-rose-300 font-bold mb-1">Detecté ${analisis.errores.length} detalle(s) antes de fusionar en <code>${escapeHtml(rama)}</code>:</div>
+                    <div class="text-rose-300 font-bold mb-1">Detecté ${analisis.errores.length} detalle(s) en <code>${escapeHtml(rama)}</code>${nombreArchivo}:</div>
                     <ul class="list-disc pl-4 space-y-1 text-slate-200">
                         ${analisis.errores.map(err => `<li>${escapeHtml(err)}</li>`).join('')}
                     </ul>
@@ -1710,7 +2430,7 @@
                     ? `<div class="text-amber-300 mt-1">Sugerencia opcional: ${escapeHtml(analisis.advertencias[0])}</div>`
                     : '';
                 box.innerHTML = `
-                    <strong class="text-emerald-400">¡Código limpio en rama <code>${escapeHtml(rama)}</code>!</strong> Sintaxis balanceada y 0 marcadores de conflicto. ${rama !== 'main' ? 'Cuando tu equipo esté listo, presiona <strong>Merge → main</strong> arriba.' : 'Listo para evaluación docente.'}
+                    <strong class="text-emerald-400">¡Código limpio en rama <code>${escapeHtml(rama)}</code>${nombreArchivo}!</strong> Sintaxis balanceada y 0 marcadores de conflicto. ${rama !== 'main' ? 'Cuando tu equipo esté listo, presiona <strong>Merge → main</strong> arriba.' : 'Listo para evaluación docente.'}
                     ${warns}
                 `;
             }
@@ -1722,24 +2442,25 @@
 
             if (accion === 'revisar') {
                 if (!lab) {
-                    box.innerHTML = 'Primero crea o selecciona un laboratorio en la izquierda para que pueda inspeccionar tu código.';
+                    box.innerHTML = 'Primero crea o selecciona un laboratorio en la izquierda para que pueda inspeccionar tu archivo.';
                     return;
                 }
-                const analisis = analizarCodigoPreMerge(document.getElementById('codeEditor').value, lab.plantilla);
+                const file = obtenerArchivoActivo();
+                const analisis = analizarCodigoPreMerge(document.getElementById('codeEditor').value, lab.plantilla, file?.ruta_archivo || '');
                 actualizarMentorConAnalisis(analisis, activeBranch);
             } else if (accion === 'git') {
                 box.innerHTML = `
                     <strong class="text-cyan-300">Flujo cero conflictos en 3 pasos:</strong>
-                    1) Cambia el selector superior de <code>main</code> a <code>dev</code> o <code>feature/ui</code>.
-                    2) Escribe tu módulo y pulsa <strong>Validar Pre-Merge y Guardar</strong>.
+                    1) Divide los archivos del Explorador entre el equipo (ej. <code>index.html</code>, <code>styles.css</code>, <code>app.js</code>) y selecciona una rama como <code>dev</code>.
+                    2) Edita tu archivo y pulsa <strong>Validar Pre-Merge y Guardar</strong>.
                     3) Cuando salga en verde (<code>PASSED</code>), haz clic en <strong>Merge → main</strong>.
                 `;
             } else if (accion === 'entrega') {
                 const aprobados = validacionesActivas.filter(v => v.aprobado).length;
                 box.innerHTML = `
                     <strong class="text-emerald-300">Checklist antes de entregar al docente:</strong>
-                    • Commits guardados en este proyecto: <strong>${validacionesActivas.length}</strong> (Aprobados: <strong>${aprobados}</strong>).<br>
-                    • Rama oficial recomendada: <strong>main</strong>.<br>
+                    • Archivos organizados en este proyecto: <strong>${archivosActivos.length}</strong>.<br>
+                    • Commits guardados: <strong>${validacionesActivas.length}</strong> (Aprobados: <strong>${aprobados}</strong>).<br>
                     • Recuerda descargar tu <strong>Certificado de Aportes en PDF</strong> desde la pestaña <strong>Bonus & Reporte</strong>.
                 `;
             }
@@ -1807,6 +2528,10 @@
             if (pregunta.length < 2) return;
 
             const lab = laboratorios.find(l => l.id === activeLabId);
+            const file = obtenerArchivoActivo();
+            const contextoPlantilla = lab
+                ? `${lab.plantilla}${file ? ` — archivo ${file.ruta_archivo}` : ''}`
+                : '';
 
             agregarBurbujaChatMentor('user', escapeHtml(pregunta));
             input.value = '';
@@ -1830,7 +2555,7 @@
                     body: JSON.stringify({
                         usuario_id: currentUser.id,
                         correo: currentUser.correo,
-                        plantilla_activa: lab?.plantilla || '',
+                        plantilla_activa: contextoPlantilla,
                         mensaje: pregunta,
                         historial: mentorChatHistory.slice(-6)
                     })
@@ -1863,7 +2588,7 @@
             }
         }
 
-        // --- BONUS #1: PLANTILLAS CLONABLES ---
+        // --- BONUS #1: PLANTILLAS CLONABLES COMO ARCHIVO DEDICADO ---
         function renderizarPlantillasBonus() {
             const grid = document.getElementById('bonusTemplatesGrid');
             if (!grid) return;
@@ -1877,6 +2602,7 @@
                             <i class="${tpl.icono} text-lg"></i>
                         </div>
                         <div class="font-brand font-bold text-white text-sm">${escapeHtml(tpl.titulo)}</div>
+                        <div class="font-code text-[10px] text-slate-500 mt-0.5"><i class="fa-solid fa-file-code mr-1"></i>${escapeHtml(tpl.nombreArchivo)}</div>
                         <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">${escapeHtml(tpl.desc)}</p>
                     </div>
                     <button type="button" onclick="clonarPlantillaBonus('${tpl.id}')" class="w-full py-2 rounded-lg font-code text-[11px] font-bold transition ${
@@ -1884,13 +2610,13 @@
                             ? 'bg-cyan-400/15 hover:bg-cyan-400 text-cyan-300 hover:text-slate-950 border border-cyan-400/40'
                             : 'bg-slate-900 text-slate-500 border border-slate-800'
                     }">
-                        ${cfg.esPro ? '<i class="fa-solid fa-clone mr-1"></i>Clonar en mi Sandbox' : '<i class="fa-solid fa-lock mr-1"></i>Requiere Plan Pro'}
+                        ${cfg.esPro ? '<i class="fa-solid fa-clone mr-1"></i>Clonar como archivo' : '<i class="fa-solid fa-lock mr-1"></i>Requiere Plan Pro'}
                     </button>
                 </div>
             `).join('');
         }
 
-        function clonarPlantillaBonus(tplId) {
+        async function clonarPlantillaBonus(tplId) {
             const cfg = obtenerConfigPlan(currentUser.plan_actual);
             if (!cfg.esPro) {
                 showToast('Activa Estudiante Pro ($4.60/mes) para clonar las plantillas Bonus.', 'error');
@@ -1904,10 +2630,37 @@
             const tpl = BONUS_PLANTILLAS.find(t => t.id === tplId);
             if (!tpl) return;
 
-            document.getElementById('codeEditor').value = tpl.codigo;
-            document.getElementById('commitMsgInput').value = `Plantilla clonada: ${tpl.titulo}`;
+            if (archivosTablaDisponible) {
+                const existente = archivosActivos.find(f => f.ruta_archivo.toLowerCase() === tpl.nombreArchivo.toLowerCase());
+                if (existente) {
+                    await db.from('archivos_laboratorio')
+                        .update({ contenido: tpl.codigo, actualizado_por: currentUser.nombre_completo, updated_at: new Date().toISOString() })
+                        .eq('id', existente.id);
+                    existente.contenido = tpl.codigo;
+                    activeFileId = existente.id;
+                } else {
+                    const { data, error } = await db.from('archivos_laboratorio')
+                        .insert([{
+                            laboratorio_id: lab.id,
+                            ruta_archivo: tpl.nombreArchivo,
+                            contenido: tpl.codigo,
+                            actualizado_por: currentUser.nombre_completo
+                        }])
+                        .select()
+                        .single();
+                    if (error) return showToast('Error clonando archivo: ' + error.message, 'error');
+                    archivosActivos.push(data);
+                    activeFileId = data.id;
+                }
+                renderizarExploradorArchivos();
+                sincronizarEditorConArchivoActivo();
+            } else {
+                document.getElementById('codeEditor').value = tpl.codigo;
+            }
+
+            document.getElementById('commitMsgInput').value = `[${tpl.nombreArchivo}] Plantilla clonada: ${tpl.titulo}`;
             switchDashTab('sandbox');
-            showToast(`Plantilla "${tpl.titulo}" cargada en el editor. Presiona Validar para guardarla.`);
+            showToast(`Archivo "${tpl.nombreArchivo}" agregado a tu Explorador. Presiona Validar para registrar el commit.`);
         }
 
         // --- BONUS #3 + CERTIFICADO OFICIAL DE APORTES UGB ---
@@ -2359,7 +3112,7 @@
             cargarResumenDocente();
         }
 
-        // --- CREAR LABORATORIO + INVITADOS ---
+        // --- CREAR LABORATORIO + ARCHIVOS INICIALES + INVITADOS ---
         async function crearLaboratorio(e) {
             e.preventDefault();
             if (esDocente) return showToast('Los docentes evalúan proyectos, no crean laboratorios.', 'error');
@@ -2379,7 +3132,8 @@
 
             const nombre_proyecto = document.getElementById('newLabName').value.trim();
             const plantilla = document.getElementById('newLabTemplate').value;
-            const codigo_fuente = `# Proyecto: ${nombre_proyecto}\n# Plantilla: ${plantilla} (${cfg.ramLabel})\nprint("Contenedor LabFlow Uni listo para ${currentUser.nombre_completo}")`;
+            const archivosBase = generarArchivosInicialesPlantilla(nombre_proyecto, plantilla, currentUser.nombre_completo, cfg.ramLabel);
+            const codigo_fuente = archivosBase[0]?.contenido || '';
 
             const { data, error } = await db
                 .from('laboratorios')
@@ -2388,6 +3142,14 @@
                 .single();
 
             if (error) return showToast('Error al crear laboratorio: ' + error.message, 'error');
+
+            const filasArchivos = archivosBase.map(a => ({
+                laboratorio_id: data.id,
+                ruta_archivo: a.ruta_archivo,
+                contenido: a.contenido,
+                actualizado_por: currentUser.nombre_completo
+            }));
+            await db.from('archivos_laboratorio').insert(filasArchivos);
 
             const invitadosAlCrear = [...invitadosPendientesCreacion];
             if (invitadosAlCrear.length > 0) {
@@ -2414,11 +3176,12 @@
             invitadosPendientesCreacion = [];
             renderizarInvitadosCreacion();
             activeLabId = data.id;
+            activeFileId = null;
 
             const resumenInvitados = invitadosAlCrear.length > 0
-                ? ` con ${invitadosAlCrear.length} compañero(s) unido(s)`
+                ? ` y ${invitadosAlCrear.length} compañero(s)`
                 : '';
-            showToast(`Laboratorio "${nombre_proyecto}" creado${resumenInvitados}.`);
+            showToast(`Laboratorio "${nombre_proyecto}" creado con ${archivosBase.length} archivo(s)${resumenInvitados}.`);
             await cargarMapaUsuarios();
             cargarLaboratorios();
         }
@@ -2432,9 +3195,10 @@
                 return showToast('Este proyecto está anulado por plagio. No se pueden guardar más commits.', 'error');
             }
 
+            const file = obtenerArchivoActivo();
             const codigo_fuente = document.getElementById('codeEditor').value;
             const commitInput = document.getElementById('commitMsgInput');
-            const mensaje_commit = commitInput.value.trim();
+            let mensaje_commit = commitInput.value.trim();
 
             if (!mensaje_commit) {
                 commitInput.classList.add('border-rose-500');
@@ -2442,15 +3206,16 @@
                 return showToast('El mensaje del commit es obligatorio antes de validar.', 'error');
             }
 
-            const consoleBox = document.getElementById('sandboxConsole');
-            consoleBox.innerHTML = `<div class="text-amber-300">$ Ejecutando Pre-Merge Check en rama "${escapeHtml(activeBranch)}"...</div>`;
+            if (file && !mensaje_commit.startsWith('[')) {
+                mensaje_commit = `[${file.ruta_archivo}] ${mensaje_commit}`.slice(0, 160);
+            }
 
-            const analisis = analizarCodigoPreMerge(codigo_fuente, lab?.plantilla);
+            const consoleBox = document.getElementById('sandboxConsole');
+            consoleBox.innerHTML = `<div class="text-amber-300">$ Ejecutando Pre-Merge Check en "${escapeHtml(file?.ruta_archivo || 'archivo')}" (rama "${escapeHtml(activeBranch)}")...</div>`;
+
+            const analisis = analizarCodigoPreMerge(codigo_fuente, lab?.plantilla, file?.ruta_archivo || '');
             const inicio = performance.now();
-            const { error: errUpdate } = await db
-                .from('laboratorios')
-                .update({ codigo_fuente, rama_actual: activeBranch })
-                .eq('id', activeLabId);
+            const { error: errUpdate } = await persistirArchivosModificados(activeLabId);
             const latencia_ms = Math.max(45, Math.round(performance.now() - inicio));
             const estado_validacion = analisis.valido ? 'PASSED' : 'ERROR';
 
@@ -2468,20 +3233,21 @@
 
             commitInput.value = '';
             commitInput.classList.remove('border-rose-500');
+            document.getElementById('activeFileDirtyDot')?.classList.add('hidden');
+            renderizarExploradorArchivos();
 
             if (analisis.valido) {
                 consoleBox.innerHTML = `
-                    <div class="text-emerald-400">✓ PRE-MERGE PASSED en rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
+                    <div class="text-emerald-400">✓ PRE-MERGE PASSED en "${escapeHtml(file?.ruta_archivo || 'archivo')}" • rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
                     <div class="text-cyan-300">→ Sintaxis verificada • ${analisis.conflictos} conflictos detectados • Guardado en Supabase.</div>
                 `;
             } else {
                 consoleBox.innerHTML = `
-                    <div class="text-rose-400 font-bold">✕ PRE-MERGE ERROR en rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
+                    <div class="text-rose-400 font-bold">✕ PRE-MERGE ERROR en "${escapeHtml(file?.ruta_archivo || 'archivo')}" • rama "${escapeHtml(activeBranch)}" (${latencia_ms} ms)</div>
                     ${analisis.errores.map(e => `<div class="text-rose-300">  • ${escapeHtml(e)}</div>`).join('')}
                 `;
             }
 
-            // Mentor Colega Básico ahora da retroalimentación inmediata en todos los planes (incluido Freemium)
             actualizarMentorConAnalisis(analisis, activeBranch);
 
             showToast(analisis.valido ? 'Validación PASSED registrada.' : 'Commit guardado con errores de Pre-Merge. Revisa el Mentor Colega.', analisis.valido ? 'success' : 'error');

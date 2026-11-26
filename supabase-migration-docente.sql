@@ -39,6 +39,22 @@ CREATE TABLE IF NOT EXISTS public.miembros_laboratorio (
     UNIQUE (laboratorio_id, correo_miembro)
 );
 
+-- 5. Tabla de archivos por laboratorio (Explorador estilo VS Code)
+CREATE TABLE IF NOT EXISTS public.archivos_laboratorio (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    laboratorio_id BIGINT NOT NULL REFERENCES public.laboratorios(id) ON DELETE CASCADE,
+    ruta_archivo TEXT NOT NULL,
+    contenido TEXT NOT NULL DEFAULT '',
+    actualizado_por TEXT,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (laboratorio_id, ruta_archivo)
+);
+
+CREATE INDEX IF NOT EXISTS idx_archivos_lab_id
+    ON public.archivos_laboratorio (laboratorio_id);
+
+ALTER TABLE public.archivos_laboratorio DISABLE ROW LEVEL SECURITY;
+
 CREATE INDEX IF NOT EXISTS idx_miembros_lab_correo
     ON public.miembros_laboratorio (correo_miembro);
 
