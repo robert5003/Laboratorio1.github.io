@@ -375,36 +375,25 @@
                             <div>$ Motor Pre-Merge listo. Escribe tu código y presiona «Validar Pre-Merge y Guardar».</div>
                         </div>
 
-                        <!-- ASISTENTE IA "MENTOR COLEGA" 24/7 (PRO / PACK GRUPO) -->
-                        <div id="mentorColegaCard" class="rounded-2xl bg-blue-950/40 border border-cyan-400/35 p-4 space-y-3">
+                        <!-- ASISTENTE «MENTOR COLEGA» (BÁSICO GRATIS + CHAT IA AVANZADO PRO/GRUPO) -->
+                        <div id="mentorColegaCard" class="rounded-2xl bg-blue-950/40 border border-cyan-400/35 p-4 space-y-3.5">
                             <div class="flex flex-wrap items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-xl bg-cyan-400/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center">
                                         <i class="fa-solid fa-user-astronaut"></i>
                                     </div>
                                     <div>
-                                        <div class="font-brand font-bold text-white text-sm">Asistente IA «Mentor Colega» 24/7</div>
-                                        <div class="text-[10px] font-code text-cyan-300">Análisis pedagógico en vivo • Cero plagio</div>
+                                        <div class="font-brand font-bold text-white text-sm">Asistente «Mentor Colega»</div>
+                                        <div class="text-[10px] font-code text-cyan-300">Orientación pedagógica y consultas • Cero tareas resueltas</div>
                                     </div>
                                 </div>
-                                <span id="mentorPlanBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-code text-[10px] font-bold">ACTIVO</span>
+                                <span id="mentorPlanBadge" class="px-2.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 font-code text-[10px] font-bold">BÁSICO (GRATIS)</span>
                             </div>
 
-                            <!-- Bloqueo para Freemium -->
-                            <div id="mentorLockedBox" class="hidden p-3.5 rounded-xl bg-slate-950/90 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                                <div class="text-slate-300">
-                                    <strong class="text-amber-300"><i class="fa-solid fa-lock mr-1"></i>Función exclusiva Estudiante Pro y Pack Grupo:</strong>
-                                    Recibe explicaciones paso a paso de cada error antes de entregar tu laboratorio.
-                                </div>
-                                <a href="checkout.html?plan=pro" class="btn-cta-main px-4 py-2 rounded-xl font-code text-[11px] shrink-0 text-center">
-                                    Activar Pro ($4.60)
-                                </a>
-                            </div>
-
-                            <!-- Panel interactivo desbloqueado -->
-                            <div id="mentorUnlockedBox" class="space-y-3">
+                            <!-- 1. MENTOR COLEGA BÁSICO (DISPONIBLE EN TODOS LOS PLANES, INCLUIDO FREEMIUM) -->
+                            <div id="mentorBasicBox" class="space-y-2.5">
                                 <div id="mentorResponseBox" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 leading-relaxed">
-                                    ¡Hola! Soy tu <strong>Mentor Colega</strong>. Cuando valides tu código o me pidas una revisión, revisaré llaves, paréntesis, sintaxis y posibles conflictos de rama antes de que fusiones a <code>main</code>.
+                                    ¡Hola! Soy tu <strong>Mentor Colega</strong>. Cuando valides tu código o uses las guías rápidas, revisaré llaves, paréntesis, sintaxis básica y posibles conflictos antes de que fusiones a <code>main</code>.
                                 </div>
                                 <div class="flex flex-wrap items-center gap-1.5 font-code text-[11px]">
                                     <button type="button" onclick="consultarMentorColega('revisar')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-cyan-400/30 text-cyan-300 transition">
@@ -416,6 +405,62 @@
                                     <button type="button" onclick="consultarMentorColega('entrega')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-emerald-400/30 text-emerald-300 transition">
                                         <i class="fa-solid fa-clipboard-check mr-1"></i>Checklist antes de entregar
                                     </button>
+                                </div>
+                            </div>
+
+                            <!-- 2. MENTOR COLEGA IA AVANZADA (BLOQUEADO EN FREEMIUM / CHAT LIBRE EN PRO Y PACK GRUPO) -->
+                            <div class="pt-3 border-t border-cyan-400/20">
+                                <!-- Bloqueo de Chat IA Avanzado para Freemium -->
+                                <div id="mentorAiLockedBox" class="hidden p-3.5 rounded-xl bg-slate-950/90 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                                    <div class="text-slate-300 leading-relaxed">
+                                        <strong class="text-amber-300"><i class="fa-solid fa-sparkles mr-1"></i>Chat IA Avanzado (Exclusivo Estudiante Pro y Pack Grupo):</strong>
+                                        Haz consultas abiertas con IA externa sobre teoría, errores, Git, Linux, SQL o el uso de LabFlow Uni (guía honesta, sin resolver tareas).
+                                    </div>
+                                    <a href="checkout.html?plan=pro" class="btn-cta-main px-4 py-2 rounded-xl font-code text-[11px] shrink-0 text-center">
+                                        Activar Pro ($4.60)
+                                    </a>
+                                </div>
+
+                                <!-- Chat IA Avanzado Desbloqueado (Pro y Pack Grupo) -->
+                                <div id="mentorAiChatBox" class="hidden space-y-2.5">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-code">
+                                        <span class="text-emerald-300 font-bold flex items-center gap-1.5">
+                                            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+                                            Chat IA Avanzado • Consultas y Guías (No resuelve tareas)
+                                        </span>
+                                        <button type="button" onclick="limpiarChatMentorIA()" class="text-[10px] text-slate-400 hover:text-cyan-300 transition">
+                                            <i class="fa-solid fa-broom mr-1"></i>Limpiar chat
+                                        </button>
+                                    </div>
+
+                                    <div id="mentorChatMessages" class="max-h-60 overflow-y-auto space-y-2.5 p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-xs">
+                                        <div class="p-2.5 rounded-xl bg-blue-950/60 border border-cyan-400/30 text-slate-200 leading-relaxed">
+                                            <div class="text-[10px] font-code text-cyan-300 font-bold mb-1">Mentor Colega IA • Listo para ayudarte</div>
+                                            Pregúntame sobre conceptos de programación, bases de datos, redes, Linux, Git, significado de errores o cómo usar cualquier módulo de LabFlow Uni. <em>Recuerda: te guío paso a paso, pero no escribo tareas ni ejercicios resueltos.</em>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-wrap gap-1.5 font-code text-[10px]">
+                                        <button type="button" onclick="usarSugerenciaMentorIA('¿Qué es un merge conflict y cómo lo evito en equipo?')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+                                            ¿Qué es un merge conflict?
+                                        </button>
+                                        <button type="button" onclick="usarSugerenciaMentorIA('¿Para qué sirve el Kanban y los Story Points en LabFlow Uni?')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+                                            ¿Cómo usar Kanban y SP?
+                                        </button>
+                                        <button type="button" onclick="usarSugerenciaMentorIA('Explícame qué significa una llave foránea en SQL sin darme el ejercicio resuelto')" class="px-2 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 transition">
+                                            ¿Qué es una llave foránea?
+                                        </button>
+                                    </div>
+
+                                    <form id="mentorChatForm" onsubmit="enviarPreguntaMentorIA(event)" class="flex flex-col sm:flex-row gap-2">
+                                        <input type="text" id="mentorChatInput" required maxlength="1000"
+                                            placeholder="Escribe tu duda teórica, de error o sobre LabFlow Uni..."
+                                            class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:outline-none text-xs text-white">
+                                        <button type="submit" id="mentorChatSendBtn" class="btn-cta-main px-4 py-2.5 rounded-xl font-code text-xs flex items-center justify-center gap-1.5 shrink-0">
+                                            <i class="fa-solid fa-paper-plane"></i>
+                                            <span>Consultar IA</span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -868,6 +913,8 @@
         let kanbanCache = [];
         let kanbanFiltroPrioridad = 'Todas';
         let reporteCache = null;
+        let mentorChatHistory = [];
+        let mentorAiEnviando = false;
 
         const PRIORIDADES_KANBAN = {
             Alta:  { badge: 'bg-rose-500/15 text-rose-300 border-rose-500/40',          border: 'border-l-rose-500',    peso: 1 },
@@ -976,6 +1023,14 @@
             }[c]));
         }
 
+        function formatearTextoMentorIA(rawText) {
+            let safe = escapeHtml(rawText || '');
+            safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>');
+            safe = safe.replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-slate-900 text-cyan-300 font-code text-[11px]">$1</code>');
+            safe = safe.replace(/\n/g, '<br>');
+            return safe;
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if (!currentUser) return;
             if (!db) return showToast('Error al conectar con Supabase.', 'error');
@@ -1029,14 +1084,15 @@
                 return;
             }
 
-            document.getElementById('mentorLockedBox')?.classList.toggle('hidden', cfg.esPro);
-            document.getElementById('mentorUnlockedBox')?.classList.toggle('hidden', !cfg.esPro);
+            // Mentor Colega Básico es GRATIS para todos; Chat IA Avanzado solo para Estudiante Pro y Pack Grupo
+            document.getElementById('mentorAiLockedBox')?.classList.toggle('hidden', cfg.esPro);
+            document.getElementById('mentorAiChatBox')?.classList.toggle('hidden', !cfg.esPro);
             const mentorBadge = document.getElementById('mentorPlanBadge');
             if (mentorBadge) {
-                mentorBadge.textContent = cfg.esPro ? 'ACTIVO 24/7' : 'BLOQUEADO (PRO)';
+                mentorBadge.textContent = cfg.esPro ? 'IA AVANZADA 24/7' : 'BÁSICO (GRATIS)';
                 mentorBadge.className = cfg.esPro
                     ? 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-code text-[10px] font-bold'
-                    : 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-code text-[10px] font-bold';
+                    : 'px-2.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/40 font-code text-[10px] font-bold';
             }
 
             // Bloqueo Freemium en pestaña Bonus & Reporte (incluye Bonus #2 Guía Git)
@@ -1629,7 +1685,7 @@
             `;
         }
 
-        // --- ASISTENTE IA "MENTOR COLEGA" 24/7 ---
+        // --- ASISTENTE «MENTOR COLEGA» BÁSICO (GRATIS PARA TODOS) ---
         function actualizarMentorConAnalisis(analisis, rama, ramaFusionada = null) {
             const box = document.getElementById('mentorResponseBox');
             if (!box || esDocente) return;
@@ -1686,6 +1742,124 @@
                     • Rama oficial recomendada: <strong>main</strong>.<br>
                     • Recuerda descargar tu <strong>Certificado de Aportes en PDF</strong> desde la pestaña <strong>Bonus & Reporte</strong>.
                 `;
+            }
+        }
+
+        // --- ASISTENTE «MENTOR COLEGA» IA AVANZADA (PRO Y PACK GRUPO -> SUPABASE EDGE FUNCTION + GEMINI) ---
+        function usarSugerenciaMentorIA(texto) {
+            const input = document.getElementById('mentorChatInput');
+            if (!input) return;
+            input.value = texto;
+            input.focus();
+        }
+
+        function limpiarChatMentorIA() {
+            mentorChatHistory = [];
+            const box = document.getElementById('mentorChatMessages');
+            if (!box) return;
+            box.innerHTML = `
+                <div class="p-2.5 rounded-xl bg-blue-950/60 border border-cyan-400/30 text-slate-200 leading-relaxed">
+                    <div class="text-[10px] font-code text-cyan-300 font-bold mb-1">Mentor Colega IA • Conversación reiniciada</div>
+                    ¿En qué concepto, mensaje de error o herramienta de LabFlow Uni te puedo orientar ahora?
+                </div>
+            `;
+        }
+
+        function agregarBurbujaChatMentor(rol, htmlContenido, subtitulo = '') {
+            const box = document.getElementById('mentorChatMessages');
+            if (!box) return null;
+
+            const div = document.createElement('div');
+            if (rol === 'user') {
+                div.className = 'ml-6 p-2.5 rounded-xl bg-violet-600/25 border border-violet-400/40 text-white leading-relaxed';
+                div.innerHTML = `
+                    <div class="text-[10px] font-code text-violet-300 font-bold mb-1">Tú</div>
+                    <div>${htmlContenido}</div>
+                `;
+            } else if (rol === 'error') {
+                div.className = 'mr-4 p-2.5 rounded-xl bg-rose-950/70 border border-rose-500/40 text-rose-200 leading-relaxed';
+                div.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${htmlContenido}`;
+            } else {
+                div.className = 'mr-4 p-2.5 rounded-xl bg-blue-950/60 border border-cyan-400/30 text-slate-200 leading-relaxed';
+                div.innerHTML = `
+                    <div class="text-[10px] font-code text-cyan-300 font-bold mb-1">Mentor Colega IA${subtitulo ? ` • ${escapeHtml(subtitulo)}` : ''}</div>
+                    <div>${htmlContenido}</div>
+                `;
+            }
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+            return div;
+        }
+
+        async function enviarPreguntaMentorIA(e) {
+            e.preventDefault();
+            if (esDocente || mentorAiEnviando) return;
+
+            const cfg = obtenerConfigPlan(currentUser.plan_actual);
+            if (!cfg.esPro) {
+                showToast('El Chat IA Avanzado es exclusivo de Estudiante Pro y Pack Grupo.', 'error');
+                return;
+            }
+
+            const input = document.getElementById('mentorChatInput');
+            const btn = document.getElementById('mentorChatSendBtn');
+            const pregunta = input.value.trim();
+            if (pregunta.length < 2) return;
+
+            const lab = laboratorios.find(l => l.id === activeLabId);
+
+            agregarBurbujaChatMentor('user', escapeHtml(pregunta));
+            input.value = '';
+
+            mentorAiEnviando = true;
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-wait');
+
+            const loadingBubble = agregarBurbujaChatMentor(
+                'model',
+                '<span class="text-slate-400 font-code"><i class="fa-solid fa-spinner fa-spin mr-1.5 text-cyan-400"></i>Analizando tu consulta pedagógica...</span>'
+            );
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/mentor-colega`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY
+                    },
+                    body: JSON.stringify({
+                        usuario_id: currentUser.id,
+                        correo: currentUser.correo,
+                        plantilla_activa: lab?.plantilla || '',
+                        mensaje: pregunta,
+                        historial: mentorChatHistory.slice(-6)
+                    })
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (loadingBubble) loadingBubble.remove();
+
+                if (!res.ok || !data.respuesta) {
+                    agregarBurbujaChatMentor('error', escapeHtml(data.error || 'No se pudo obtener respuesta de la IA. Intenta nuevamente.'));
+                    return;
+                }
+
+                mentorChatHistory.push({ role: 'user', text: pregunta });
+                mentorChatHistory.push({ role: 'model', text: data.respuesta });
+                if (mentorChatHistory.length > 10) {
+                    mentorChatHistory = mentorChatHistory.slice(-10);
+                }
+
+                agregarBurbujaChatMentor('model', formatearTextoMentorIA(data.respuesta), 'Guía pedagógica');
+            } catch (err) {
+                console.error('Error consultando Mentor Colega IA:', err);
+                if (loadingBubble) loadingBubble.remove();
+                agregarBurbujaChatMentor('error', 'Error de red al conectar con Mentor Colega IA. Verifica tu conexión.');
+            } finally {
+                mentorAiEnviando = false;
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-wait');
+                input.focus();
             }
         }
 
@@ -2307,8 +2481,8 @@
                 `;
             }
 
-            const cfg = obtenerConfigPlan(currentUser.plan_actual);
-            if (cfg.esPro) actualizarMentorConAnalisis(analisis, activeBranch);
+            // Mentor Colega Básico ahora da retroalimentación inmediata en todos los planes (incluido Freemium)
+            actualizarMentorConAnalisis(analisis, activeBranch);
 
             showToast(analisis.valido ? 'Validación PASSED registrada.' : 'Commit guardado con errores de Pre-Merge. Revisa el Mentor Colega.', analisis.valido ? 'success' : 'error');
             cargarValidaciones(activeLabId);
